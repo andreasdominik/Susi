@@ -1,0 +1,94 @@
+# Configuration of NoSnips services
+#
+# Dec. 2019, A. Dominik
+#
+title = "NoSnips services config"
+
+[local]
+# satellite = false    false for the main system; if true, only hotword
+#                      detectiion and auidio I/O will be started
+# name = "default"     name of satellite/room
+# base_directory = ""  installation directory (/..../ADoNoSnips)
+satellite = false
+siteId = "default"
+base_directory = "/home/andreas/Projects/ADoSnipsQnD/NoSnips"
+work_dir = "/tmp"
+
+
+[mqtt]
+# host = "localhost"
+# port = 8883
+host = ""
+port = ""
+subscribe = "mosquitto_sub"
+publish = "mosquitto_pub"
+
+# set user/password to use authetication:
+#
+user = ""
+password = ""
+
+
+[hotword]
+# start = true          start hotword service
+# binary = "Snowboy/bin/hotword"     path to the hotword detector
+# model_path = "Snowboy/resources"   path to the hotword models
+# model = "computer.pmdl"            name of hotword model
+# sensitivity = 0.5
+# session_timeout = 60               60 secs after hotword recognition
+#                                    hotword detector is restarted because of
+#                                    timeout
+start = true
+daemon = "Hotword/hotword.daemon"
+binary = "Snowboy/bin/hotword.py"
+model_path = "Snowboy/bin/resources"
+model = "computer.pmdl"
+local_hotword = "Computer"
+sensitivity = 0.5
+
+
+[record]
+# start = true     start the local service to record commands
+# daemon = "Record/record.daemon"     daemon binary
+# binary = "Record/Sox/recCmd.sh"     command to perform recording
+# recording_file = "cmd.flac"         file with recording (defines the format, too)
+# recording_limit = 15                stop recording after 15 sec
+# notification = true                 play sounds when starting/stopping rec
+# notification_start = "Record/Sounds/startlisten.wav"
+# notification_end = "Record/Sounds/stoplisten.wav"
+# play = "play"                       command to play an audio file
+#
+start = false
+daemon = "Record/record.daemon"
+binary = "Record/soxrec.sh"
+recording_file = "cmd.flac"
+recording_limit = 15
+notification = true
+notification_start = "Record/Sounds/startlisten.wav"
+notification_end = "Record/Sounds/stoplisten.wav"
+play = "play"
+
+
+[say]
+# start = true     start the local service to utter text
+start = false
+
+[tts]
+# start = true     start the central text-to-speech service
+start = false
+
+[stt]
+# start = true     start the central speech-to-text (aka ASR) service
+start = false
+
+[nlu]
+# start = true     start the natural language understanding service
+#                  to identify intents and extract slot values
+start = false
+
+
+[session]
+# The session manager ...
+start = false
+daemon = "Session/session.daemon"
+session_timeout = 30

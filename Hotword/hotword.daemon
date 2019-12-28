@@ -1,0 +1,71 @@
+#!/bin/bash -xv
+#
+# Hotword service for NoSnips replacement.
+# Usage:
+#     hotword.daemon path/to/nosnips.toml
+#     hotword.daemon /etc/nosnips.toml
+#
+# https://github.com/dbohdan/remarshal is used for reading toml
+# jq is used for parsing JSON
+#
+
+# set config path:
+#
+if [[ $# -lt 1 ]] ; then
+  CONFIG="/etc/nosnips.toml"
+else
+  CONFIG=$1
+fi
+
+TOML="$(cat $CONFIG | toml2json)"
+BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
+
+# load tool funs:
+#
+source $BASE_DIR/Tools/funs.sh
+source $BASE_DIR/Tools/topics.sh
+
+# parse config from toml:
+# PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,
+# BASE_DIR, WORK_DIR, SITE_ID
+#
+readToml $CONFIG
+
+DETECTOR="${BASE_DIR}/$(extractJSON .hotword.binary)"
+MODEL="$BASE_DIR/$(extractJSON .hotword.model_path)/$(extractJSON .hotword.model)"
+LOCAL_HOTWORD="$(extractJSON .hotword.local_hotword)"
+SENSITIVITY="$(extractJSON .hotword.sensitivity)"
+
+
+# construct MQTT message for hotword detected
+#
+PAYLOAD="{
+  \"siteId\": \"$SITE_ID\",
+  \"modelId\": \"$LOCAL_HOTWORD\",
+  \"modelVersion\": \"1.0\",
+  \"modeltype\": \"personal\",
+  \"currentSensitivity\": $SENSITIVITY
+}"
+
+while true ; do
+
+  # run Snowboy until hotword is detected
+  #
+  $DETECTOR $MODEL $SENSITIVITY
+  STATUS=$?
+  STATUS=0  # cancel should work for debugging
+  echo "$STATUS"
+
+  # publish "hotword detected" if status == 0; otherwise just keep
+  # detector stopped:
+  #
+  if [[ $STATUS -eq 0 ]] ; then
+    publish $TOPIC_HOTWORD "$PAYLOAD"
+  fi
+
+  # wait until retsart is triggered via:
+  #     mosquitto_pub -h <HOSTNAME> -t 'hermes/hotword/toggleOn' \
+  #         -m '{"siteId": "default"}'
+  #
+  subscribeSiteOnce $SITE_ID hermes/hotword/toggleOn
+done

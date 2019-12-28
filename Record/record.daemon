@@ -1,0 +1,70 @@
+#!/bin/bash -xv
+#
+# Record service for NoSnips replacement.
+# Usage:
+#     record.daemon <path/to/nosnips.toml>
+#
+#
+
+# set config path:
+#
+if [[ $# -lt 1 ]] ; then
+  CONFIG="/etc/nosnips.toml"
+else
+  CONFIG=$1
+fi
+
+TOML="$(cat $CONFIG | toml2json)"
+BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
+
+# load tool funs:
+#
+source $BASE_DIR/Tools/funs.sh
+source $BASE_DIR/Tools/topics.sh
+
+# parse config from toml:
+# PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,
+# BASE_DIR, WORK_DIR, SITE_ID
+#
+readToml $CONFIG
+
+REC_CMD="${BASE_DIR}/$(extractJSON .record.binary)"
+REC_FILE="${BASE_DIR}/$(extractJSON .record.recording_file)"
+REC_LIMIT="$(extractJSON .record.recording_limit)"
+NOTIFICATION="$(extractJSON .record.notification)"
+START_SOUND="${BASE_DIR}/$(extractJSON .record.notification_start)"
+END_SOUND="${BASE_DIR}/$(extractJSON .record.notification_end)"
+PLAY_CMD="$(extractJSON .record.play)"
+
+
+# main loop:
+#  - wait for request
+#  - call record binary
+#  - base64 encode recording
+#  - send MQTT
+#
+while true ; do
+
+  subscribeSiteOnce $SITE_ID $TOPIC_ASR_START
+
+  [[ $NOTIFICATION == true ]] && $PLAY_CMD $START_SOUND
+  rm -f $REC_FILE
+  $REC_CMD $REC_FILE $REC_LIMIT
+  [[ $NOTIFICATION == true ]] && $PLAY_CMD $END_SOUND
+
+  if [[ -s $REC_FILE ]] ; then
+    AUDIO="$(base64 -w 0 $REC_FILE)"
+  else
+    AUDIO=""
+  fi
+
+TOPIC=$TOPIC_ASR_AUDIO
+PAYLOAD="{
+  \"siteId\": \"$SITE_ID\",
+  \"sessionId\": \"$MQTT_SESSION_ID\",
+  \"id\": \"$MQTT_ID\",
+  \"audio\": \"$AUDIO\"
+}"
+
+publish $TOPIC "$PAYLOAD"
+done

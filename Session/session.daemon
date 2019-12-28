@@ -1,0 +1,177 @@
+#!/bin/bash -vx
+#
+# Session manager for NoSnips replacement service.
+# Usage:
+#     session.daemon path/to/nosnips.toml
+#
+# https://github.com/dbohdan/remarshal is used for reading toml
+# jq is used for parsing JSON
+#
+
+# set config file:
+#
+if [[ $# -lt 1 ]] ; then
+  CONFIG="/etc/nosnips.toml"
+else
+  CONFIG=$1
+fi
+
+# load tool funs:
+#
+TOML="$(cat $CONFIG | toml2json)"
+BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
+
+source $BASE_DIR/Tools/funs.sh
+source $BASE_DIR/Session/dialogueManagerActions.sh
+
+# parse config from toml:
+# PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,
+# BASE_DIR, WORK_DIR, SITE_ID
+#
+readToml $CONFIG
+
+TIMEOUT="$(extractJSON .hotword.session_timeout)"
+
+# Topics:
+source $BASE_DIR/Tools/topics.sh
+
+# core loop that catches all MQTTs depending on
+# state:
+#
+DOING="no_session"
+while true ; do
+
+  setDMtopics
+  subscribeSmart $MATCH $TOPICS
+
+  ID="id:$(uuidgen)"    # set request ID for next round.
+
+  # manage timeouts:
+  #
+  if [[ $MQTT_TOPIC == $TOPIC_TIMEOUT ]] ; then
+    if [[ $MQTT_ID == $TIMEOUT_ID ]] &&
+       [[ $DOING != "no_session" ]] ; then
+      publishSessionEnded "timeout"
+      publishHotwordOn
+      DOING="no_session"
+    fi
+  else
+    scheduleTimeOut
+  fi
+
+  # manage dialogue manager sequences:
+  #
+  case "$MQTT_TOPIC" in
+    $TOPIC_HOTWORD)
+      SESSION_ID="session:$(uuidgen)"
+      SESSION_SITE_ID=$MQTT_SITE_ID
+      publishAsrStart # next: wait for audio recording
+      DOING="wait_for_asr"
+      ;;
+
+    $TOPIC_ASR_AUDIO)
+      AUDIO="$(extractJSON .audio $MQTT_PAYLOAD)"
+      if [[ -z $AUDIO ]] ; then
+        publishSessionEnded "error: no audio"
+        publishHotwordOn
+        DOING="no_session"
+      else
+        publishAsrTransscribe  # next: wait for STT result
+        DOING="wait_for_stt"
+      fi
+      ;;
+
+    $TOPIC_ASR_TEXT)
+      TEXT="$(extractJSON .transscript $MQTT_PAYLOAD)"
+      if [[ -z $TEXT ]] ; then
+        publishSessionEnded "error: no transscript"
+        publishHotwordOn
+        DOING="no_session"
+      else
+        publishNluQuery # next: wait for NLU result
+        DOING="wait_for_nlu"
+      fi
+      ;;
+
+    $TOPIC_NLU_NOT)
+      publishSessionEnded "error: NLU failed"
+      qndSay "failedNLU"
+      publishHotwordOn
+      DOING="no_session"
+      ;;
+
+    $TOPIC_NLU_PARSED)
+      INTENT="$(extractJSON .intent $MQTT_PAYLOAD)"
+      publishIntent
+      DOING="session_ongoing"
+      ;;
+
+    $TOPIC_START_SESSION)
+      SESSION_ID="session:$(uuidgen)"
+      SESSION_SITE_ID=$MQTT_SITE_ID
+
+      # check if action or notification or api or command:
+      #
+      TYPE="$(extractJSON .init.type $MQTT_PAYLOAD)"
+      if [[ $TYPE == "action" ]] ; then
+        publishAsrStart # next: wait for audio recording
+        DOING="wait_for_asr"
+
+      elif [[ $TYPE == "notification" ]] ; then
+        TEXT="$(extractJSON .init.text $MQTT_PAYLOAD)"
+        publishTTSrequest
+        DOING="wait_for_tts"
+        NEXT_DOING="end_session"
+        PLAY_SITE=$SESION_SITE_ID
+
+      elif [[ $TYPE == "api" ]] ; then
+        INTENT="$(extractJSON .intent $MQTT_PAYLOAD)"
+        publishIntent
+        DOING="session_ongoing"
+
+      elif [[ $TYPE == "command" ]] ; then
+        TEXT="$(extractJSON .init.command $MQTT_PAYLOAD)"
+        publishNluQuery
+        DOING="wait_for_nlu"
+
+      else  # wrong formatted payload:
+        DOING="no_session"
+      fi
+      ;;
+
+    $TOPIC_TTS_AUDIO)
+      AUDIO="$(extractJSON .audio $MQTT_PAYLOAD)"
+      if [[ -z $AUDIO ]] ; then
+        publishSessionEnded "error: no audio from TTS"
+        publishHotwordOn
+        DOING="no_session"
+      else
+        if [[ -z $PLAY_SITE ]] ; then
+          PLAY_SITE=$SESSION_SITE_ID
+        fi
+        publishPlay $PLAY_SITE
+        PLAY_SITE=$SESION_SITE_ID
+        DOING="playing"
+      fi
+      ;;
+
+    $TOPIC_PLAY_FINISHED)
+      if [[ $NEXT_DOING == "end_session" ]] ; then
+        publishSessionEnded
+        publishHotwordOn
+        DOING="no_session"
+      else
+        DOING="session_ongoing"
+      fi
+      ;;
+
+    $TOPIC_SAY)
+      TEXT="$(extractJSON .text $MQTT_PAYLOAD)"
+      PLAY_SITE="$(extractJSON .siteId $MQTT_PAYLOAD)"
+      publishTTSrequest
+      DOING="wait_for_tts"
+      NEXT_DOING="session_ongoing"
+      ;;
+
+  esac
+done
