@@ -4,6 +4,9 @@
 #
 title = "NoSnips services config"
 
+[assistant]
+language = "de"
+
 [local]
 # satellite = false    false for the main system; if true, only hotword
 #                      detectiion and auidio I/O will be started
@@ -80,6 +83,9 @@ start = false
 [stt]
 # start = true     start the central speech-to-text (aka ASR) service
 start = false
+daemon = "SpeechToText/stt.daemon"
+binary = "GoogleCloud/stt/googleRest.sh"
+
 
 [nlu]
 # start = true     start the natural language understanding service
