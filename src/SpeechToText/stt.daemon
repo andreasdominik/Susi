@@ -1,0 +1,98 @@
+#!/bin/bash -xv
+#
+# STT service for NoSnips replacement.
+# Usage:
+#     stt.daemon path/to/nosnips.toml
+#     stt.daemon #/etc/nosnips.toml
+#
+#
+
+# set config path:
+#
+if [[ $# -lt 1 ]] ; then
+  CONFIG="/etc/nosnips.toml"
+else
+  CONFIG=$1
+fi
+
+TOML="$(cat $CONFIG | toml2json)"
+BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
+
+# load tool funs:
+#
+source $BASE_DIR/Tools/funs.sh
+source $BASE_DIR/Tools/topics.sh
+
+# parse config from toml:
+# PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,
+# BASE_DIR, WORK_DIR, SITE_ID
+#
+readToml $CONFIG
+
+BINARY="${BASE_DIR}/src/$(extractJSON .stt.binary)"
+MODEL="$BASE_DIR/$(extractJSON .hotword.model_path)/$(extractJSON .hotword.model)"
+LOCAL_HOTWORD="$(extractJSON .hotword.local_hotword)"
+SENSITIVITY="$(extractJSON .hotword.sensitivity)"
+
+
+# construct MQTT message for hotword detected
+#
+PAYLOAD="{
+  \"siteId\": \"$SITE_ID\",
+  \"modelId\": \"$LOCAL_HOTWORD\",
+  \"modelVersion\": \"1.0\",
+  \"modeltype\": \"personal\",
+  \"currentSensitivity\": $SENSITIVITY
+}"
+
+while true ; do
+#!/bin/bash -xv
+#
+#
+
+MAX_TIME=$1
+STT="${SUSI_DIR}/src/STT/Google/googleREST.sh"
+EMPTY_TS="${SUSI_DIR}/src/STT/Google/empty.json"
+
+${SUSI_DIR}/src/Hardware/Internet/checkservices.sh
+
+# check if a new access token is necessary
+# (in background, inparallel to record)
+#
+${SUSI_DIR}/src/STT/Google/refreshToken.sh &
+
+AUDIO_NAME="cmd.flac"
+STT_OUTPUT="cmdservice.json"
+TS_NAME="cmd.ts"
+
+# record == tell daemon to record and wait until done:
+#
+echo $MAX_TIME > record.voice.main
+while [[ -e record.voice.main ]] ; do
+  sleep 0.05
+done
+
+if [[ -s $AUDIO_NAME ]] ; then
+  $STT $AUDIO_NAME $STT_OUTPUT   > /dev/null 2>&1
+
+  # generate simple standardised JSON for Susi
+  # and fix if ts is corrupted:
+  #
+  grep 'transcript' $STT_OUTPUT
+  TS_OK=$?
+
+  if [[ $TS_OK -eq 0 ]] ; then
+    TS="$( cat $STT_OUTPUT | jq '.results[].alternatives[].transcript' | sed 's/[^0-9a-zA-Z]/ /g')"
+
+    echo "{"                             >  $TS_NAME
+    echo "   \"transscript\": \"$TS\" "  >> $TS_NAME
+    echo "}"                             >> $TS_NAME
+  else
+    cp $EMPTY_TS $TS_NAME
+  fi
+else
+  cp $EMPTY_TS $TS_NAME
+fi
+
+echo "transscript is:"
+cat $TS_NAME
