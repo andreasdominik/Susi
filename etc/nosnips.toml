@@ -92,3 +92,10 @@ start = false
 start = false
 daemon = "Session/session.daemon"
 session_timeout = 30
+
+[skills]
+start = true
+daemon = "Skillserver/skills.daemon"
+
+skills_dir_1 = "/opt/Susi/Skills"
+skills_dir_2 = "/home/andreas/Projects/Susi/Skills"
