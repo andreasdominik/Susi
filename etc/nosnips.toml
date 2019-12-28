@@ -86,6 +86,8 @@ start = false
 daemon = "SpeechToText/stt.daemon"
 binary = "GoogleCloud/stt/googleRest.sh"
 
+[google_cloud]
+credentials = "Google/Credentials/google-credentials.json"
 
 [nlu]
 # start = true     start the natural language understanding service
