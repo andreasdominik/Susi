@@ -18,6 +18,7 @@ fi
 
 TOML="$(cat $CONFIG | toml2json)"
 BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
+WORK_DIR="$(echo $TOML | jq -r .local.work_directory)"
 export BASE_DIR
 
 # load tool funs:
