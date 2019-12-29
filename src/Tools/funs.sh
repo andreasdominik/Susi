@@ -100,6 +100,8 @@ function parseMQTT() {
 #    VAL=$(extractJSON .field {json})
 #
 # if only one arg, JSON is assumed to be in $TOML
+# dirs read with extractJSONdir() will be subdirs
+# to BASE_DIR if relative.
 #
 function extractJSON() {
   _FIELD=$1
@@ -111,6 +113,18 @@ function extractJSON() {
   fi
 
   echo "$(echo $_JSON | jq -r $_FIELD)"
+}
+
+function extractJSONdir() {
+  _FIELD=$1
+  if [[ $# -gt 1 ]] ; then
+    shift
+    _JSON=$@
+  else
+    _JSON=$TOML
+  fi
+
+  echo "$(echo $_JSON | jq -r $_FIELD | relDir)"
 }
 
 
