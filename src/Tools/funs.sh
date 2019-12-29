@@ -27,9 +27,11 @@ function readToml() {
 # make a dir relative to Susi if not absolute:
 #
 function relDir() {
-  DIR=$1
-  if ! [[ $DIR =~ ^/ ]] ; then
-    DIR="$BASE_DIR/$DIR"
+  read _DIR
+  if [[ $_DIR =~ ^/ ]] ; then
+    echo "$_DIR"
+  else
+    echo "$BASE_DIR/$_DIR"
   fi
 }
 
