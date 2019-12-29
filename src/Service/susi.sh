@@ -42,7 +42,7 @@ function startDaemon() {
 
   if [[ $_FLAG == true ]] ; then
     echo "starting $_DAEMON daemon"
-    _EXEC="$(extractJSON .$_DAEMON.daemon $TOML | relDir)"
+    _EXEC="$(extractJSONdir .$_DAEMON.daemon $TOML)"
     $BASE_DIR/$_EXEC $CONFIG &
   fi
 }

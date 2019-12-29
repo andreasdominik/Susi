@@ -13,7 +13,7 @@ function readToml() {
   MQTT_PW="$(extractJSON .mqtt.password $TOML)"
 
   export BASE_DIR="$(extractJSON .local.base_directory $TOML)"
-  export WORK_DIR="$(extractJSON .local.work_dir $TOML)"
+  export WORK_DIR="$(extractJSONdir .local.work_dir $TOML)"
 
   export SITE_ID="$(extractJSON .local.siteId $TOML)"
   export SESSION_TIMEOUT="$(extractJSON .session.session_timeout $TOML)"

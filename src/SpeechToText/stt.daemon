@@ -29,7 +29,7 @@ source $BASE_DIR/Tools/topics.sh
 #
 readToml $CONFIG
 
-BINARY="${BASE_DIR}/src/$(extractJSON .stt.binary)"
+BINARY="$(extractJSONdir .stt.binary)"
 STT_INPUT=audio.base64
 STT_OUTPUT=cmd.ts
 
