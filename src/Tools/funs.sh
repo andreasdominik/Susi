@@ -24,6 +24,15 @@ function readToml() {
   export PUBLISH="$PUBLISH $(mqtt_auth)"
 }
 
+# make a dir relative to Susi if not absolute:
+#
+function relDir() {
+  DIR=$1
+  if ! [[ $DIR =~ ^/ ]] ; then
+    DIR="$BASE_DIR/$DIR"
+  fi
+}
+
 
 
 # mqtt_sub/pub command with optional user/password:
