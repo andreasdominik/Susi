@@ -6,13 +6,27 @@
 
 STT_INPUT=$1
 STT_OUTPUT=$2
-BASE_DIR=$3
-MAX_TIME=10
 TMP_TOKEN="googlecloud.tmptoken"
 REQUEST="sttrequest.json"
 
-# STT="${SUSI_DIR}/src/STT/Google/googleREST.sh"
-# EMPTY_TS="${SUSI_DIR}/src/STT/Google/empty.json"
+# load tool funs:
+#
+TOML="$(cat susi.json)"
+BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
+REFRESH_TOKEN="$(echo $TOML | jq -r .google_cloud.refresh_token)"
+
+source $BASE_DIR/Tools/funs.sh
+
+# parse config from toml:
+# PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,
+# BASE_DIR, WORK_DIR, SITE_ID
+#
+readToml $CONFIG
+
+TIMEOUT="$(extractJSON .hotword.session_timeout)"
+
+# Topics:
+source $BASE_DIR/Tools/topics.sh
 
 # check if a new access token is necessary
 # (in background)
@@ -46,7 +60,7 @@ if [[ -s $STT_INPUT ]] ; then
   curl -v -XPOST --http2 'https://speech.googleapis.com/v1p1beta1/speech:recognize' \
      -H "Content-Type: application/json" \
      -H "Authorization: Bearer $ACCESS_TOKEN" \
-     -d @$REQUEST -o $JSON
+     -d "$REQUEST" -o $JSON
 
   grep 'transcript' $JSON
   TS_OK=$?
@@ -57,6 +71,9 @@ if [[ -s $STT_INPUT ]] ; then
   else
     echo "" > $STT_OUTPUT
   fi
+else
+  echo "" > $STT_OUTPUT
+fi
 
 echo "transscript is:"
 cat $STT_OUTPUT
