@@ -14,7 +14,7 @@ language = "de"
 # base_directory = ""  installation directory (/..../ADoNoSnips)
 satellite = false
 siteId = "default"
-base_directory = "/home/andreas/Projects/ADoSnipsQnD/NoSnips"
+base_directory = "/home/andreas/Documents/Projekte/2019-Susi/Susi"
 work_dirrectory = "/tmp"
 
 

@@ -8,15 +8,18 @@
 # jq is used for parsing JSON
 #
 
-# set config path:
+# set config path
+# and make a JSON config in work dir:
 #
 if [[ $# -lt 1 ]] ; then
   CONFIG="/etc/nosnips.toml"
 else
   CONFIG=$1
 fi
+cd $WORK_DIR
+cat $CONFIG | toml2json > susi.json
 
-TOML="$(cat $CONFIG | toml2json)"
+TOML="$(cat susi.json)"
 BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
 WORK_DIR="$(echo $TOML | jq -r .local.work_directory)"
 export BASE_DIR
