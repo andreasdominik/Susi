@@ -15,7 +15,7 @@ language = "de"
 satellite = false
 siteId = "default"
 base_directory = "/home/andreas/Projects/ADoSnipsQnD/NoSnips"
-work_dir = "/tmp"
+work_dirrectory = "/tmp"
 
 
 [mqtt]
@@ -42,9 +42,9 @@ password = ""
 #                                    hotword detector is restarted because of
 #                                    timeout
 start = true
-daemon = "Hotword/hotword.daemon"
-binary = "Snowboy/bin/hotword.py"
-model_path = "Snowboy/bin/resources"
+daemon = "src/Hotword/hotword.daemon"
+binary = "src/Snowboy/bin/hotword.py"
+model_path = "src/Snowboy/bin/resources"
 model = "computer.pmdl"
 local_hotword = "Computer"
 sensitivity = 0.5
@@ -62,13 +62,13 @@ sensitivity = 0.5
 # play = "play"                       command to play an audio file
 #
 start = false
-daemon = "Record/record.daemon"
-binary = "Record/soxrec.sh"
+daemon = "src/Record/record.daemon"
+binary = "src/Record/soxrec.sh"
 recording_file = "cmd.flac"
 recording_limit = 15
 notification = true
-notification_start = "Record/Sounds/startlisten.wav"
-notification_end = "Record/Sounds/stoplisten.wav"
+notification_start = "src/Record/Sounds/startlisten.wav"
+notification_end = "src/Record/Sounds/stoplisten.wav"
 play = "play"
 
 
@@ -83,11 +83,12 @@ start = false
 [stt]
 # start = true     start the central speech-to-text (aka ASR) service
 start = false
-daemon = "SpeechToText/stt.daemon"
-binary = "GoogleCloud/stt/googleRest.sh"
+daemon = "src/SpeechToText/stt.daemon"
+binary = "src/GoogleCloud/stt/googleRest.sh"
 
 [google_cloud]
-credentials = "Google/Credentials/google-credentials.json"
+credentials = "src/Google/Credentials/google-credentials.json"
+refresh_token = "src/GoogleCloud/refreshToken.sh"
 
 [nlu]
 # start = true     start the natural language understanding service
@@ -98,12 +99,11 @@ start = false
 [session]
 # The session manager ...
 start = false
-daemon = "Session/session.daemon"
+daemon = "src/Session/session.daemon"
 session_timeout = 30
 
 [skills]
 start = true
-daemon = "Skillserver/skills.daemon"
+daemon = "src/Skillserver/skills.daemon"
 
-skills_dir_1 = "/opt/Susi/Skills"
-skills_dir_2 = "/home/andreas/Projects/Susi/Skills"
+skills_dir = "Skills"
