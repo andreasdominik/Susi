@@ -1,50 +1,62 @@
 #!/bin/bash -xv
 #
-#
+# Get STT from Google.
+#   Input: $1 : file with base64-encoded audio
+#   Output: $2 file with transscript only
 
-MAX_TIME=$1
-STT="${SUSI_DIR}/src/STT/Google/googleREST.sh"
-EMPTY_TS="${SUSI_DIR}/src/STT/Google/empty.json"
+STT_INPUT=$1
+STT_OUTPUT=$2
+BASE_DIR=$3
+MAX_TIME=10
+TMP_TOKEN="googlecloud.tmptoken"
+REQUEST="sttrequest.json"
 
-${SUSI_DIR}/src/Hardware/Internet/checkservices.sh
+# STT="${SUSI_DIR}/src/STT/Google/googleREST.sh"
+# EMPTY_TS="${SUSI_DIR}/src/STT/Google/empty.json"
 
 # check if a new access token is necessary
-# (in background, inparallel to record)
+# (in background)
 #
-${SUSI_DIR}/src/STT/Google/refreshToken.sh &
+${BASE_DIR}/src/GoogleCloud/refreshToken.sh &
 
 AUDIO_NAME="cmd.flac"
-STT_OUTPUT="cmdservice.json"
-TS_NAME="cmd.ts"
+JSON="cmd.json"
 
-# record == tell daemon to record and wait until done:
-#
-echo $MAX_TIME > record.voice.main
-while [[ -e record.voice.main ]] ; do
-  sleep 0.05
-done
+if [[ -s $STT_INPUT ]] ; then
 
-if [[ -s $AUDIO_NAME ]] ; then
-  $STT $AUDIO_NAME $STT_OUTPUT   > /dev/null 2>&1
+  ACCESS_TOKEN="$( cat $TMP_TOKEN )"
 
-  # generate simple standardised JSON for Susi
-  # and fix if ts is corrupted:
-  #
-  grep 'transcript' $STT_OUTPUT
+  REQUEST="{
+            \"config\" : {
+                \"encoding\" : \"FLAC\",
+                \"sampleRateHertz\" : 16000,
+                \"languageCode\" : \"de-DE\",
+                \"alternativeLanguageCodes\" : [\"en-US\"],
+                \"maxAlternatives\" : 1,
+                \"model\" : \"command_and_search\",
+                \"enableWordTimeOffsets\" : false
+            },
+            \"audio\" : {
+                \"content\" : \"$(cat $STT_INPUT)\"
+            }
+          }"
+
+
+
+  curl -v -XPOST --http2 'https://speech.googleapis.com/v1p1beta1/speech:recognize' \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer $ACCESS_TOKEN" \
+     -d @$REQUEST -o $JSON
+
+  grep 'transcript' $JSON
   TS_OK=$?
 
   if [[ $TS_OK -eq 0 ]] ; then
-    TS="$( cat $STT_OUTPUT | jq '.results[].alternatives[].transcript' | sed 's/[^0-9a-zA-Z]/ /g')"
-
-    echo "{"                             >  $TS_NAME
-    echo "   \"transscript\": \"$TS\" "  >> $TS_NAME
-    echo "}"                             >> $TS_NAME
+    TS="$( cat $JSON | jq '.results[].alternatives[].transcript' | sed 's/[^0-9a-zA-Z]/ /g')"
+    echo "$TS" > $STT_OUTPUT
   else
-    cp $EMPTY_TS $TS_NAME
+    echo "" > $STT_OUTPUT
   fi
-else
-  cp $EMPTY_TS $TS_NAME
-fi
 
 echo "transscript is:"
-cat $TS_NAME
+cat $STT_OUTPUT

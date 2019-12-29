@@ -30,69 +30,66 @@ source $BASE_DIR/Tools/topics.sh
 readToml $CONFIG
 
 BINARY="${BASE_DIR}/src/$(extractJSON .stt.binary)"
-MODEL="$BASE_DIR/$(extractJSON .hotword.model_path)/$(extractJSON .hotword.model)"
-LOCAL_HOTWORD="$(extractJSON .hotword.local_hotword)"
-SENSITIVITY="$(extractJSON .hotword.sensitivity)"
-
+STT_INPUT=audio.base64
+STT_OUTPUT=cmd.ts
 
 # construct MQTT message for hotword detected
 #
-PAYLOAD="{
-  \"siteId\": \"$SITE_ID\",
-  \"modelId\": \"$LOCAL_HOTWORD\",
-  \"modelVersion\": \"1.0\",
-  \"modeltype\": \"personal\",
-  \"currentSensitivity\": $SENSITIVITY
-}"
+# PAYLOAD="{
+#   \"siteId\": \"$SITE_ID\",
+#   \"modelId\": \"$LOCAL_HOTWORD\",
+#   \"modelVersion\": \"1.0\",
+#   \"modeltype\": \"personal\",
+#   \"currentSensitivity\": $SENSITIVITY
+# }"
 
 while true ; do
-#!/bin/bash -xv
-#
-#
 
-MAX_TIME=$1
-STT="${SUSI_DIR}/src/STT/Google/googleREST.sh"
-EMPTY_TS="${SUSI_DIR}/src/STT/Google/empty.json"
+  subscribeOnce $TOPIC_ASR_TRANSSCRIBE
 
-${SUSI_DIR}/src/Hardware/Internet/checkservices.sh
+  # extract base64 audio:
+  #
+  AUDIO="$(extractJSON .audio $MQTT_PAYLOAD)"
+  echo "$AUDIO" > $STT_INPUT
 
-# check if a new access token is necessary
-# (in background, inparallel to record)
-#
-${SUSI_DIR}/src/STT/Google/refreshToken.sh &
+  SESSION_ID=$MQTT_SESSION_ID
+  ID=$MQTT_ID
 
-AUDIO_NAME="cmd.flac"
-STT_OUTPUT="cmdservice.json"
-TS_NAME="cmd.ts"
+  # check if offline:
+  # ${SUSI_DIR}/src/Hardware/Internet/checkservices.sh
 
-# record == tell daemon to record and wait until done:
-#
-echo $MAX_TIME > record.voice.main
-while [[ -e record.voice.main ]] ; do
-  sleep 0.05
-done
+  # check if a new access token is necessary
+  #
+  ${BASE_DIR}/src/GoogleCloud/refreshToken.sh &
 
-if [[ -s $AUDIO_NAME ]] ; then
-  $STT $AUDIO_NAME $STT_OUTPUT   > /dev/null 2>&1
+  AUDIO_NAME="cmd.flac"
+  STT_OUTPUT="cmdservice.json"
+  TS_NAME="cmd.ts"
 
-  # generate simple standardised JSON for Susi
+  $BINARY $STT_INPUT $STT_OUTPUT $BASE_DIR  > /dev/null 2>&1
+
+  # generate standardised JSON for Susi
   # and fix if ts is corrupted:
   #
-  grep 'transcript' $STT_OUTPUT
-  TS_OK=$?
-
-  if [[ $TS_OK -eq 0 ]] ; then
-    TS="$( cat $STT_OUTPUT | jq '.results[].alternatives[].transcript' | sed 's/[^0-9a-zA-Z]/ /g')"
-
-    echo "{"                             >  $TS_NAME
-    echo "   \"transscript\": \"$TS\" "  >> $TS_NAME
-    echo "}"                             >> $TS_NAME
+  if [[ -s $STT_OUTPUT ]] ; then
+    TRANSSCRIPT="$(cat $STT_OUTPUT)"
   else
-    cp $EMPTY_TS $TS_NAME
+    TRANSSCRIPT=""
   fi
-else
-  cp $EMPTY_TS $TS_NAME
-fi
+  # grep 'transcript' $STT_OUTPUT
+  # TS_OK=$?
+  #
+  # if [[ $TS_OK -eq 0 ]] ; then
+  #   TS="$( cat $STT_OUTPUT | jq '.results[].alternatives[].transcript' | sed 's/[^0-9a-zA-Z]/ /g')"
+  # else
+  #   TS=""
+  # fi
 
-echo "transscript is:"
-cat $TS_NAME
+  PAYLOAD="{
+            \"sessionId\": \"$SESSION_ID\",
+            \"id\": \"$ID\",
+            \"text\": \"$TRANSSCRIPT\"
+           }"
+  publish "$TOPIC_ASR_TEXT" "$PAYLOAD"
+
+done
