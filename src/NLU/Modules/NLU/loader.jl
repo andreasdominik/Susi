@@ -26,7 +26,7 @@ function addIntents(toml)
     slots = extractSlots(toml)
 
     for intentName in toml["inventory"]["intents"]
-        (exacts, parts, regexs) = extractPhrases(toml, intent)
+        (exacts, parts, regexs) = extractPhrases(toml, intentName)
         intent = Intent(slots, exacts, parts, regexs)
         global INTENTS
         push!(INTENTS, intent)

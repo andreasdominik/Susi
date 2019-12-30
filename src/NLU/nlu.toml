@@ -2,16 +2,19 @@
 #
 #  (c) A. Dominik, 2020
 #
+title = "ADoSnipsYesOrNoDE"
+
+
 [inventory]
-slot_types = ["yes_or_no_type"]
-slots = ["yes_or_no"]
-intents = ["ADoSnipsYesOrNo"]
+slot_types = ["yes_or_no_type"] # date/time/datetime/currency/...
+slots = "yes_or_no"
+intents = ["andreasdominik:ADoSnipsYesOrNo"]
 
 
 # define slot types:
 #
 [yes_or_no_type]
-class = "synonym"   # any/date/time/datetime/currency/...
+class = "synonyms"   # any/...
 
 [yes_or_no_type.synonyms]
       NO = ["nein", "nö", "nicht", "auf keinen Fall", "Abbruch", "abbrechen",
