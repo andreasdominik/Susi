@@ -1,0 +1,37 @@
+# Intent definition for Yes/no:
+#
+#  (c) A. Dominik, 2020
+#
+[inventory]
+slot_types = ["yes_or_no_type"]
+slots = ["yes_or_no"]
+intents = ["ADoSnipsYesOrNo"]
+
+
+# define slot types:
+#
+[yes_or_no_type]
+class = "synonym"   # any/date/time/datetime/currency/...
+
+[yes_or_no_type.synonyms]
+      NO = ["nein", "nö", "nicht", "auf keinen Fall", "Abbruch", "abbrechen",
+            "ende", "exit"]
+      YES = ["ja", "jawohl", "ja doch", "natürlich", "sowieso", "mach",
+             "mach es", "tu es", "weiter", "mehr", "sicher"]
+
+
+# define slots:
+#
+[yes_or_no]
+slot_type = "yes_or_no_type"
+
+
+# define phrases for intent recognition:
+# exact, regex, part
+#
+[ADoSnipsYesOrNo]
+exact = ["<yes_or_no>",
+         "bitte <yes_or_no>",
+         "<yes_or_no> bitte"]
+regex = "^bitte <yes_or_no>$"
+exactpart = "<yes_or_no>"
