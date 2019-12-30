@@ -106,4 +106,4 @@ session_timeout = 30
 start = true
 daemon = "src/Skillserver/skills.daemon"
 
-skills_dir = "Skills"
+skills_dir = "/home/andreas/Documents/Projekte/2019-Susi/Skills"
