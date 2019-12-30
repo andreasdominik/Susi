@@ -19,11 +19,19 @@ const NLU_DIR = @__DIR__
 include("$NLU_DIR/Modules/TOML/TOML.jl")
 include("$NLU_DIR/Modules/NLU/NLU.jl")
 using Main.TOML
+TOML = Main.TOML
 using Main.NLU
 
 # load config:
 #
 config = TOML.parsefile(CONFIG_FILE)
-NLU.setSkillDir(toml["skills"]["skills_dir"])
+NLU.setSkillDir(config["skills"]["skills_dir"])
 
-NLU.loadIntents()
+# for each skill:
+#
+nluConfig = "$NLU_DIR/nlu.toml"
+toml = TOML.parsefile(nluConfig)
+toml = fixToml(toml)
+addIntents(toml)
+
+# NLU.loadIntents()

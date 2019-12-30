@@ -5,6 +5,9 @@
 
 module NLU
 
+# include("../TOML/TOML.jl")
+# using Main.TOML
+# TOML = Main.TOML
 
 include("util.jl")
 include("types.jl")
@@ -13,7 +16,9 @@ include("loader.jl")
 INTENTS = Intent[]
 
 
-export Slot, Skill, Intent,
-       setSkillDir, getSkillDir
+export SlotType, Slot, Skill, Intent,
+       setSkillDir, getSkillDir,
+       fixToml, 
+       addIntents
 
 end

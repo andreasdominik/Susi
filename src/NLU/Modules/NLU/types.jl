@@ -4,7 +4,7 @@ struct SlotType
     values
 end
 
-struct Slot
+mutable struct Slot
     name
     type
     class
@@ -16,12 +16,8 @@ struct Skill
     intents
 end
 
-struct Intent
+mutable struct Intent
     name
     slots
-    exacts
-    exactparts
-    regexs
     matchExpressions    # list of regexes to test against
-    captureGroups       # list of lists names of slots to match the expresions
 end
