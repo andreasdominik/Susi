@@ -87,8 +87,8 @@ daemon = "src/SpeechToText/stt.daemon"
 binary = "src/GoogleCloud/stt/googleRest.sh"
 
 [google_cloud]
-credentials = "src/Google/Credentials/google-credentials.json"
-refresh_token = "src/GoogleCloud/refreshToken.sh"
+credentials = "/home/andreas/Documents/Projekte/2019-Susi/ApplicationData/Google/Credentials/google-credentials.json"
+refresh_token_cmd = "src/GoogleCloud/refreshToken.sh"
 
 [nlu]
 # start = true     start the natural language understanding service

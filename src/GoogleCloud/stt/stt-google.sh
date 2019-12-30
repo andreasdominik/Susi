@@ -6,35 +6,9 @@
 
 STT_INPUT=$1
 STT_OUTPUT=$2
-TMP_TOKEN="googlecloud.tmptoken"
+TMP_TOKEN="google_cloud.tmptoken"
 REQUEST="sttrequest.json"
-
-# load tool funs:
-#
-TOML="$(cat susi.json)"
-BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
-REFRESH_TOKEN="$(echo $TOML | jq -r .google_cloud.refresh_token)"
-
-source $BASE_DIR/Tools/funs.sh
-
-# parse config from toml:
-# PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,
-# BASE_DIR, WORK_DIR, SITE_ID
-#
-readToml $CONFIG
-
-TIMEOUT="$(extractJSON .hotword.session_timeout)"
-
-# Topics:
-source $BASE_DIR/Tools/topics.sh
-
-# check if a new access token is necessary
-# (in background)
-#
-${BASE_DIR}/src/GoogleCloud/refreshToken.sh &
-
-AUDIO_NAME="cmd.flac"
-JSON="cmd.json"
+JSON="curl.result"
 
 if [[ -s $STT_INPUT ]] ; then
 
