@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# simulate a voice command for Snips.
+#
+#    (c) June 2019, A. Dominik
+#    Licenced under MIT (see https://opensource.org/licenses/MIT for details)
+#
+COMMAND="$@"
+TOKEN_1="$1"
+shift
+REMAINING=$@
+
+DELTA_RANGE=5
+RANGE_START=0
+let RANGE_END=$RANGE_START+$DELTA_RANGE-1
+
+DELTA_TIME=0.55
+TIME_START=0.0
+TIME_END="$(echo $TIME_START+$DELTA_TIME | bc -l | sed 's/^\./0\./')"
+
+TOKENS="{\"value\":\"$TOKEN_1\",\"confidence\":1.0,\"rangeStart\":$RANGE_START,\"rangeEnd\":$RANGE_END,\"time\":{\"start\":$TIME_START,\"end\":$TIME_END}}"
+for tok in $REMAINING ; do
+  TIME_START="$(echo $TIME_START+$DELTA_TIME | bc -l | sed 's/^\./0\./')"
+  TIME_END="$(echo $TIME_END+$DELTA_TIME | bc -l | sed 's/^\./0\./')"
+  let RANGE_START=$RANGE_START+$DELTA_RANGE
+  let RANGE_END=$RANGE_END+$DELTA_RANGE
+
+  TOKENS="$TOKENS,{\"value\":\"$tok\",\"confidence\":1.0,\"rangeStart\":$RANGE_START,\"rangeEnd\":$RANGE_END,\"time\":{\"start\":$TIME_START,\"end\":$TIME_END}}"
+done
+
+# echo "Tokens = $TOKENS"
+echo "... sending command \"$COMMAND\" to Snips ..."
+
+
+# start session:
+#
+sleep 2; mosquitto_pub -t hermes/dialogueManager/startSession -m '{"siteId":"default","init":{"type":"action","canBeEnqueued":true}}' &
+
+# echo final recognised intent:
+#
+mosquitto_sub -C 1 -t "hermes/intent/#" | jq &
+
+# read sessId from answer:
+
+# send MQTT to NLU:
+#
+ANSWER_SESS="$(mosquitto_sub -C 1 -t hermes/dialogueManager/sessionStarted)"
+SESSION_ID="$(echo $ANSWER_SESS | jq '.sessionId')"
+
+# send MQTT to NLU by simulating asr result:
+#
+# this works:
+# mosquitto_pub -t 'hermes/asr/textCaptured' -m "{\"text\":\"$COMMAND\",\"likelihood\":1.0,\"tokens\":[{\"value\":\"schalte\",\"confidence\":1.0,\"rangeStart\":0,\"rangeEnd\":7,\"time\":{\"start\":0.0,\"end\":0.51}},{\"value\":\"das\",\"confidence\":1.0,\"rangeStart\":8,\"rangeEnd\":11,\"time\":{\"start\":0.51,\"end\":0.69}},{\"value\":\"licht\",\"confidence\":1.0,\"rangeStart\":12,\"rangeEnd\":17,\"time\":{\"start\":0.69,\"end\":0.96}},{\"value\":\"ein\",\"confidence\":1.0,\"rangeStart\":18,\"rangeEnd\":21,\"time\":{\"start\":0.96,\"end\":1.89}}],\"seconds\":2.0,\"siteId\":\"default\",\"sessionId\":$SESSION_ID}"
+
+
+mosquitto_pub -t 'hermes/asr/textCaptured' -m \
+"{\"text\":\"$COMMAND\",
+\"likelihood\":1.0,
+\"tokens\":[$TOKENS],
+\"seconds\":$TIME_END,
+\"siteId\":\"default\",
+\"sessionId\":$SESSION_ID}"

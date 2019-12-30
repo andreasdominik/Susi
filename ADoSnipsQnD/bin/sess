@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# open new session and return sesionId.
+#
+COMMAND="$@"
+# start a session and get the sessionId:
+#
+sleep 2; mosquitto_pub -t 'hermes/dialogueManager/startSession' -m "{\"siteId\": \"default\",
+    \"init\": {\"type\": \"action\", \"canBeEnqueued\":true}}" &
+
+SESS="$(mosquitto_sub -C 1 -t hermes/dialogueManager/sessionStarted)"
+
+SESS_ID="$(echo $SESS | jq '.sessionId')"
+
+echo "payload = $SESS"
+echo "SID = $SESS_ID"
+
+# mosquitto_pub -t 'hermes/asr/textCaptured' -m "{\"text\":\"$COMMAND\",
+#   \"likelihood\":0.9,
+#   \"tokens\":[],
+#   \"seconds\":4.0,
+#   \"siteId\":\"default\",
+#   \"sessionId\":\"$SESS_ID\"}"

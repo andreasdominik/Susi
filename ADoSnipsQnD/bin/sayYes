@@ -1,0 +1,5 @@
+#!/bin/bash
+#
+# publish a yes for the YES/NO-intent
+#
+mosquitto_pub -t hermes/intent/andreasdominik:ADoSnipsYesNoDE  -m '{"sessionId":"session0123456789", "siteId": "default", "input": "ja doch", "intent": {"intentName": "andreasdominik:ADoSnipsYesNoDE", "confidenceScore": 0.9516558}, "slots":  [ { "rawValue": "ja doch", "value": { "kind": "Custom", "value": "YES" }, "range": { "start": 0, "end": 7 }, "entity": "yes_or_no_type", "slotName": "yes_or_no" } ] }'
