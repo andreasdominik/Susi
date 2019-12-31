@@ -116,7 +116,7 @@ function extractSlots(toml)
             # for list, match only ANY of the words in one of the
             # alternatives:
             #
-        elseif slot.class == "list"
+        elseif type  == "list"
             words = []
             for (k,v) in slot.values
                 append!(words, v)
