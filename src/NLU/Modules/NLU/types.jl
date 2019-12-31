@@ -1,14 +1,8 @@
-struct SlotType
-    name
-    class
-    values
-end
-
 mutable struct Slot
     name
     type
-    class
-    values    # depend on type and class
+    synonyms    # depend on type and class
+    regex
 end
 
 struct Skill

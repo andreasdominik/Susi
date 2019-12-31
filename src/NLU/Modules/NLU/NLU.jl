@@ -16,9 +16,9 @@ include("loader.jl")
 INTENTS = Intent[]
 
 
-export SlotType, Slot, Skill, Intent,
+export Slot, Skill, Intent,
        setSkillDir, getSkillDir,
-       fixToml, 
+       fixToml,
        addIntents
 
 end

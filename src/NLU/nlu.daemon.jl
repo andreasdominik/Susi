@@ -26,12 +26,13 @@ using Main.NLU
 #
 config = TOML.parsefile(CONFIG_FILE)
 NLU.setSkillDir(config["skills"]["skills_dir"])
+NLU.setSkillDir(".")
 
 # for each skill:
 #
 nluConfig = "$NLU_DIR/nlu.toml"
 toml = TOML.parsefile(nluConfig)
 toml = fixToml(toml)
-addIntents(toml)
+NLU.addIntents(toml)
 
 # NLU.loadIntents()

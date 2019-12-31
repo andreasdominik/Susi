@@ -6,7 +6,7 @@ function loadIntents()
     for (root, dirs, files) in walkdir(SKILLS_DIR)
 
         files = filter(f->f=="nlu.toml", files)
-        paths = root .* "/" .* files
+        paths = joinpath...root .* "/" .* files
         append!(skills, paths)
     end
 
@@ -47,47 +47,28 @@ function extractPhrases(toml, slots, intentName)
     for ph in d["exact"]
         push!(phrases, "^$ph\$")
     end
-    for ph in d["exactpart"]
+    for ph in d["partial"]
         push!(phrases, "$ph")
     end
     for ph in d["regex"]
         push!(phrases, ph)
     end
 
-
-    # add slot-regex to phrases:
+    # make regex:
     #
-    for (slotName, slot) in slots
-        # for any just return all content as slot value:
-        #
-        if slot.type in ["any", "data", "time", "datetime"]
-            matchSlot = ".+"
-
-        # for synonyms, match all, but replace the synonyms
-        # later:
-        #
-        elseif slot.class == "synonyms"
-            matchSlot = ".+"
-
-        # for list, match only ANY of the words in one of the
-        # alternatives:
-        #
-        elseif slot.class == "list"
-            words = []
-            for (k,v) in slot.values
-                append!(words, v)
-            end
-            matchSlot = join(words, "|")
+    for ph in phrases
+        for sl in slots
+            ph = replace(ph, "<$(sl.name)>" => sl.regex )
         end
 
-        # re matches the single slot (with named captuer group):
-        #
-        re = "(?<$slotName>$matchSlot)"
+        ph = replace(ph, "<>" => " [^\\s]* ")
+        ph = strip(ph)
+        ph = replace(ph, r"\s{2,}" => " ")
 
-        for ph in phrases
-            push!(regexes, replace(ph, "<$slotName>" => re ))
-        end
+        push!(regexes, ph)
     end
+end
+
     return regexes
 end
 
@@ -113,31 +94,44 @@ end
 
 function extractSlots(toml)
 
-    # types:
-    #
-    slotTypes = Dict{AbstractString, SlotType}()
-    for st in toml["inventory"]["slot_types"]
-        dict = toml[st]
-
-        if dict["class"] in ["list", "synonyms"]
-            if haskey(dict, "synonyms") && dict["synonyms"] isa Dict
-                synonyms = dict["synonyms"]
-            else
-                synonyms = Dict()
-            end
-            slotTypes[st] = SlotType(st, dict["class"], synonyms)
-        end
-    end
-
     # slots:
     #
     slots = Dict{AbstractString, Slot}()
     for s in toml["inventory"]["slots"]
-        t = toml[s]["slot_type"]
+
+        type = toml[s]["slot_type"]
+        if haskey(toml[s], "synonyms")
+            syns = toml[s]["synonyms"]
+        else
+            syns = Dict{AbstractString, AbstractArray}()
+        end
+
+        # add regex that matches the slot:
+        #
+            # for any just return all content as slot value:
+            #
+        if type in ["any", "date", "time", "datetime"]
+            matchSlot = ".+"
+
+            # for list, match only ANY of the words in one of the
+            # alternatives:
+            #
+        elseif slot.class == "list"
+            words = []
+            for (k,v) in slot.values
+                append!(words, v)
+            end
+            matchSlot = join(words, "|")
+        end
+
+        # re matches the single slot (with named capture group):
+        #
+        re = "(?<$s>$matchSlot)"
+
         slots[s] = Slot(deepcopy(s),
-                        deepcopy(t),
-                        deepcopy(slotTypes[t].class),
-                        deepcopy(slotTypes[t].values))
+                        deepcopy(typ),
+                        deepcopy(syn),
+                        deepcopy(re))
     end
     return slots
 end
