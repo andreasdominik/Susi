@@ -13,7 +13,7 @@ intents = "ADoSnipsYesOrNo"
 
 
 # define slots:
-# Types: any/list/date/time/datetime/currency/...
+# Types: any/list/datetime/currency/number/ordinal/...
 #
 [yes_or_no]
 slot_type = "list"

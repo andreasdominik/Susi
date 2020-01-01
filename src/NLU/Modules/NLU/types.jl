@@ -6,10 +6,6 @@ mutable struct Slot
     postfun     # function to postprocess slot value
 end
 
-struct Skill
-    slots
-    intents
-end
 
 mutable struct Intent
     name

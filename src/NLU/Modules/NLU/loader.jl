@@ -46,15 +46,15 @@ function extractPhrases(toml, slots, intentName)
     #
     for (name, raw) in d
 
+        # add optional word:
+        #
+        raw = replace(raw, "<>" => " [^\\s]* ")
+
         # add slots as named capture groups:
         #
         for sl in slots
             raw = replace(raw, "<$(sl.name)>" => sl.regex )
         end
-
-        # add optional word:
-        #
-        raw = replace(raw, "<>" => " [^\\s]* ")
 
         # get type from first word and skip if unknown type:
         #
@@ -119,38 +119,70 @@ function extractSlots(toml)
 
         # add regex that matches the slot:
         #
-            # for any just return all content as slot value:
-            #
-        if type in ["any", "time", "date"]
-            matchSlot = ".+"
-
-            # for list, match only ANY of the words in one of the
-            # alternatives:
-            #
-        elseif type  == "list"
+        # for list, match only ANY of the words in one of the
+        # alternatives:
+        #
+        if type  == "list"
             words = []
-            for (k,v) in slot.values
+            for (k,v) in syns
                 append!(words, v)
             end
             matchSlot = join(words, "|")
+
+        # for any just return all content as slot value:
+        #
+        elseif type in ["any", "list", "datetime", "currency",
+                    "number", "ordinal"]
+            matchSlot = ".+"
+        else
+            matchSlot = nothing
         end
-        # re matches the single slot (with named capture group):
-        #
-        re = "(?P<$s>$matchSlot)"
 
-        # define function for postprocessind:
-        #
-        if type in ["any","list"]
-            fun = function(syns)
-                for syn in syns
-                    synRe = Regex("^$(join(words,"|"))\$")
-                    if occursin(synRe, )
+        if matchSlot != nothing
+            # re matches the single slot (with named capture group):
+            #
+            re = "(?P<$s>$matchSlot)"
+
+            # define function for postprocessind:
+            #
+            if type in ["any","list"]
+                fun = function(slotParsed)
+                    for (synName,synWords) in syns
+                        synRe = Regex("^$(join(synWords,"|"))\$")
+                        if occursin(synRe, slotParsed)
+                            return(synName)
+                        end
+                    end
+                end
+            elseif type == "datetime"
+                fun = function(slotParsed)
+                    return askDuckling(:time, slotParsed)
+                end
+            elseif type == "number"
+                fun = function(slotParsed)
+                    return askDuckling(:number, slotParsed)
+                end
+            elseif type == "ordinal"
+                fun = function(slotParsed)
+                    return askDuckling(:ordinal, slotParsed)
+                end
+            elseif type == "duration"
+                fun = function(slotParsed)
+                    return askDuckling(:duration, slotParsed)
+                end
+            else
+                fun = function(slotParsed)
+                    return slotParsed
+                end
 
 
-        slots[s] = Slot(deepcopy(s),
-                        deepcopy(typ),
-                        deepcopy(syns),
-                        deepcopy(re))
+
+            slots[s] = Slot(deepcopy(s),
+                            deepcopy(typ),
+                            deepcopy(syns),
+                            deepcopy(re),
+                            fun)
+        end
     end
     return slots
 end
