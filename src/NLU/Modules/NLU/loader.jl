@@ -39,8 +39,7 @@ end
 function extractPhrases(toml, slots, intentName)
 
     d = toml[intentName]
-    regexes = []
-    phrases = []
+    regexes = Tuple[]
 
     # make regexes from phrases:
     #
@@ -69,13 +68,13 @@ function extractPhrases(toml, slots, intentName)
         #
         if type == "exact:"
             type = :exact
-            push!(phrases, Regex("^$phrase\$"))
+            push!(regexes, (name, Regex("^$phrase\$")))
         elseif type == "partial:"
             type = :partial
-            push!(phrases, Regex(phrase))
+            push!(regexes, (name, Regex(phrase)))
         elseif type == "regex:"
             type = :regex
-            push!(phrases, Regex(phrase))
+            push!(regexes, (name, Regex(phrase)))
         else
             type = :unknown
         end
