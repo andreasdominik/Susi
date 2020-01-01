@@ -5,9 +5,8 @@
 
 module NLU
 
-# include("../TOML/TOML.jl")
-# using Main.TOML
-# TOML = Main.TOML
+include("../TOML/TOML.jl")
+using .TOML
 
 include("util.jl")
 include("types.jl")

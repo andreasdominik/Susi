@@ -19,7 +19,7 @@ const NLU_DIR = @__DIR__
 include("$NLU_DIR/Modules/TOML/TOML.jl")
 include("$NLU_DIR/Modules/NLU/NLU.jl")
 using Main.TOML
-TOML = Main.TOML
+# TOML = Main.TOML
 using Main.NLU
 
 # load config:

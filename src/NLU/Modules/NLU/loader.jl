@@ -6,7 +6,7 @@ function loadIntents()
     for (root, dirs, files) in walkdir(SKILLS_DIR)
 
         files = filter(f->f=="nlu.toml", files)
-        paths = joinpath...root .* "/" .* files
+        paths = joinpath(root, files)
         append!(skills, paths)
     end
 
@@ -173,11 +173,10 @@ function extractSlots(toml)
                 fun = function(slotParsed)
                     return slotParsed
                 end
-
-
+            end
 
             slots[s] = Slot(deepcopy(s),
-                            deepcopy(typ),
+                            deepcopy(type),
                             deepcopy(syns),
                             deepcopy(re),
                             fun)

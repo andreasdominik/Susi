@@ -17,10 +17,13 @@ intents = "ADoSnipsYesOrNo"
 #
 [yes_or_no]
 slot_type = "list"
-synonyms = ["NO" = ["nein", "nö", "nicht", "auf keinen Fall", "Abbruch", "abbrechen",
-                    "ende", "exit"],
-            "YES" = ["ja", "jawohl", "ja doch", "natürlich", "sowieso", "mach",
-                     "mach es", "tu es", "weiter", "mehr", "sicher"]]
+
+[yes_or_no.synonyms]
+"NO" = ["nein", "nö", "nicht", "auf keinen Fall", "Abbruch", "abbrechen",
+        "ende", "exit"]
+"YES" = ["ja", "jawohl", "ja doch", "natürlich", "sowieso", "mach",
+         "mach es", "tu es", "weiter", "mehr", "sicher"]
+
 
 [begin]
 slot_type = "date"
