@@ -3,6 +3,7 @@ mutable struct Slot
     type
     synonyms    # depend on type and class
     regex
+    postfun     # function to postprocess slot value
 end
 
 struct Skill

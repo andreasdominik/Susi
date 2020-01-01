@@ -44,31 +44,42 @@ function extractPhrases(toml, slots, intentName)
 
     # make regexes from phrases:
     #
-    for ph in d["exact"]
-        push!(phrases, "^$ph\$")
-    end
-    for ph in d["partial"]
-        push!(phrases, "$ph")
-    end
-    for ph in d["regex"]
-        push!(phrases, ph)
-    end
+    for (name, raw) in d
 
-    # make regex:
-    #
-    for ph in phrases
+        # add slots as named capture groups:
+        #
         for sl in slots
-            ph = replace(ph, "<$(sl.name)>" => sl.regex )
+            raw = replace(raw, "<$(sl.name)>" => sl.regex )
         end
 
-        ph = replace(ph, "<>" => " [^\\s]* ")
-        ph = strip(ph)
-        ph = replace(ph, r"\s{2,}" => " ")
+        # add optional word:
+        #
+        raw = replace(raw, "<>" => " [^\\s]* ")
 
-        push!(regexes, ph)
+        # get type from first word and skip if unknown type:
+        #
+        (type, phrase) = split( raw, " ", limit = 2)
+
+        # clean whitespaces:
+        #
+        phrase = strip(phrase)
+        phrase = replace(phrase, r"\s{2,}" => " ")
+
+        # make regex:
+        #
+        if type == "exact:"
+            type = :exact
+            push!(phrases, Regex("^$phrase\$"))
+        elseif type == "partial:"
+            type = :partial
+            push!(phrases, Regex(phrase))
+        elseif type == "regex:"
+            type = :regex
+            push!(phrases, Regex(phrase))
+        else
+            type = :unknown
+        end
     end
-end
-
     return regexes
 end
 
@@ -110,7 +121,7 @@ function extractSlots(toml)
         #
             # for any just return all content as slot value:
             #
-        if type in ["any", "date", "time", "datetime"]
+        if type in ["any", "time", "date"]
             matchSlot = ".+"
 
             # for list, match only ANY of the words in one of the
@@ -123,14 +134,22 @@ function extractSlots(toml)
             end
             matchSlot = join(words, "|")
         end
-
         # re matches the single slot (with named capture group):
         #
-        re = "(?<$s>$matchSlot)"
+        re = "(?P<$s>$matchSlot)"
+
+        # define function for postprocessind:
+        #
+        if type in ["any","list"]
+            fun = function(syns)
+                for syn in syns
+                    synRe = Regex("^$(join(words,"|"))\$")
+                    if occursin(synRe, )
+
 
         slots[s] = Slot(deepcopy(s),
                         deepcopy(typ),
-                        deepcopy(syn),
+                        deepcopy(syns),
                         deepcopy(re))
     end
     return slots

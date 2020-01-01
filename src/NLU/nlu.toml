@@ -33,8 +33,7 @@ slot_type = "date"
 # exact, regex, part
 #
 [ADoSnipsYesOrNo]
-exact = ["<yes_or_no>",
-         "bitte <yes_or_no>",
-         "<yes_or_no> bitte"]
-regex = "^bitte <yes_or_no>$"
-partial = "<yes_or_no>"
+minimal = "exact: <yes_or_no>"
+please = "exact: <> <yes_or_no> <>"
+all_in_one = "regex: ^(?bitte|) <yes_or_no> (?bitte|)$"
+tolerant = "partial: <yes_or_no>"
