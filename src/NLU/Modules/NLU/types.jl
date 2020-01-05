@@ -7,8 +7,10 @@ mutable struct Slot
 end
 
 
-mutable struct Intent
-    name
+mutable struct MatchEx
+    skill
+    intent
+    match
     slots
-    matchExpressions    # list of regexes to test against
+    matchExpression    # ONE regex to test against
 end

@@ -12,7 +12,7 @@ include("util.jl")
 include("types.jl")
 include("loader.jl")
 
-INTENTS = Intent[]
+MATCHES = MatchEx[]
 
 
 export Slot, Skill, Intent,

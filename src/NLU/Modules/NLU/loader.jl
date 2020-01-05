@@ -14,36 +14,29 @@ function loadIntents()
 
     for skill in skills
         println("[NLU loader]: loading nlu.toml for $skill.")
-        toml = loadToml(skill)
-        addIntents(toml)
+
+        toml = TOML.parse(skill)
+        slots = extractSlots(toml)
+        for intentName in toml["inventory"]["intents"]
+            extractPhrases(toml, slots, intentName)
+        end
     end
 end
 
 
-function addIntents(toml)
 
+"""
+Extract the match expressions and add them to global list of MATCHES.
+"""
+function extractPhrases(toml, slots, intent)
 
-    slots = extractSlots(toml)
-
-    for intentName in toml["inventory"]["intents"]
-        matchExpressions = extractPhrases(toml, slots, intentName)
-        intent = Intent(intentName, slots, matchExpressions)
-        global INTENTS
-        push!(INTENTS, intent)
-    end
-     return(INTENTS)
-end
-
-
-
-function extractPhrases(toml, slots, intentName)
-
-    d = toml[intentName]
-    regexes = Tuple[]
+    skill = toml["skill"]
+    all = toml[intent]
+    global MATCHES
 
     # make regexes from phrases:
     #
-    for (name, raw) in d
+    for (name, raw) in all
 
         # add optional word:
         #
@@ -68,18 +61,17 @@ function extractPhrases(toml, slots, intentName)
         #
         if type == "exact:"
             type = :exact
-            push!(regexes, (name, Regex("^$phrase\$")))
+            push!(MATCHES, MatchEx(skill, intent, name, slots, Regex("^$phrase\$")))
         elseif type == "partial:"
             type = :partial
-            push!(regexes, (name, Regex(phrase)))
+            push!(MATCHES, MatchEx(skill, intent, name, slots, Regex(phrase)))
         elseif type == "regex:"
             type = :regex
-            push!(regexes, (name, Regex(phrase)))
+            push!(MATCHES, MatchEx(skill, intent, name, slots, Regex(phrase)))
         else
             type = :unknown
         end
     end
-    return regexes
 end
 
 
@@ -184,14 +176,6 @@ function extractSlots(toml)
     end
     return slots
 end
-
-
-
-
-
-
-
-
 
 
 
