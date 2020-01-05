@@ -12,12 +12,11 @@ include("util.jl")
 include("types.jl")
 include("loader.jl")
 
+SKILLS_DIR = AbstractString
 MATCHES = MatchEx[]
 
 
-export Slot, Skill, Intent,
-       setSkillDir, getSkillDir,
-       fixToml,
-       addIntents
+export setSkillDir, getSkillDir,
+       loadIntents
 
 end

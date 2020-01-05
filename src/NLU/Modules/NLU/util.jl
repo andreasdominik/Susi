@@ -1,8 +1,8 @@
 function setSkillDir(d)
-    global SKILL_DIR = d
+    global SKILLS_DIR = d
 end
 
 
 function getSkillDir()
-    return SKILL_DIR
+    return SKILLS_DIR
 end

@@ -6,7 +6,7 @@ function loadIntents()
     for (root, dirs, files) in walkdir(SKILLS_DIR)
 
         files = filter(f->f=="nlu.toml", files)
-        paths = joinpath(root, files)
+        paths = joinpath.(root, files)
         append!(skills, paths)
     end
 
@@ -15,7 +15,8 @@ function loadIntents()
     for skill in skills
         println("[NLU loader]: loading nlu.toml for $skill.")
 
-        toml = TOML.parse(skill)
+        toml = TOML.parsefile(skill)
+        toml = fixToml(toml)
         slots = extractSlots(toml)
         for intentName in toml["inventory"]["intents"]
             extractPhrases(toml, slots, intentName)
@@ -36,26 +37,28 @@ function extractPhrases(toml, slots, intent)
 
     # make regexes from phrases:
     #
-    for (name, raw) in all
+    for (name, phrase) in all
 
         # add optional word:
         #
-        raw = replace(raw, "<>" => " [^\\s]* ")
+        phrase = replace(phrase, "<>" => " [^\\s]* ")
 
         # add slots as named capture groups:
         #
-        for sl in slots
-            raw = replace(raw, "<$(sl.name)>" => sl.regex )
+        for (slotName,slot) in slots
+            phrase = replace(phrase, "<$(slot.name)>" => slot.regex )
         end
 
         # get type from first word and skip if unknown type:
         #
-        (type, phrase) = split( raw, " ", limit = 2)
+        (type, phrase) = split( phrase, " ", limit = 2)
 
         # clean whitespaces:
         #
         phrase = strip(phrase)
         phrase = replace(phrase, r"\s{2,}" => " ")
+
+        println(type, phrase)
 
         # make regex:
         #

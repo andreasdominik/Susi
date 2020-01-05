@@ -2,7 +2,7 @@
 #
 #  (c) A. Dominik, 2020
 #
-title = "ADoSnipsYesOrNoDE"
+skill = "ADoSnipsYesOrNoDE"
 
 
 [inventory]
@@ -38,5 +38,5 @@ slot_type = "date"
 [ADoSnipsYesOrNo]
 minimal = "exact: <yes_or_no>"
 please = "exact: <> <yes_or_no> <>"
-all_in_one = "regex: ^(?bitte|) <yes_or_no> (?bitte|)$"
+all_in_one = "regex: ^(?:bitte|) <yes_or_no> (?:bitte|)$"
 tolerant = "partial: <yes_or_no>"
