@@ -79,13 +79,13 @@ function extractPhrases(toml, slots, intent)
         #
         if type == "exact:"
             type = :exact
-            push!(MATCHES, MatchEx(skill, intent, name, slots, raw, Regex("^$phrase\$")))
+            push!(MATCHES, MatchEx(skill, intent, name, slots, raw, Regex("^$phrase\$", "i")))
         elseif type == "partial:"
             type = :partial
-            push!(MATCHES, MatchEx(skill, intent, name, slots, raw, Regex(phrase)))
+            push!(MATCHES, MatchEx(skill, intent, name, slots, raw, Regex(phrase, "i")))
         elseif type == "regex:"
             type = :regex
-            push!(MATCHES, MatchEx(skill, intent, name, slots, raw, Regex(phrase)))
+            push!(MATCHES, MatchEx(skill, intent, name, slots, raw, Regex(phrase, "i")))
         else
             type = :unknown
         end
@@ -163,21 +163,25 @@ function extractSlots(toml)
                         end
                     end
                 end
-            elseif type == "datetime"
+            elseif type == "InstantTime"
                 fun = function(slotParsed)
                     return askDuckling(:time, slotParsed)
                 end
-            elseif type == "number"
+            elseif type == "Number"
                 fun = function(slotParsed)
                     return askDuckling(:number, slotParsed)
                 end
-            elseif type == "ordinal"
+            elseif type == "Ordinal"
                 fun = function(slotParsed)
                     return askDuckling(:ordinal, slotParsed)
                 end
-            elseif type == "duration"
+            elseif type == "Duration"
                 fun = function(slotParsed)
                     return askDuckling(:duration, slotParsed)
+                end
+            elseif type == "Currency"
+                fun = function(slotParsed)
+                    return askDuckling(:currency, slotParsed)
                 end
             else
                 fun = function(slotParsed)
