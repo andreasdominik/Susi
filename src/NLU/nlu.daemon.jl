@@ -31,6 +31,6 @@ NLU.setSkillDir(".")
 # for each skill:
 #
 nluConfig = "$NLU_DIR/nlu.toml"
-NLU.loadIntents(toml)
+NLU.loadIntents()
 
 # NLU.loadIntents()

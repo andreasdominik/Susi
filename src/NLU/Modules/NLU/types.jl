@@ -12,5 +12,6 @@ mutable struct MatchEx
     intent
     match
     slots
+    raw
     matchExpression    # ONE regex to test against
 end

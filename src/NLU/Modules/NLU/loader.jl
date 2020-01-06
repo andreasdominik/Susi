@@ -37,11 +37,20 @@ function extractPhrases(toml, slots, intent)
 
     # make regexes from phrases:
     #
-    for (name, phrase) in all
+    for (name, raw) in all
 
-        # add optional word:
+        # add optional word with space behind
+        # and w/o space behind:
         #
-        phrase = replace(phrase, "<>" => " [^\\s]* ")
+        phrase = raw
+        phrase = replace(phrase, " <<" => "  ?<<")
+        phrase = replace(phrase, ">> " => ">>  ?")
+        phrase = replace(phrase, "<<>>" => "\\S*")
+
+        # word alternatives.
+        # or "none" can be defined as <<word1|word2|>>
+        #
+        phrase = replace(phrase, r"<<(?P<aword>\S*)>>" => s"(?:\g<aword>)")
 
         # add slots as named capture groups:
         #
@@ -55,22 +64,28 @@ function extractPhrases(toml, slots, intent)
 
         # clean whitespaces:
         #
+        phrase = replace(phrase, r"^ \?" => "")
+        phrase = replace(phrase, r"^\?" => "")
+        phrase = replace(phrase, r" \?$" => "")
         phrase = strip(phrase)
         phrase = replace(phrase, r"\s{2,}" => " ")
+        phrase = replace(phrase, r"( \?){2,}" => " ?")
 
-        println(type, phrase)
+        # println("raw:     $raw")
+        # println("phrase:  $phrase")
+        # println("regex:  $(Regex(phrase))")
 
         # make regex:
         #
         if type == "exact:"
             type = :exact
-            push!(MATCHES, MatchEx(skill, intent, name, slots, Regex("^$phrase\$")))
+            push!(MATCHES, MatchEx(skill, intent, name, slots, raw, Regex("^$phrase\$")))
         elseif type == "partial:"
             type = :partial
-            push!(MATCHES, MatchEx(skill, intent, name, slots, Regex(phrase)))
+            push!(MATCHES, MatchEx(skill, intent, name, slots, raw, Regex(phrase)))
         elseif type == "regex:"
             type = :regex
-            push!(MATCHES, MatchEx(skill, intent, name, slots, Regex(phrase)))
+            push!(MATCHES, MatchEx(skill, intent, name, slots, raw, Regex(phrase)))
         else
             type = :unknown
         end

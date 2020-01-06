@@ -6,3 +6,8 @@ end
 function getSkillDir()
     return SKILLS_DIR
 end
+
+
+function getMatches()
+    return MATCHES
+end
