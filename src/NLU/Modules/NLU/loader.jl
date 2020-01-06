@@ -154,7 +154,7 @@ function extractSlots(toml)
 
             # define function for postprocessind:
             #
-            if type in ["any","list"]
+            if type in ["Any","ListOfValues"]
                 fun = function(slotParsed)
                     for (synName,synWords) in syns
                         synRe = Regex("^$(join(synWords,"|"))\$")

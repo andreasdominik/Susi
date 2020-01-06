@@ -24,7 +24,8 @@ using Main.NLU
 
 # load config:
 #
-config = TOML.parsefile(CONFIG_FILE)
+# config = TOML.parsefile(CONFIG_FILE)
+NLU.readConfig(CONFIG_FILE)
 NLU.setSkillDir(config["skills"]["skills_dir"])
 NLU.setSkillDir(".")
 

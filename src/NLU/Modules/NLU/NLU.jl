@@ -11,7 +11,9 @@ using .TOML
 include("util.jl")
 include("types.jl")
 include("loader.jl")
+include("nluengine.jl")
 
+CONFIG = Dict()
 SKILLS_DIR = AbstractString
 MATCHES = MatchEx[]
 

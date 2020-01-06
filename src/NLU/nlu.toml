@@ -13,10 +13,10 @@ intents = "ADoSnipsYesOrNo"
 
 
 # define slots:
-# Types: any/list/datetime/currency/number/ordinal/...
+# Types: Any/List/InstantTime/Currency/Number/Ordinal/...
 #
 [yes_or_no]
-slot_type = "list"
+slot_type = "ListOfValues"
 
 [yes_or_no.synonyms]
 "NO" = ["nein", "nö", "nicht", "auf keinen Fall", "Abbruch", "abbrechen",

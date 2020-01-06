@@ -11,3 +11,10 @@ end
 function getMatches()
     return MATCHES
 end
+
+
+function readConfig(configName)
+
+    CONFIG = TOML.parsefile(configName)
+
+end
