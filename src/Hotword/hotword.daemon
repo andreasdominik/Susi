@@ -12,7 +12,7 @@
 # set config path:
 #
 if [[ $# -lt 1 ]] ; then
-  CONFIG="/etc/nosnips.toml"
+  CONFIG="/etc/susi.toml"
 else
   CONFIG=$1
 fi

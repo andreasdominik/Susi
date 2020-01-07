@@ -10,7 +10,7 @@
 # set config path:
 #
 if [[ $# -lt 1 ]] ; then
-  CONFIG="/etc/nosnips.toml"
+  CONFIG="/etc/susi.toml"
 else
   CONFIG=$1
 fi
@@ -20,8 +20,8 @@ BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
 
 # load tool funs:
 #
-source $BASE_DIR/Tools/funs.sh
-source $BASE_DIR/Tools/topics.sh
+source $BASE_DIR/src/Tools/funs.sh
+source $BASE_DIR/src/Tools/topics.sh
 
 # parse config from toml:
 # PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,
@@ -62,7 +62,7 @@ while true ; do
 
   # check if a new access token is necessary
   #
-  $REFRESH_TOKEN_CMD $CREDS 
+  $REFRESH_TOKEN_CMD $CREDS
 
   AUDIO_NAME="cmd.flac"
   STT_OUTPUT="cmdservice.json"
