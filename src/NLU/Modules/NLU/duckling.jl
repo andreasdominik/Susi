@@ -5,18 +5,18 @@ Call duckling web-service to read the slot content.
 """
 function askDuckling(dimension, text)
 
-    cmd = `curl -XPOST http://$DUCKLING_HOST:$DUCKLING_PORT/parse --data 'lang=$LANG&text=$text' > duckling.out`
+    cmd = `curl -v -XPOST http://$DUCKLING_HOST:$DUCKLING_PORT/parse --data \'lang=$LANG\&text=$text\' -o duckling.out`
 
-    slotValue = ""
+    slotvalue = ""
     try
         run(cmd; wait = true)
         json = JSON.parsefile("duckling.out")
         json = key2symbol(json)
 
         for value in json
-            body = json[:body]
-            dim = json[:dim]
-            value = json[:value][:value]
+            body = value[:body]
+            dim = value[:dim]
+            value = value[:value][:value]
 
             # return time w/o timezone:
             #
@@ -36,7 +36,7 @@ function askDuckling(dimension, text)
             # return duration always as number of secs:
             #
             elseif dimension == "Duration" && dim == "duration"
-                slotvalue = json[:value][:normalized][:value])
+                slotvalue = json[:value][:normalized][:value]
             end
         end
 

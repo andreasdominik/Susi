@@ -7,6 +7,7 @@ module NLU
 
 include("../TOML/TOML.jl")
 using .TOML
+using JSON
 
 include("util.jl")
 include("types.jl")
@@ -22,6 +23,9 @@ LANG = "en"
 DUCKLING_HOST = "localhost"
 DUCKLING_PORT = "8000"
 
+# read topics from susi utils script:
+#
+include("../../../Tools/topics.sh")
 
 export setSkillDir, getSkillDir,
        loadIntents

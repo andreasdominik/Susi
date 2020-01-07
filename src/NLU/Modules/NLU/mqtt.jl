@@ -99,7 +99,6 @@ Run the cmd return mosquito_sub output.
 """
 function runOneMQTT(cmd)
 
-    printLog("MQTT-command: $cmd")
     return read(cmd, String)
 end
 
@@ -120,7 +119,6 @@ function parseMQTT(message)
         topic = strip(m[:topic])
         payload = tryParseJSON(strip(m[:payload]))
     else
-        printLog("ERROR: Unable to parse MQTT message!")
         topic = nothing
         payload = Dict()
     end
@@ -145,7 +143,7 @@ Publish a MQTT message.
             mosquitto_sub will be called without hostname/port
             (using the default configuration of the system).
 """
-function publishMQTT(topic, payload, hostname = nothing, port = nothing,
+function publishMQTT(topic, payload; hostname = nothing, port = nothing,
                             user = nothing, password = nothing)
 
     # build cmd string:
@@ -177,9 +175,7 @@ function publishMQTT(topic, payload, hostname = nothing, port = nothing,
     end
 
     cmd = Cmd(cmd, ignorestatus = true)
-
-    printLog(cmd)
-    run(cmd, wait = true)  # false maybe possible?
+    run(cmd, wait = false)  
 end
 
 #

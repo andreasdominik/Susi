@@ -1,4 +1,9 @@
+function setSkillDir()
+    setSkillDir(CONFIG["skills"]["skills_dir"])
+end
+
 function setSkillDir(d)
+
     global SKILLS_DIR = d
 end
 
@@ -69,4 +74,65 @@ function tryParseJSONfile(fname)
 
     json = key2symbol(json)
     return json
+end
+
+
+
+"""
+    key2symbol(arr::Array)
+
+Wrapper for key2symbol, if 1st hierarchy is an Array
+"""
+function key2symbol(arr::Array)
+
+    return [key2symbol(elem) for elem in arr]
+end
+
+
+"""
+    key2symbol(dict::Dict)
+
+Return a new Dict() with all keys replaced by Symbols.
+d is scanned hierarchically.
+"""
+function key2symbol(dict::Dict)
+
+    mkSymbol(s) = Symbol(replace(s, r"[^a-zA-Z0-9]"=>"_"))
+
+    d = Dict{Symbol}{Any}()
+    for (k,v) in dict
+
+        if v isa Dict
+            d[mkSymbol(k)] = key2symbol(v)
+        elseif v isa Array
+            d[mkSymbol(k)] = [(elem isa Dict) ? key2symbol(elem) : elem for elem in v]
+        else
+            d[mkSymbol(k)] = v
+        end
+    end
+    return d
+end
+
+"""
+    tryMkJSON(payload)
+
+Create a JSON representation of the input (nested Dict or Array)
+or return an empty string if not possible.
+"""
+function tryMkJSON(payload)
+
+    json = Dict()
+    try
+        json = JSON.json(payload)
+    catch
+        json = ""
+    end
+
+    return json
+end
+
+
+function printDict(dict)
+
+    print(json(dict, 2))
 end

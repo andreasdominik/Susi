@@ -1,15 +1,16 @@
-function listener(topics)
+function listener()
 
     host = CONFIG["mqtt"]["host"]
     port = CONFIG["mqtt"]["port"]
     user = CONFIG["mqtt"]["user"]
-    password = CONFIG["mqtt"]["pasword"]
+    password = CONFIG["mqtt"]["password"]
 
-    length(host) < 1 && host = nothing
-    length(port) < 1 && port = nothing
-    length(user) < 1 && user = nothing
-    length(password) < 1 && password = nothing
+    (length(host) < 1) && (host = nothing)
+    (length(port) < 1) && (port = nothing)
+    (length(user) < 1) && (user = nothing)
+    (length(password) < 1) && (password = nothing)
 
+    topics = TOPIC_NLU_QUERY
     while true
         (topic, payload) = readOneMQTT(topics,
                                        hostname = host, port = port,
@@ -21,9 +22,13 @@ function listener(topics)
             println("[NLU]: No input text in NLU request!")
             return
         else
-            result = Dict(:id => payload[:id],
+            result = Dict{Symbol,Any}(:id => payload[:id],
                           :sessionId => payload[:sessionId],
                           :input => payload[:input])
+
+            if !haskey(payload, :intentFilter)
+                payload[:intentFilter] = []
+            end
 
             matched = findIntent(payload[:input], payload[:intentFilter])
 
@@ -35,15 +40,17 @@ function listener(topics)
 
                 # publish nlu result:
                 #
-                publishMQTT(TOPIC_NLU_RESULT, result,
+                publishMQTT(TOPIC_NLU_PARSED, result,
                                        hostname = host, port = port,
                                        user = user,password =password)
+                printDict(result)
             else
                 # publish intent not recognised:
                 #
                 publishMQTT(TOPIC_NLU_NOT, result,
                                        hostname = host, port = port,
                                        user = user,password =password)
+                printDict(result)
             end
         end
     end
@@ -67,8 +74,10 @@ function findIntent(command, filter)
     command = strip(command)
     command = replace(command, r"\s{2,}" => " ")
 
+    println(MATCHES)
     for oneMatch in MATCHES
 
+        println("testing ... $(oneMatch.match)")
         if length(filter) == 0 || oneMatch.intent in filter
 
             matched = matchOne(command, oneMatch)

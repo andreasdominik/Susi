@@ -17,6 +17,8 @@ function loadIntents()
 
         toml = TOML.parsefile(skill)
         toml = fixToml(toml)
+        # printDict(toml)
+
         slots = extractSlots(toml)
         for intentName in toml["inventory"]["intents"]
             extractPhrases(toml, slots, intentName)
