@@ -97,8 +97,14 @@ refresh_token_cmd = "src/GoogleCloud/refreshToken.sh"
 start = false
 
 [duckling]
+# duckling is used to extract time and ordinal information from raw slot values.
+# a locally inststalled server can be used.
+#
+install_dir = "/opt/Duckling/duckling"
+daemon = "src/Duckling/duckling.daemon"
+# binary = "stack exec duckling-example-exe"
 host = "localhost"
-port = "8000"
+port = "8017"
 
 [session]
 # The session manager ...

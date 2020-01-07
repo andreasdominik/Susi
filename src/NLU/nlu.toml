@@ -3,13 +3,14 @@
 #  (c) A. Dominik, 2020
 #
 skill = "ADoSnipsYesOrNoDE"
+developer = "andreasdominik"
 
 
 [inventory]
 # slot_types = ["yes_or_no_type"]     # predefined types need not to be declared:
 #                                     # any/date/time/datetime/currency/...
 slots = ["yes_or_no", "begin", "end"]
-intents = "ADoSnipsYesOrNo"
+intents = ["ADoSnipsYesOrNo"]
 
 
 # define slots:
@@ -39,4 +40,4 @@ slot_type = "date"
 minimal = "exact: <yes_or_no>"
 please = "exact: <<>> <yes_or_no> <<bitte>>"
 all_in_one = "regex: ^(?:bitte|) <yes_or_no> (?:bitte|)$"
-tolerant = "partial: <<bitte>> <<bitte|>> <yes_or_no>"
+tolerant = "partial: <<bitte|bimmel>> <<bitte|>> <yes_or_no>"
