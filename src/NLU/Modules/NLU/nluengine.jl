@@ -74,7 +74,6 @@ function findIntent(command, filter)
     command = strip(command)
     command = replace(command, r"\s{2,}" => " ")
 
-    println(MATCHES)
     for oneMatch in MATCHES
 
         println("testing ... $(oneMatch.match)")

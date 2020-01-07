@@ -36,6 +36,7 @@ function extractPhrases(toml, slots, intent)
     skill = toml["skill"]
     all = toml[intent]
     global MATCHES
+    fullIntent = "$(toml["developer"]):$intent"
 
     # make regexes from phrases:
     #
@@ -89,8 +90,7 @@ function extractPhrases(toml, slots, intent)
             re = Regex(phrase, "i")
         end
 
-        intent = "$(toml["developer"]):$intent"
-        push!(MATCHES, MatchEx(skill, intent, name, slots, raw, re))
+        push!(MATCHES, MatchEx(skill, fullIntent, name, slots, raw, re))
     end
 end
 
