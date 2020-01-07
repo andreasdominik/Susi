@@ -6,6 +6,7 @@ title = "NoSnips services config"
 
 [assistant]
 language = "de"
+name = "susi"
 
 [local]
 # satellite = false    false for the main system; if true, only hotword
@@ -95,6 +96,9 @@ refresh_token_cmd = "src/GoogleCloud/refreshToken.sh"
 #                  to identify intents and extract slot values
 start = false
 
+[duckling]
+host = "localhost"
+port = "8000"
 
 [session]
 # The session manager ...

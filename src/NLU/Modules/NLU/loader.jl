@@ -131,7 +131,7 @@ function extractSlots(toml)
         # for list, match only ANY of the words in one of the
         # alternatives:
         #
-        if type  == "list"
+        if type  == "ListOfValues"
             words = []
             for (k,v) in syns
                 append!(words, v)
@@ -140,8 +140,8 @@ function extractSlots(toml)
 
         # for any just return all content as slot value:
         #
-        elseif type in ["any", "list", "datetime", "currency",
-                    "number", "ordinal"]
+        elseif type in ["Any",
+                        "Time", "Duration", "Currency", "Number", "Ordinal"]
             matchSlot = ".+"
         else
             matchSlot = nothing
@@ -163,25 +163,10 @@ function extractSlots(toml)
                         end
                     end
                 end
-            elseif type == "InstantTime"
+            elseif type in ["Time", "Duration", "Number",
+                            "Ordinal", "Currency"]
                 fun = function(slotParsed)
-                    return askDuckling(:time, slotParsed)
-                end
-            elseif type == "Duration"
-                fun = function(slotParsed)
-                    return askDuckling(:duration, slotParsed)
-                end
-            elseif type == "Number"
-                fun = function(slotParsed)
-                    return askDuckling(:numeral, slotParsed)
-                end
-            elseif type == "Ordinal"
-                fun = function(slotParsed)
-                    return askDuckling(:ordinal, slotParsed)
-                end
-            elseif type == "Currency"
-                fun = function(slotParsed)
-                    return askDuckling(:currency, slotParsed)
+                    return askDuckling(type, slotParsed)
                 end
             else
                 fun = function(slotParsed)

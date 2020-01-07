@@ -18,6 +18,10 @@ CONFIG = Dict()
 SKILLS_DIR = AbstractString
 MATCHES = MatchEx[]
 
+LANG = "en"
+DUCKLING_HOST = "localhost"
+DUCKLING_PORT = "8000"
+
 
 export setSkillDir, getSkillDir,
        loadIntents
