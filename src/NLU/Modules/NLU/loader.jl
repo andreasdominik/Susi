@@ -167,17 +167,17 @@ function extractSlots(toml)
                 fun = function(slotParsed)
                     return askDuckling(:time, slotParsed)
                 end
+            elseif type == "Duration"
+                fun = function(slotParsed)
+                    return askDuckling(:duration, slotParsed)
+                end
             elseif type == "Number"
                 fun = function(slotParsed)
-                    return askDuckling(:number, slotParsed)
+                    return askDuckling(:numeral, slotParsed)
                 end
             elseif type == "Ordinal"
                 fun = function(slotParsed)
                     return askDuckling(:ordinal, slotParsed)
-                end
-            elseif type == "Duration"
-                fun = function(slotParsed)
-                    return askDuckling(:duration, slotParsed)
                 end
             elseif type == "Currency"
                 fun = function(slotParsed)

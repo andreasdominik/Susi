@@ -11,6 +11,7 @@ using .TOML
 include("util.jl")
 include("types.jl")
 include("loader.jl")
+include("mqtt.jl")
 include("nluengine.jl")
 
 CONFIG = Dict()
