@@ -17,21 +17,19 @@ end
 const NLU_DIR = @__DIR__
 # const SKILLS_DIR = replace(FRAMEWORK_DIR, r"/[^/]*/?$"=>"")
 include("$NLU_DIR/Modules/TOML/TOML.jl")
+import Main.TOML
 include("$NLU_DIR/Modules/NLU/NLU.jl")
-using Main.TOML
-# TOML = Main.TOML
-using Main.NLU
+import Main.NLU
 
 # load config:
 #
 # config = TOML.parsefile(CONFIG_FILE)
 NLU.readConfig(CONFIG_FILE)
-NLU.setSkillDir(config["skills"]["skills_dir"])
-NLU.setSkillDir(".")
+NLU.setSkillDir()
 
 # for each skill:
 #
-nluConfig = "$NLU_DIR/nlu.toml"
 NLU.loadIntents()
-
-# NLU.loadIntents()
+NLU.listener()
+#
+# run forever ...
