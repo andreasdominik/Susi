@@ -22,8 +22,8 @@ BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
 
 # load tool funs:
 #
-source $BASE_DIR/Tools/funs.sh
-source $BASE_DIR/Tools/topics.sh
+source $BASE_DIR/src/Tools/funs.sh
+source $BASE_DIR/src/Tools/topics.sh
 
 # parse config from toml:
 # PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,
@@ -31,8 +31,8 @@ source $BASE_DIR/Tools/topics.sh
 #
 readToml $CONFIG
 
-DETECTOR="${BASE_DIR}/$(extractJSONdir .hotword.binary)"
-MODEL="$BASE_DIR/$(extractJSONdir .hotword.model_path)/$(extractJSON .hotword.model)"
+DETECTOR="$(extractJSONdir .hotword.binary)"
+MODEL="$(extractJSONdir .hotword.model_path)/$(extractJSON .hotword.model)"
 LOCAL_HOTWORD="$(extractJSON .hotword.local_hotword)"
 SENSITIVITY="$(extractJSON .hotword.sensitivity)"
 
@@ -68,3 +68,4 @@ while true ; do
   #         -m '{"siteId": "default"}'
   #
   subscribeSiteOnce $SITE_ID hermes/hotword/toggleOn
+done

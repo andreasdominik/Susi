@@ -16,7 +16,7 @@ name = "susi"
 satellite = false
 siteId = "default"
 base_directory = "/home/andreas/Documents/Projekte/2019-Susi/Susi"
-work_dirrectory = "/tmp"
+work_directory = "/tmp"
 
 
 [mqtt]
@@ -62,7 +62,7 @@ sensitivity = 0.5
 # notification_end = "Record/Sounds/stoplisten.wav"
 # play = "play"                       command to play an audio file
 #
-start = false
+start = true
 daemon = "src/Record/record.daemon"
 binary = "src/Record/soxrec.sh"
 recording_file = "cmd.flac"
@@ -100,6 +100,7 @@ start = false
 # duckling is used to extract time and ordinal information from raw slot values.
 # a locally inststalled server can be used.
 #
+start = false
 install_dir = "/opt/Duckling/duckling"
 daemon = "src/Duckling/duckling.daemon"
 # binary = "stack exec duckling-example-exe"
@@ -113,7 +114,7 @@ daemon = "src/Session/session.daemon"
 session_timeout = 30
 
 [skills]
-start = true
+start = false
 daemon = "src/Skillserver/skills.daemon"
 
 skills_dir = "/home/andreas/Documents/Projekte/2019-Susi/Susi/src/NLU"
