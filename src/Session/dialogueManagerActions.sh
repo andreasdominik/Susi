@@ -94,7 +94,7 @@ function publishPlay() {
             \"id\": \"$ID\",
             \"audio\": \"$AUDIO\"
            }"
-  publish "$TOPIC_QND_PLAY" "$_PAYLOAD"
+  publish "$TOPIC_TTS_PLAY" "$_PAYLOAD"
 }
 
 

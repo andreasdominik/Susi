@@ -11,13 +11,13 @@
 #
 
 AUDIO_NAME=$1
-shift
-LANGUAGE=$1
-shift
+LANGUAGE=$2
+CACHE=$3
+shift 3
 TEXT="$@"
+TMP_TOKEN="google_cloud.tmptoken"
 
-umask 000
-
+# umask 000
 case $LANGUAGE in
     de)
         COUNTRY="DE"
@@ -34,28 +34,89 @@ LANCODE="${LANGUAGE}-${COUNTRY}"
 
 # language-specfic cache:
 #
-CACHE=${GOOGLE_TTS_DIR}/Cache
 if [[ ! -d "${CACHE}/$LANCODE" ]] ; then
     mkdir "${CACHE}/$LANCODE"
 fi
 CACHE="${CACHE}/${LANCODE}"
 
-TTS_SERVICE=${GOOGLE_TTS_DIR}/src/ttsREST.sh
+# TTS_SERVICE=${GOOGLE_TTS_DIR}/src/ttsREST.sh
 
-CACHED_NAME=$(echo $TEXT | tr '/' '_' | sed 's/[^(0-9a-zA-Z)]/_/g').wav
+CACHED_NAME=$(echo $TEXT | tr '/' '_' | sed 's/[^(0-9a-zA-Z)]/_/g').b64
 LEN=$(echo $CACHED_NAME | wc -c)
 
 # use caching for strings smaller then 256
-if [[ $LEN -lt 64 ]] ; then
+#
+if [[ -e ${CACHE}/${CACHED_NAME} ]] ; then
+    cp ${CACHE}/${CACHED_NAME} $AUDIO_NAME
 
-    if [[ -e ${CACHE}/${CACHED_NAME} ]] ; then
-        cp ${CACHE}/${CACHED_NAME} $AUDIO_NAME
+# get audio from Google Wavenet:
+#
+else
+    if [[ $LANGUAGE == de-DE ]] ; then
+      VOICE="de-DE-Wavenet-B"
+      LAN="de-DE"
+      VOICE_SET="\"voice\":
+                  {
+                    \"languageCode\": \"$LAN\",
+                    \"name\": \"$VOICE\",
+                  },"
+      # VOICE="de-DE-Wavenet-C"
+      # LAN="de-DE"
+      # VOICE_SET="\"voice\":
+      #             {
+      #               \"languageCode\": \"$LAN\",
+      #               \"name\": \"$VOICE\",
+      #               \"ssmlGender\": \"FEMALE\"
+      #             },"
+    elif [[ $LANGUAGE == en-GB ]] ; then
+      VOICE="en-GB-Wavenet-A"
+      LAN="en-GB"
+      VOICE_SET="\"voice\":
+                  {
+                    \"languageCode\": \"$LAN\",
+                    \"name\": \"$VOICE\",
+                    \"ssmlGender\": \"FEMALE\"
+                  },"
     else
-        ${GOOGLE_TTS_DIR}/src/ttsREST.sh ${AUDIO_NAME} ${LANCODE} "${TEXT}"
-        if [[ -s ${AUDIO_NAME} ]]; then
+      LAN=$LANGUAGE
+      VOICE_SET="\"voice\":
+                  {
+                    \"languageCode\": \"$LAN\",
+                    \"ssmlGender\": \"FEMALE\"
+                  },"
+    fi
+
+    JSON="
+    {
+      \"input\":
+      {
+        \"text\": \"$TEXT\"
+      },
+      $VOICE_SET
+      \"audioConfig\":
+      {
+        \"audioEncoding\": \"LINEAR16\",
+        \"speakingRate\": \"1.0\",
+        \"pitch\": \"0\",
+        \"volumeGainDb\": \"0.0\",
+      }
+    }"
+    echo $JSON > request.json
+
+
+    curl -XPOST\
+         -H "Authorization: Bearer $(cat $TMP_TOKEN)" \
+         -H "Content-Type: application/json; charset=utf-8"   \
+         -v\
+         --data "$JSON" \
+         "https://texttospeech.googleapis.com/v1beta1/text:synthesize" \
+         -o audio.json
+
+    cat audio.json | sed 's/^.*audioContent\": \"//' | sed 's/[\"{}]//g'  >  $AUDIO_NAME
+
+    if [[ -s ${AUDIO_NAME} ]]; then
+        if [[ $LEN -lt 256 ]] ; then
             cp ${AUDIO_NAME} ${CACHE}/${CACHED_NAME}
         fi
     fi
-else
-    ${GOOGLE_TTS_DIR}/src/ttsREST.sh ${AUDIO_NAME} ${LANCODE} "${TEXT}"
 fi

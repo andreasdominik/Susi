@@ -80,12 +80,15 @@ start = false
 [tts]
 # start = true     start the central text-to-speech service
 start = false
+daemon = "src/TextToSpeach/tts.daemon"
+binary = "src/GoogleCloud/tts/ttsWcache.sh"
+cache = "home/andreas/Documents/Projekte/2019-Susi/ApplicationData/TTScache"
 
 [stt]
 # start = true     start the central speech-to-text (aka ASR) service
 start = false
 daemon = "src/SpeechToText/stt.daemon"
-binary = "src/GoogleCloud/stt/googleRest.sh"
+binary = "src/GoogleCloud/stt/googleREST.sh"
 
 [google_cloud]
 credentials = "/home/andreas/Documents/Projekte/2019-Susi/ApplicationData/Google/Credentials/google-credentials.json"
