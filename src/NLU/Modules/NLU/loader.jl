@@ -41,18 +41,9 @@ function extractPhrases(toml, slots, intent)
     #
     for (name, raw) in all
 
-        # add optional word with space behind
-        # and w/o space behind:
+        # get type from first word:
         #
-        phrase = raw
-        phrase = replace(phrase, " <<" => "  ?<<")
-        phrase = replace(phrase, ">> " => ">>  ?")
-        phrase = replace(phrase, "<<>>" => "\\S*")
-
-        # word alternatives.
-        # or "none" can be defined as <<word1|word2|>>
-        #
-        phrase = replace(phrase, r"<<(?P<aword>\S*)>>" => s"(?:\g<aword>)")
+        (type, phrase) = split( raw, " ", limit = 2)
 
         # add slots as named capture groups:
         #
@@ -60,37 +51,46 @@ function extractPhrases(toml, slots, intent)
             phrase = replace(phrase, "<$(slot.name)>" => slot.regex )
         end
 
-        # get type from first word and skip if unknown type:
+        # not for Regex-type:
+        # add optional word with space behind
+        # and w/o space behind:
         #
-        (type, phrase) = split( phrase, " ", limit = 2)
+        if type != "regex"
+            phrase = replace(phrase, " <<" => "  ?<<")
+            phrase = replace(phrase, ">> " => ">>  ?")
+            phrase = replace(phrase, "<<>>" => "\\S*")
 
-        # clean whitespaces:
-        #
-        phrase = replace(phrase, r"^ \?" => "")
-        phrase = replace(phrase, r"^\?" => "")
-        phrase = replace(phrase, r" \?$" => "")
-        phrase = strip(phrase)
-        phrase = replace(phrase, r"\s{2,}" => " ")
-        phrase = replace(phrase, r"( \?){2,}" => " ?")
+            # word alternatives.
+            # or "none" can be defined as <<word1|word2|>>
+            #
+            phrase = replace(phrase, r"<<(?P<aword>\S*)>>" => s"(?:\g<aword>)")
+
+
+
+            # clean whitespaces:
+            #
+            phrase = replace(phrase, r"^ \?" => "")
+            phrase = replace(phrase, r"^\?" => "")
+            phrase = replace(phrase, r" \?$" => "")
+            phrase = strip(phrase)
+            phrase = replace(phrase, r"\s{2,}" => " ")
+            phrase = replace(phrase, r"( \?){2,}" => " ?")
+        end
 
         # println("raw:     $raw")
         # println("phrase:  $phrase")
         # println("regex:  $(Regex(phrase))")
 
-        # make regex:
+        # make exact regex:
         #
         if type == "exact:"
-            type = :exact
-            push!(MATCHES, MatchEx(skill, intent, name, slots, raw, Regex("^$phrase\$", "i")))
-        elseif type == "partial:"
-            type = :partial
-            push!(MATCHES, MatchEx(skill, intent, name, slots, raw, Regex(phrase, "i")))
-        elseif type == "regex:"
-            type = :regex
-            push!(MATCHES, MatchEx(skill, intent, name, slots, raw, Regex(phrase, "i")))
+            re = Regex("^$phrase\$", "i")
         else
-            type = :unknown
+            re = Regex(phrase, "i")
         end
+
+        intent = "$(toml["developer"]):$intent"
+        push!(MATCHES, MatchEx(skill, intent, name, slots, raw, re))
     end
 end
 
