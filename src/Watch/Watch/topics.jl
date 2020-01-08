@@ -178,7 +178,7 @@ end
 function showPlay(payload)
     printTime()
     sessionIndent();
-    print("[TTS] Ask TTS at site ")
+    print("[Session] Ask play daemon at site ")
     printSiteId(payload)
     println(" to play an audio file.")
 end
@@ -186,7 +186,7 @@ end
 function showPlayFinished(payload)
     printTime()
     sessionIndent();
-    print("[TTS] Playing of audio file finished at site ")
+    print("[play] Playing of audio file finished at site ")
     printSiteId(payload)
     println(".")
 end
