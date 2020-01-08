@@ -148,7 +148,7 @@ function setDMtopics() {
       MATCH="id"
       ;;
     "playing")
-      TOPICS="$TOPIC_PLAY_FINISHED"
+      TOPICS="$TOPIC_TTS_PLAY_FINISHED"
       MATCH="id"
       ;;
     "session_ongoing")

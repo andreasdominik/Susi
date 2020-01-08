@@ -42,6 +42,17 @@ function watchSusi(host, port, user, password)
             showEndSession(payload)
         elseif topic == TOPIC_CONTINUE_SESSION
             showContSession(payload)
+
+        elseif topic == TOPIC_TTS_SAY
+            showSay(payload)
+        elseif topic == TOPIC_TTS_REQUEST
+            showTTSRequest(payload)
+        elseif topic == TOPIC_TTS_AUDIO
+            showTTSAudio(payload)
+        elseif topic == TOPIC_TTS_PLAY
+            showPlay(payload)
+        elseif topic == TOPIC_TTS_PLAY_FINISHED
+            showPlayFinished(payload)
         end
     end
 end

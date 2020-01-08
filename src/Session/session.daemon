@@ -155,7 +155,7 @@ while true ; do
       fi
       ;;
 
-    $TOPIC_PLAY_FINISHED)
+    $TOPIC_TTS_PLAY_FINISHED)
       if [[ $NEXT_DOING == "end_session" ]] ; then
         publishSessionEnded
         publishHotwordOn
@@ -165,7 +165,7 @@ while true ; do
       fi
       ;;
 
-    $TOPIC_SAY)
+    $TOPIC_TTS_SAY)
       TEXT="$(extractJSON .text $MQTT_PAYLOAD)"
       PLAY_SITE="$(extractJSON .siteId $MQTT_PAYLOAD)"
       publishTTSrequest

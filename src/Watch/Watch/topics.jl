@@ -26,7 +26,6 @@ function showEndedSession(payload)
 end
 
 
-
 function showHotwordDetected(payload)
     printTime()
     print("[Hotword] Hotword detected at site "); printSiteId(payload)
@@ -144,6 +143,58 @@ function showContSession(payload)
     end
     printIntentFilter(payload)
 end
+
+function showSay(payload)
+    printTime()
+    sessionIndent();
+    print("[User] Request to say text at site ")
+    printSiteId(payload); println(":")
+
+    if haskey(payload, :text)
+        dateIndent(); sessionIndent()
+        printText(payload[:text])
+        println()
+    end
+end
+
+function showTTSRequest(payload)
+    printTime()
+    sessionIndent();
+    println("[Session] Requesting audio for text:")
+
+    if haskey(payload, :input)
+        dateIndent(); sessionIndent()
+        printText(payload[:input])
+        println()
+    end
+end
+
+function showTTSAudio(payload)
+    printTime()
+    sessionIndent();
+    println("[TTS] Sending requested audio.")
+end
+
+function showPlay(payload)
+    printTime()
+    sessionIndent();
+    print("[TTS] Ask TTS at site ")
+    printSiteId(payload)
+    println(" to play an audio file.")
+end
+
+function showPlayFinished(payload)
+    printTime()
+    sessionIndent();
+    print("[TTS] Playing of audio file finished at site ")
+    printSiteId(payload)
+    println(".")
+end
+
+
+
+
+
 
 
 # helpers:
