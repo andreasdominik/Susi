@@ -200,3 +200,13 @@ function subscribeSmart() {
     fi
   done
 }
+
+function nextSessionId() {
+  if [[ -z SESSION_ID_COUNTER ]] ; then
+    SESSION_ID_COUNTER=1
+  else
+    let SESSION_ID_COUNTER=$SESSION_ID_COUNTER+1
+  fi
+  DATE="$(date | sed 's/ /_/g')"
+  SESSION_ID="session:${SESSION_ID_COUNTER}_$DATE"
+}

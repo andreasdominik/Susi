@@ -107,7 +107,7 @@ while true ; do
       ;;
 
     $TOPIC_START_SESSION)
-      SESSION_ID="session:$(uuidgen)"
+      nextSessionId
       SESSION_SITE_ID=$MQTT_SITE_ID
 
       # check if action or notification or api or command:
