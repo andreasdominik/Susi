@@ -19,6 +19,8 @@ function watchSusi(host, port, user, password)
 
         elseif topic == TOPIC_HOTWORD
             showHotwordDetected(payload)
+        elseif topic == TOPIC_HOTWORD_ON
+            showHotwordOn(payload)
 
         elseif topic == TOPIC_ASR_START
             showAudioRequest(payload)

@@ -1,7 +1,9 @@
 function showStartSession(payload)
     println("\n\n")
     printTime()
-    printstyled("Session ($(payload[:init][:type])) started", bold=true)
+    print("[Session] ")
+    printstyled("Session of type $(payload[:init][:type]) started",
+                bold=true, color=:green)
     print(" at site "); printSiteId(payload)
     print(" with sessionId: ")
     printSessionId(payload)
@@ -11,7 +13,8 @@ end
 
 function showEndedSession(payload)
     printTime()
-    printstyled("Session ended", bold=true)
+    print("[Session] ")
+    printstyled("Session ended", bold=true, color=:green)
     print(" at site "); printSiteId(payload)
     print(" with sessionId: ")
     printSessionId(payload)
@@ -29,6 +32,11 @@ end
 function showHotwordDetected(payload)
     printTime()
     print("[Hotword] Hotword detected at site "); printSiteId(payload)
+end
+
+function showHotwordOn(payload)
+    printTime()
+    print("[Session] Request to start hotword daemon at site "); printSiteId(payload)
 end
 
 
@@ -200,8 +208,8 @@ end
 # helpers:
 #
 #
-printSiteId(payload) = printstyled("$(payload[:siteId])", color=:blue)
-printSessionId(payload) = printstyled("$(payload[:sessionId])", bold=false, color=:green)
+printSiteId(payload) = printstyled("$(payload[:siteId])", color=:light_blue)
+printSessionId(payload) = printstyled("$(payload[:sessionId])", bold=false, color=:light_green)
 printText(text) = printstyled("\"$text\"", bold=false, color=:magenta)
 
 printTime() = printstyled("$(Dates.format(now(), "HH:MM:SS yyyy uuu dd")) ",
