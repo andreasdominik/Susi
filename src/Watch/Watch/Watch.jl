@@ -7,11 +7,15 @@
 module Watch
 
 using ArgParse
+using JSON
+
+include("../../Tools/topics.sh")
 include("mqtt.jl")
 include("topics.jl")
 include("args.jl")
+include("loop.jl")
 
 
-export parse_commandline, printArgs
-
+export parse_commandline, printArgs,
+       watchSusi
 end

@@ -1,4 +1,4 @@
-#!/usr/local/bin/julia
+#!/usr/local/bin/julia --color=yes
 #
 # watch he MQTT traffic of susi.
 #
@@ -12,6 +12,27 @@ using Main.Watch
 function main()
     args = parse_commandline()
     printArgs(args)
+
+    sayHello(args[:host], args[:port])
+
+    watchSusi(args[:host], args[:port], args[:user], args[:password])
 end
+
+
+
+
+function sayHello(host, port)
+
+    if host === nothing
+        host = "localhost"
+    end
+    if port === nothing
+        port = "1883"
+    end
+    printstyled("Watching the Susi assistant on host $host:$port\n\n",
+            bold=true, color=:green)
+    # println(" ")
+end
+
 
 main()
