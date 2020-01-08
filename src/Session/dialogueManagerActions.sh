@@ -66,7 +66,7 @@ function publishNluQuery() {
 
 function pubishIntent() {
 
-  _INTENT_NAME="$(extractJSON .intent.intentName $INTENT)"
+  _INTENT_NAME="${TOPIC_INTENT}/$(extractJSON .intent.intentName $INTENT)"
   publish "$_INTENT_NAME" "$INTENT"
 }
 

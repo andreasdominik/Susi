@@ -31,6 +31,8 @@ TOPIC_TTS_REQUEST="susi/tts/request"
 TOPIC_TTS_AUDIO="susi/tts/audio"
 TOPIC_TTS_PLAY="susi/tts/play"
 
+TOPIC_INTENT="/hermes/intent/"
+
 # QnD NoSnips topics:
 #
 TOPIC_TIMEOUT="susi/session/timeout"
