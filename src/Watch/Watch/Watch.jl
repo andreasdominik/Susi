@@ -8,6 +8,7 @@ module Watch
 
 using ArgParse
 using JSON
+using Dates
 
 include("../../Tools/topics.sh")
 include("mqtt.jl")

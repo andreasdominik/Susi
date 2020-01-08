@@ -8,10 +8,40 @@ function watchSusi(host, port, user, password)
                             hostname = host, port = port,
                             user = user, password = password)
 
-        println(payload)
-        
+        # println(topic)
+        # println(payload)
+        # println(TOPIC_INTENT)
+
         if topic == TOPIC_START_SESSION
             showStartSession(payload)
+        elseif topic == TOPIC_SESSION_ENDED
+            showEndedSession(payload)
+
+        elseif topic == TOPIC_HOTWORD
+            showHotwordDetected(payload)
+
+        elseif topic == TOPIC_ASR_START
+            showAudioRequest(payload)
+        elseif topic == TOPIC_ASR_AUDIO
+            showAudioRecorded(payload)
+
+        elseif topic == TOPIC_ASR_TRANSSCRIBE
+            showSTTRequest(payload)
+        elseif topic == TOPIC_ASR_TEXT
+            showTransscript(payload)
+
+        elseif topic == TOPIC_NLU_QUERY
+            showNLURequest(payload)
+        elseif topic == TOPIC_NLU_PARSED
+            showNLUResult(payload)
+
+        elseif occursin(TOPIC_INTENT, topic)
+            showIntentPublished(payload)
+
+        elseif topic == TOPIC_END
+            showEndSession(payload)
+        elseif topic == TOPIC_CONTINUE_SESSION
+            showContSession(payload)
         end
     end
 end

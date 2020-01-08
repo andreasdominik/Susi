@@ -11,7 +11,7 @@ using Main.Watch
 
 function main()
     args = parse_commandline()
-    printArgs(args)
+    # printArgs(args)
 
     sayHello(args[:host], args[:port])
 
