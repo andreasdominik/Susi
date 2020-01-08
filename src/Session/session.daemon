@@ -21,8 +21,8 @@ fi
 TOML="$(cat $CONFIG | toml2json)"
 BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
 
-source $BASE_DIR/Tools/funs.sh
-source $BASE_DIR/Session/dialogueManagerActions.sh
+source $BASE_DIR/src/Tools/funs.sh
+source $BASE_DIR/src/Session/dialogueManagerActions.sh
 
 # parse config from toml:
 # PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,

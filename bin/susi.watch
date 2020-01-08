@@ -1,0 +1,44 @@
+#!/bin/bash -xv
+#
+# watch the MQTT traffic of Susi.
+#
+if [[ $# -lt 1 ]] ; then
+  CONFIG="/etc/susi.toml"
+else
+  CONFIG=$1
+fi
+CONFIG="/home/andreas/Documents/Projekte/2019-Susi/Susi/etc/susi.toml"
+
+
+# get path to Susi installation:
+#
+TOML="$(cat $CONFIG | toml2json)"
+BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
+
+# parse config from toml:
+# PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,
+# BASE_DIR, WORK_DIR, SITE_ID
+#
+source "$BASE_DIR/src/Tools/funs.sh"
+readToml $CONFIG
+EXEC="$BASE_DIR/src/Watch/watch.jl"
+
+# args:
+#
+ARG_STR=""
+if [[ ! -z $MQTT_HOST ]] ; then
+  ARG_STR="$ARG_STR --host $MQTT_HOST"
+fi
+if [[ ! -z $MQTT_PORT ]] ; then
+  ARG_STR="$ARG_STR --port $MQTT_PORT"
+fi
+if [[ ! -z $MQTT_USER ]] ; then
+  ARG_STR="$ARG_STR --user $MQTT_USER"
+fi
+if [[ ! -z $MQTT_PW ]] ; then
+  ARG_STR="$ARG_STR --password $MQTT_PW"
+fi
+
+# run:
+#
+julia --color=yes -- $EXEC $ARG_STR
