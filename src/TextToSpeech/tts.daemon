@@ -9,30 +9,25 @@
 
 # set config path:
 #
-if [[ $# -lt 1 ]] ; then
-  CONFIG="/etc/susi.toml"
-else
-  CONFIG=$1
-fi
-
-TOML="$(cat $CONFIG | toml2json)"
-BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
+CONFIG="/etc/susi.toml"
+TOML2ENV="/usr/local/bin/toml2env"
+source $TOML2ENV $CONFIG
+BASE_DIR="$local_base_directory"
 
 # load tool funs:
 #
 source $BASE_DIR/src/Tools/funs.sh
+
+# Topics:
+#
 source $BASE_DIR/src/Tools/topics.sh
 
-# parse config from toml:
-# PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,
-# BASE_DIR, WORK_DIR, SITE_ID
-#
-readToml $CONFIG
+cd $local_work_dir
 
-BINARY="$(extractJSONdir .tts.binary)"
-REFRESH_TOKEN_CMD="$(extractJSONdir .google_cloud.refresh_token_cmd)"
-CREDS="$(extractJSONdir .google_cloud.credentials)"
-CACHE="$(extractJSONdir .tts.cache)"
+BINARY="$(relDir $tts_binary)"
+REFRESH_TOKEN_CMD="$(relDir $google_cloud_refresh_token_cmd)"
+CREDS="$(relDir $google_cloud_credentials)"
+CACHE="$(relDir $tts_cache)"
 
 while true ; do
 
@@ -58,7 +53,7 @@ while true ; do
 
   # name of audio file, base64-encoded:
   #
-  AUDIO_NAME="audio.b64"
+  AUDIO_NAME="audio.base64"
   rm -f $AUDIO_NAME
 
   $BINARY $AUDIO_NAME $LANG $CACHE $TEXT > /dev/null 2>&1

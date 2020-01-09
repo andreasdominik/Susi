@@ -82,7 +82,7 @@ start = false
 start = false
 daemon = "src/TextToSpeach/tts.daemon"
 binary = "src/GoogleCloud/tts/ttsWcache.sh"
-cache = "home/andreas/Documents/Projekte/2019-Susi/ApplicationData/TTScache"
+cache = "/home/andreas/Documents/Projekte/2019-Susi/ApplicationData/TTScache"
 
 [stt]
 # start = true     start the central speech-to-text (aka ASR) service
