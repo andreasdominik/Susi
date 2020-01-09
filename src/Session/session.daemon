@@ -10,31 +10,21 @@
 
 # set config file:
 #
-if [[ $# -lt 1 ]] ; then
-  CONFIG="/etc/susi.toml"
-else
-  CONFIG=$1
-fi
+CONFIG="/etc/susi.toml"
+TOML2ENV="/usr/local/bin/toml2env"
+$TOML2ENV $CONFIG
+BASE_DIR="$local_base_directory"
 
 # load tool funs:
 #
-TOML="$(cat $CONFIG | toml2json)"
-BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
-
 source $BASE_DIR/src/Tools/funs.sh
 source $BASE_DIR/src/Session/dialogueManagerActions.sh
 
-# parse config from toml:
-# PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,
-# BASE_DIR, WORK_DIR, SITE_ID
-#
-readToml $CONFIG
-
-TIMEOUT="$(extractJSON .hotword.session_timeout)"
-
 # Topics:
+#
 source $BASE_DIR/Tools/topics.sh
 
+cd $local_work_dir
 # core loop that catches all MQTTs depending on
 # state:
 #
@@ -122,7 +112,7 @@ while true ; do
         publishTTSrequest
         DOING="wait_for_tts"
         NEXT_DOING="end_session"
-        PLAY_SITE=$SESION_SITE_ID
+        PLAY_SITE=$SESSION_SITE_ID
 
       elif [[ $TYPE == "api" ]] ; then
         INTENT="$(extractJSON .intent $MQTT_PAYLOAD)"

@@ -1,28 +1,61 @@
 #!/bin/bash -xv
 #
 
-# read main config from toml, with path/file.toml
-# as argument.
+# # read main config from toml, with path/file.toml
+# # as argument.
+# # all settings will be stored in env directlywith names:
+# # toml_path_path_key
+# #
+# function readToml() {
+#   _CONFIG=$1
 #
-function readToml() {
-  CONFIG=$1
-  export TOML="$(cat $CONFIG | toml2json)"
-  MQTT_PORT="$(extractJSON .mqtt.port $TOML)"
-  MQTT_HOST="$(extractJSON .mqtt.host $TOML)"
-  MQTT_USER="$(extractJSON .mqtt.user $TOML)"
-  MQTT_PW="$(extractJSON .mqtt.password $TOML)"
-
-  export BASE_DIR="$(extractJSON .local.base_directory $TOML)"
-  export WORK_DIR="$(extractJSONdir .local.work_dir $TOML)"
-
-  export SITE_ID="$(extractJSON .local.siteId $TOML)"
-  export SESSION_TIMEOUT="$(extractJSON .session.session_timeout $TOML)"
-
-  SUBSCRIBE="$(extractJSON .mqtt.subscribe $TOML)"
-  export SUBSCRIBE="$SUBSCRIBE -C 1 -v $(mqtt_auth)"
-  PUBLISH="$(extractJSON .mqtt.publish $TOML)"
-  export PUBLISH="$PUBLISH $(mqtt_auth)"
-}
+#   _PREFIX="toml"
+#   while read -r _LINE ; do
+#     # echo "$_LINE"
+#
+#     REGEX_VALUE='^\s*(\w.+)\s*=\s*(.*\S+.*?)\s*$'
+#     REGEX_PATH='^\s*\[(\w.+)\]\s*$'
+#     if [[ "$_LINE" =~ $REGEX_VALUE ]] ; then
+#       _KEY="${BASH_REMATCH[1]}"
+#       _VAL="${BASH_REMATCH[2]}"
+#
+#       # strip whitespaces:
+#       #
+#       _KEY="$(echo $_KEY | tr -d '"')"
+#       _VAL="$(echo $_VAL)"
+#
+#       _FULL_KEY="${_PREFIX}_${_KEY}"
+#       eval "${_FULL_KEY}"="${_VAL}"
+#       echo "${_FULL_KEY}, ${!_FULL_KEY}"
+#     elif [[ "$_LINE" =~ $REGEX_PATH ]]; then
+#       _PATH="${BASH_REMATCH[1]}"
+#       _PREFIX="toml_${_PATH}"
+#     fi
+#
+#   done < $_CONFIG
+# }
+#
+#
+#
+# function readToml() {
+#   CONFIG=$1
+#   export TOML="$(cat $CONFIG | toml2json)"
+#   MQTT_PORT="$(extractJSON .mqtt.port $TOML)"
+#   MQTT_HOST="$(extractJSON .mqtt.host $TOML)"
+#   MQTT_USER="$(extractJSON .mqtt.user $TOML)"
+#   MQTT_PW="$(extractJSON .mqtt.password $TOML)"
+#
+#   export BASE_DIR="$(extractJSON .local.base_directory $TOML)"
+#   export WORK_DIR="$(extractJSONdir .local.work_dir $TOML)"
+#
+#   export SITE_ID="$(extractJSON .local.siteId $TOML)"
+#   export SESSION_TIMEOUT="$(extractJSON .session.session_timeout $TOML)"
+#
+#   SUBSCRIBE="$(extractJSON .mqtt.subscribe $TOML)"
+#   export SUBSCRIBE="$SUBSCRIBE -C 1 -v $(mqtt_auth)"
+#   PUBLISH="$(extractJSON .mqtt.publish $TOML)"
+#   export PUBLISH="$PUBLISH $(mqtt_auth)"
+# }
 
 # make a dir relative to Susi if not absolute:
 #
@@ -31,7 +64,7 @@ function relDir() {
   if [[ $_DIR =~ ^/ ]] ; then
     echo "$_DIR"
   else
-    echo "$BASE_DIR/$_DIR"
+    echo "$local_base_directory/$_DIR"
   fi
 }
 
@@ -44,10 +77,10 @@ function mqtt_auth() {
   # _FLAGS="-C 1 -v"
   _FLAGS=""
 
-  [[ -n $MQTT_HOST ]] && _FLAGS="$_FLAGS -h $MQTT_HOST"
-  [[ -n $MQTT_PORT ]] && _FLAGS="$_FLAGS -p $MQTT_PORT"
-  [[ -n $MQTT_USER ]] && _FLAGS="$_FLAGS -u $MQTT_USER"
-  [[ -n $MQTT_PW ]] && _FLAGS="$_FLAGS -P $MQTT_PW"
+  [[ -n $mqtt_host ]] && _FLAGS="$_FLAGS -h $mqtt_host"
+  [[ -n $mqtt_port ]] && _FLAGS="$_FLAGS -p $mqtt_port"
+  [[ -n $mqtt_user ]] && _FLAGS="$_FLAGS -u $mqtt_user"
+  [[ -n $mqtt_password ]] && _FLAGS="$_FLAGS -P $mqtt_password"
 
   echo "$_FLAGS"
 }
@@ -67,7 +100,7 @@ function subscribeOnce() {
     __TOPICS="$__TOPICS -t $_T"
   done
 
-  _RECIEVED="$($SUBSCRIBE $__TOPICS)"
+  _RECIEVED="$($mqtt_subscribe -C 1 -v $(mqtt_auth) $__TOPICS)"
   parseMQTT "$_RECIEVED"
 }
 
@@ -137,5 +170,5 @@ function publish() {
   _TOPIC="$1"
   _PAYLOAD="$2"
 
-  $PUBLISH  -t "$_TOPIC" -m "$_PAYLOAD"
+  $mqtt_publish  -t "$_TOPIC" -m "$_PAYLOAD"
 }
