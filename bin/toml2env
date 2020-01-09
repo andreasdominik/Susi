@@ -1,0 +1,40 @@
+#!/bin/bash -xv
+#
+# read a toml file and
+# all settings will be stored in env directlywith names:
+# toml_path_path_key
+# usage: toml2env file <prefix>
+#
+_TOML=$1
+if [[ $# -gt 1 ]] ; then
+  _PREFIX="$2_"
+else
+  _PREFIX=""
+fi
+
+PATH=""
+REGEX_VALUE='^\s*(\w.+)\s*=\s*(.*\S+.*?)\s*$'
+REGEX_PATH='^\s*\[(\w.+)\]\s*$'
+
+while read -r _LINE ; do
+  # echo "$_LINE"
+
+  if [[ "$_LINE" =~ $REGEX_VALUE ]] ; then
+    _KEY="${BASH_REMATCH[1]}"
+    _VAL="${BASH_REMATCH[2]}"
+
+    # strip whitespaces:
+    #
+    _KEY="$(echo $_KEY)"
+    _VAL="$(echo $_VAL)"
+    _FULL_KEY="${_PREFIX}${_PATH}${_KEY}"
+
+    eval ${_FULL_KEY}="${_VAL}"
+    export ${_FULL_KEY}
+    echo "VARIABLE: ${_FULL_KEY}=${!_FULL_KEY}"
+
+  elif [[ "$_LINE" =~ $REGEX_PATH ]]; then
+    _PATH="${BASH_REMATCH[1]}_"
+  fi
+
+done < $_TOML

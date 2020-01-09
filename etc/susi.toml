@@ -73,7 +73,7 @@ notification_end = "src/Record/Sounds/stoplisten.wav"
 play = "play"
 
 
-[say]
+[play]
 # start = true     start the local service to utter text
 start = false
 
