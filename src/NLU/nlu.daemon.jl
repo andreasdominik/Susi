@@ -1,4 +1,4 @@
-#!/usr/local/bin/julia
+#!/usr/local/bin/julia --color=yes
 #
 # Daemon for a Julia-based NLU as a Snips-replacement.
 #
@@ -7,14 +7,9 @@
 
 # get dirs
 #
-if length(ARGS) > 0
-    const CONFIG_FILE = ARGS[1]
-else
-    const CONFIG_FILE = "/home/andreas/Documents/Projekte/2019-Susi/Susi/etc/susi.toml"
-    # const TOML_FILE = "/etc/susi.toml"
-end
-
+const CONFIG_FILE = "/etc/susi.toml"
 const NLU_DIR = @__DIR__
+
 # const SKILLS_DIR = replace(FRAMEWORK_DIR, r"/[^/]*/?$"=>"")
 include("$NLU_DIR/Modules/TOML/TOML.jl")
 import Main.TOML
@@ -23,7 +18,6 @@ import Main.NLU
 
 # load config:
 #
-# config = TOML.parsefile(CONFIG_FILE)
 NLU.readConfig(CONFIG_FILE)
 NLU.setSkillDir()
 
