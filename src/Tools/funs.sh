@@ -100,7 +100,8 @@ function subscribeOnce() {
     __TOPICS="$__TOPICS -t $_T"
   done
 
-  _RECIEVED="$($mqtt_subscribe -C 1 -v $(mqtt_auth) $__TOPICS)"
+  _CMD="$mqtt_subscribe -C 1 -v $(mqtt_auth) $__TOPICS"
+  _RECIEVED="$($_CMD)"
   parseMQTT "$_RECIEVED"
 }
 
