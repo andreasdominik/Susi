@@ -11,47 +11,40 @@
 
 # set config path:
 #
-if [[ $# -lt 1 ]] ; then
-  CONFIG="/etc/susi.toml"
-else
-  CONFIG=$1
-fi
-
-TOML="$(cat $CONFIG | toml2json)"
-BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
+CONFIG="/etc/susi.toml"
+TOML2ENV="/usr/local/bin/toml2env"
+source $TOML2ENV $CONFIG
+BASE_DIR="$local_base_directory"
 
 # load tool funs:
 #
 source $BASE_DIR/src/Tools/funs.sh
+
+# Topics:
+#
 source $BASE_DIR/src/Tools/topics.sh
 
-# parse config from toml:
-# PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,
-# BASE_DIR, WORK_DIR, SITE_ID
-#
-readToml $CONFIG
+cd $local_work_dir
 
-DETECTOR="$(extractJSONdir .hotword.binary)"
-MODEL="$(extractJSONdir .hotword.model_path)/$(extractJSON .hotword.model)"
-LOCAL_HOTWORD="$(extractJSON .hotword.local_hotword)"
-SENSITIVITY="$(extractJSON .hotword.sensitivity)"
+DETECTOR="$(relDir $hotword_binary)"
+MODEL="$(relDir $hotword_model_path/$hotword_model)"
 
 
 # construct MQTT message for hotword detected
 #
 PAYLOAD="{
-  \"siteId\": \"$SITE_ID\",
-  \"modelId\": \"$LOCAL_HOTWORD\",
+  \"siteId\": \"$local_siteId\",
+  \"modelId\": \"$hotword_local_hotword\",
   \"modelVersion\": \"1.0\",
   \"modeltype\": \"personal\",
-  \"currentSensitivity\": $SENSITIVITY
+  \"currentSensitivity\": $hotword_sensitivity
 }"
 
 while true ; do
 
   # run Snowboy until hotword is detected
   #
-  $DETECTOR $MODEL $SENSITIVITY
+  $DETECTOR $MODEL $hotword_sensitivity
   STATUS=$?
   STATUS=0  # cancel should work for debugging
   echo "$STATUS"
@@ -67,5 +60,5 @@ while true ; do
   #     mosquitto_pub -h <HOSTNAME> -t 'hermes/hotword/toggleOn' \
   #         -m '{"siteId": "default"}'
   #
-  subscribeSiteOnce $SITE_ID hermes/hotword/toggleOn
+  subscribeSiteOnce $local_siteId $TOPIC_HOTWORD_ON
 done

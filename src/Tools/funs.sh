@@ -60,7 +60,7 @@
 # make a dir relative to Susi if not absolute:
 #
 function relDir() {
-  read _DIR
+  _DIR="$1"
   if [[ $_DIR =~ ^/ ]] ; then
     echo "$_DIR"
   else
