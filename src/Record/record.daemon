@@ -2,38 +2,33 @@
 #
 # Record service for NoSnips replacement.
 # Usage:
-#     record.daemon <path/to/nosnips.toml>
+#     record.daemon
 #
 #
 
 # set config path:
 #
-if [[ $# -lt 1 ]] ; then
-  CONFIG="/etc/susi.toml"
-else
-  CONFIG=$1
-fi
-
-TOML="$(cat $CONFIG | toml2json)"
-BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
+CONFIG="/etc/susi.toml"
+TOML2ENV="/usr/local/bin/toml2env"
+source $TOML2ENV $CONFIG
+BASE_DIR="$local_base_directory"
 
 # load tool funs:
 #
 source $BASE_DIR/src/Tools/funs.sh
+
+# Topics:
+#
 source $BASE_DIR/src/Tools/topics.sh
 
-# parse config from toml:
-# PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,
-# BASE_DIR, WORK_DIR, SITE_ID
-#
-readToml $CONFIG
+cd $local_work_dir
 
-REC_CMD="$(extractJSONdir .record.binary)"
-REC_FILE="$(extractJSON .record.recording_file)"
-REC_LIMIT="$(extractJSON .record.recording_limit)"
-NOTIFICATION="$(extractJSON .record.notification)"
-START_SOUND="$(extractJSONdir .record.notification_start)"
-END_SOUND="$(extractJSONdir .record.notification_end)"
+REC_CMD="$(relDir $record_binary)"
+REC_FILE="$record_recording_file"
+REC_LIMIT="$record_recording_limit"
+NOTIFICATION="$record_notification"
+START_SOUND="$(relDir record_notification_start)"
+END_SOUND="$(relDir record_notification_end)"
 
 
 
