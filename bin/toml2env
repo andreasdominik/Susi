@@ -12,7 +12,7 @@ else
   _PREFIX=""
 fi
 
-PATH=""
+_PATH=""
 REGEX_VALUE='^\s*(\w.+)\s*=\s*(.*\S+.*?)\s*$'
 REGEX_PATH='^\s*\[(\w.+)\]\s*$'
 
