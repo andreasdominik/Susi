@@ -88,7 +88,7 @@ cache = "home/andreas/Documents/Projekte/2019-Susi/ApplicationData/TTScache"
 # start = true     start the central speech-to-text (aka ASR) service
 start = false
 daemon = "src/SpeechToText/stt.daemon"
-binary = "src/GoogleCloud/stt/googleREST.sh"
+binary = "src/GoogleCloud/stt/stt-google.sh"
 
 [google_cloud]
 credentials = "/home/andreas/Documents/Projekte/2019-Susi/ApplicationData/Google/Credentials/google-credentials.json"

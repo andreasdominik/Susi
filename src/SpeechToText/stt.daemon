@@ -9,53 +9,37 @@
 
 # set config path:
 #
-if [[ $# -lt 1 ]] ; then
-  CONFIG="/etc/susi.toml"
-else
-  CONFIG=$1
-fi
-
-TOML="$(cat $CONFIG | toml2json)"
-BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
+CONFIG="/etc/susi.toml"
+TOML2ENV="/usr/local/bin/toml2env"
+source $TOML2ENV $CONFIG
+BASE_DIR="$local_base_directory"
 
 # load tool funs:
 #
 source $BASE_DIR/src/Tools/funs.sh
+
+# Topics:
+#
 source $BASE_DIR/src/Tools/topics.sh
 
-# parse config from toml:
-# PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,
-# BASE_DIR, WORK_DIR, SITE_ID
-#
-readToml $CONFIG
+cd $local_work_dir
 
-BINARY="$(extractJSONdir .stt.binary)"
-REFRESH_TOKEN_CMD="$(extractJSONdir .google_cloud.refresh_token_cmd)"
-CREDS="$(extractJSONdir .google_cloud.credentials)"
-STT_INPUT=audio.base64
-STT_OUTPUT=cmd.ts
-
-# construct MQTT message for hotword detected
-#
-# PAYLOAD="{
-#   \"siteId\": \"$SITE_ID\",
-#   \"modelId\": \"$LOCAL_HOTWORD\",
-#   \"modelVersion\": \"1.0\",
-#   \"modeltype\": \"personal\",
-#   \"currentSensitivity\": $SENSITIVITY
-# }"
+BINARY="$(relDir $stt_binary)"
+REFRESH_TOKEN_CMD="$(relDir $google_cloud_refresh_token_cmd)"
+CREDS="$(relDir $google_cloud_credentials)"
+STT_INPUT="audio.base64"
+STT_OUTPUT="stt_retrieved.json"
+TS_NAME="stt.transscript"
 
 while true ; do
 
   subscribeOnce $TOPIC_ASR_TRANSSCRIBE
+  SESSION_ID=$MQTT_SESSION_ID
+  ID=$MQTT_ID
 
   # extract base64 audio:
   #
-  AUDIO="$(extractJSON .audio $MQTT_PAYLOAD)"
-  echo "$AUDIO" > $STT_INPUT
-
-  SESSION_ID=$MQTT_SESSION_ID
-  ID=$MQTT_ID
+  extractJSON .audio $MQTT_PAYLOAD > $STT_INPUT
 
   # check if offline:
   # ${SUSI_DIR}/src/Hardware/Internet/checkservices.sh
@@ -63,10 +47,6 @@ while true ; do
   # check if a new access token is necessary
   #
   $REFRESH_TOKEN_CMD $CREDS
-
-  AUDIO_NAME="cmd.flac"
-  STT_OUTPUT="cmdservice.json"
-  TS_NAME="cmd.ts"
 
   $BINARY $STT_INPUT $STT_OUTPUT > /dev/null 2>&1
 
