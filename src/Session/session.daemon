@@ -50,12 +50,6 @@ while true ; do
   # manage dialogue manager sequences:
   #
   case "$MQTT_TOPIC" in
-    $TOPIC_HOTWORD)
-      SESSION_ID="session:$(uuidgen)"
-      SESSION_SITE_ID=$MQTT_SITE_ID
-      publishAsrStart # next: wait for audio recording
-      DOING="wait_for_asr"
-      ;;
 
     $TOPIC_ASR_AUDIO)
       AUDIO="$(extractJSON .audio $MQTT_PAYLOAD)"
@@ -92,6 +86,13 @@ while true ; do
       INTENT="$(extractJSON .intent $MQTT_PAYLOAD)"
       publishIntent
       DOING="session_ongoing"
+      ;;
+
+    $TOPIC_HOTWORD)
+      nextSessionId
+      SESSION_SITE_ID=$MQTT_SITE_ID
+      publishAsrStart # next: wait for audio recording
+      DOING="wait_for_asr"
       ;;
 
     $TOPIC_START_SESSION)
