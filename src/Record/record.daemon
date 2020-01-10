@@ -19,7 +19,7 @@ source $SUSI_INSTALLATION/src/Tools/funs.sh
 #
 source $SUSI_INSTALLATION/src/Tools/topics.sh
 
-cd $local_work_dir
+cd $local_work_directory
 
 REC_CMD="$(relDir $record_binary)"
 REC_FILE="$record_recording_file"
@@ -27,8 +27,6 @@ REC_LIMIT="$record_recording_limit"
 NOTIFICATION="$record_notification"
 START_SOUND="$(relDir $record_notification_start)"
 END_SOUND="$(relDir $record_notification_end)"
-
-mosquitto_sub -C 1
 
 # main loop:
 #  - wait for request
@@ -46,18 +44,21 @@ while true ; do
   [[ $NOTIFICATION == true ]] && $PLAY_CMD $END_SOUND
 
   if [[ -s $REC_FILE ]] ; then
-    AUDIO="$(base64 -w 0 $REC_FILE)"
+    base64 -w 0 $REC_FILE > ${REC_FILE}.b64
   else
-    AUDIO=""
+    touch ${REC_FILE}.b64
   fi
 
 TOPIC=$TOPIC_ASR_AUDIO
-PAYLOAD="{
-  \"siteId\": \"$SITE_ID\",
+PAYLOAD="recordpayload.json"
+
+echo -n "{
+  \"siteId\": \"$local_siteId\",
   \"sessionId\": \"$MQTT_SESSION_ID\",
   \"id\": \"$MQTT_ID\",
-  \"audio\": \"$AUDIO\"
-}"
+  \"audio\": \""                >  $PAYLOAD
+  cat ${REC_FILE}.b64           >> $PAYLOAD
+  echo "\" }"                   >> $PAYLOAD
 
-publish $TOPIC "$PAYLOAD"
+publishFile $TOPIC $PAYLOAD
 done

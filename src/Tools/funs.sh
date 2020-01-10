@@ -175,5 +175,5 @@ function publishFile() {
 
   _TOPIC="$1"
   _PAYLOAD="$2"
-  $mqtt_publish  -t "$_TOPIC" -f "$_PAYLOAD"
+  $mqtt_publish  -t "$_TOPIC" -s <"$_PAYLOAD"
 }
