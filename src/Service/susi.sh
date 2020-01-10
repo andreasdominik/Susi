@@ -22,7 +22,7 @@ source $SUSI_INSTALLATION/src/Tools/funs.sh
 #
 source $SUSI_INSTALLATION/src/Tools/topics.sh
 
-cd $local_work_dir
+cd $local_work_directory
 
 # load tool funs:
 #
