@@ -14,7 +14,7 @@ NOISE="1.5%"
 END_TRIGGER="0:01"
 
 rec --rate 16000 $AUDIO \
-    trim 0 $MAX_TIME \
+    trim 0 $TIME_MAX \
     silence 1 0:00.05 $NOISE 1 $END_TRIGGER $NOISE \
     remix 1-2
     # gain -n
