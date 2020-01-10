@@ -11,18 +11,16 @@
 # set config file:
 #
 CONFIG="/etc/susi.toml"
-TOML2ENV="/usr/local/bin/toml2env"
-$TOML2ENV $CONFIG
-BASE_DIR="$local_base_directory"
+source $SUSI_INSTALLATION/bin/toml2env $CONFIG
 
 # load tool funs:
 #
-source $BASE_DIR/src/Tools/funs.sh
-source $BASE_DIR/src/Session/dialogueManagerActions.sh
+source $SUSI_INSTALLATION/src/Tools/funs.sh
+source $SUSI_INSTALLATION/src/Session/dialogueManagerActions.sh
 
 # Topics:
 #
-source $BASE_DIR/Tools/topics.sh
+source $SUSI_INSTALLATION/src/Tools/topics.sh
 
 cd $local_work_dir
 # core loop that catches all MQTTs depending on
