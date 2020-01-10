@@ -64,7 +64,7 @@ function relDir() {
   if [[ $_DIR =~ ^/ ]] ; then
     echo "$_DIR"
   else
-    echo "$local_base_directory/$_DIR"
+    echo "$SUSI_INSTALLATION/$_DIR"
   fi
 }
 

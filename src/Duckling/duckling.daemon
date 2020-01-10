@@ -8,26 +8,19 @@
 
 # set config path:
 #
-if [[ $# -lt 1 ]] ; then
-  CONFIG="/etc/susi.toml"
-else
-  CONFIG=$1
-fi
-
-TOML="$(cat $CONFIG | toml2json)"
-BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
+CONFIG="/etc/susi.toml"
+source $SUSI_INSTALLATION/bin/toml2env $CONFIG
 
 # load tool funs:
 #
-source $BASE_DIR/src/Tools/funs.sh
-source $BASE_DIR/src/Tools/topics.sh
+source $SUSI_INSTALLATION/src/Tools/funs.sh
+source $SUSI_INSTALLATION/src/Tools/topics.sh
 
 # parse config from toml:
 #
 readToml $CONFIG
 
-DUCKLING_DIR="$(extractJSONdir .duckling.install_dir)"
-DUCKLING_PORT="$(extractJSON .duckling.port)"
+DUCKLING_DIR="$(relDir $duckling_install_dir)"
 
 
 # run forever:
@@ -35,6 +28,6 @@ DUCKLING_PORT="$(extractJSON .duckling.port)"
 cd $DUCKLING_DIR
 while true ; do
 
-  stack exec -- duckling-example-exe --port $DUCKLING_PORT
+  stack exec -- duckling-example-exe --port $duckling_port
   sleep 10
 done

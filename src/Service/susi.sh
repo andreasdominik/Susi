@@ -12,7 +12,7 @@
 # and make a JSON config in work dir:
 #
 CONFIG="/etc/susi.toml"
-source SUSI_INSTALLATION/bin/toml2env $CONFIG
+source $SUSI_INSTALLATION/bin/toml2env $CONFIG
 
 # load tool funs:
 #
