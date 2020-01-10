@@ -44,7 +44,7 @@ end
 
 function showAudioRequest(payload)
     printTime()
-    sessionIndent(); print("[Session] Request command recording from site ");
+    sessionIndent(); print("[Session] Request command recording for site ");
     printSiteId(payload)
     println();
 end

@@ -53,6 +53,7 @@ function constructMQTTcmd(topics; hostname = nothing, port = nothing,
                           user = nothing, password = nothing,
                           timeout = nothing)
 
+    # TODO: `$(CONFIG["mqtt_subsribe"] -v -C 1)`
     cmd = `mosquitto_sub -v -C 1`
     if hostname != nothing
         cmd = `$cmd -h $hostname`
@@ -148,6 +149,7 @@ function publishMQTT(topic, payload; hostname = nothing, port = nothing,
 
     # build cmd string:
     #
+    # TODO: `$(CONFIG["mqtt_publish"])`
     cmd = `mosquitto_pub`
     if hostname != nothing
         cmd = `$cmd -h $hostname`
@@ -175,7 +177,7 @@ function publishMQTT(topic, payload; hostname = nothing, port = nothing,
     end
 
     cmd = Cmd(cmd, ignorestatus = true)
-    run(cmd, wait = false)  
+    run(cmd, wait = false)
 end
 
 #

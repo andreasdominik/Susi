@@ -2,41 +2,30 @@
 #
 # watch the MQTT traffic of Susi.
 #
-if [[ $# -lt 1 ]] ; then
-  CONFIG="/etc/susi.toml"
-else
-  CONFIG=$1
-fi
-CONFIG="/home/andreas/Documents/Projekte/2019-Susi/Susi/etc/susi.toml"
-
-
-# get path to Susi installation:
-#
-TOML="$(cat $CONFIG | toml2json)"
-BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
+CONFIG="/etc/susi.toml"
+source $SUSI_INSTALLATION/bin/toml2env $CONFIG
 
 # parse config from toml:
 # PUBLISH, SUBSCRIBE, MQTT_PORT, MQTT_HOST,
 # BASE_DIR, WORK_DIR, SITE_ID
 #
-source "$BASE_DIR/src/Tools/funs.sh"
-readToml $CONFIG
-EXEC="$BASE_DIR/src/Watch/watch.jl"
+source "$SUSI_INSTALLATION/src/Tools/funs.sh"
+EXEC="$SUSI_INSTALLATION/src/Watch/watch.jl"
 
 # args:
 #
 ARG_STR=""
-if [[ ! -z $MQTT_HOST ]] ; then
-  ARG_STR="$ARG_STR --host $MQTT_HOST"
+if [[ ! -z $mqtt_host ]] ; then
+  ARG_STR="$ARG_STR --host $mqtt_host"
 fi
-if [[ ! -z $MQTT_PORT ]] ; then
-  ARG_STR="$ARG_STR --port $MQTT_PORT"
+if [[ ! -z $mqtt_port ]] ; then
+  ARG_STR="$ARG_STR --port $mqtt_port"
 fi
-if [[ ! -z $MQTT_USER ]] ; then
-  ARG_STR="$ARG_STR --user $MQTT_USER"
+if [[ ! -z $mqtt_user ]] ; then
+  ARG_STR="$ARG_STR --user $mqtt_user"
 fi
-if [[ ! -z $MQTT_PW ]] ; then
-  ARG_STR="$ARG_STR --password $MQTT_PW"
+if [[ ! -z $mqtt_password ]] ; then
+  ARG_STR="$ARG_STR --password $mqtt_password"
 fi
 
 # run:
