@@ -11,28 +11,27 @@
 # set config path
 # and make a JSON config in work dir:
 #
-if [[ $# -lt 1 ]] ; then
-  CONFIG="/etc/susi.toml"
-else
-  CONFIG=$1
-fi
-cd /tmp
-cat $CONFIG | toml2json > susi.json
-
-TOML="$(cat susi.json)"
-BASE_DIR="$(echo $TOML | jq -r .local.base_directory)"
-WORK_DIR="$(echo $TOML | jq -r .local.work_directory)"
-export BASE_DIR
+CONFIG="/etc/susi.toml"
+source SUSI_INSTALLATION/bin/toml2env $CONFIG
 
 # load tool funs:
 #
-source $BASE_DIR/src/Tools/funs.sh
+source $SUSI_INSTALLATION/src/Tools/funs.sh
 
-IS_SATELLITE="$(extractJSON .local.satellite $TOML)"
-if [[ $IS_SATELLITE == true ]] ; then
+# Topics:
+#
+source $SUSI_INSTALLATION/src/Tools/topics.sh
+
+cd $local_work_dir
+
+# load tool funs:
+#
+source $SUSI_INSTALLATION/src/Tools/funs.sh
+
+if [[ $local_satellite == true ]] ; then
   DAEMONS="hotword record say"
 else
-  DAEMONS="hotword record say stt nlu duckling tts session"
+  DAEMONS="hotword record play stt nlu duckling tts session"
 fi
 
 MONITOR_PIDS=""
@@ -40,12 +39,14 @@ MONITOR_PIDS=""
 function startDaemon() {
 
   _DAEMON=$1
-  _FLAG="$(extractJSON .$_DAEMON.start $TOML)"
+  _RUN_KEY="${DAEMON}_start"
+  _PATH_KEY="${DAEMON}_daemon"
+  _FLAG=${!_RUN_KEY}
+  _EXEC="$(relDir ${!_PATH_KEY})"
 
   if [[ $_FLAG == true ]] ; then
     echo "starting $_DAEMON daemon"
-    _EXEC="$(extractJSONdir .$_DAEMON.daemon $TOML)"
-    $_EXEC $CONFIG &
+    $_EXEC &
 
     # make list to monitor:
     #
@@ -55,6 +56,7 @@ function startDaemon() {
 }
 
 for DAEMON in $DAEMONS ; do
+  echo "Starting $DAEMON"
   startDaemon $DAEMON
 done
 
