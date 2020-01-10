@@ -166,10 +166,14 @@ function extractJSONdir() {
 
 function publish() {
 
-# echo "publish"
-# exit
   _TOPIC="$1"
   _PAYLOAD="$2"
-
   $mqtt_publish  -t "$_TOPIC" -m "$_PAYLOAD"
+}
+
+function publishFile() {
+
+  _TOPIC="$1"
+  _PAYLOAD="$2"
+  $mqtt_publish  -t "$_TOPIC" -f "$_PAYLOAD"
 }
