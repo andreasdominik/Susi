@@ -9,17 +9,15 @@
 # set config path:
 #
 CONFIG="/etc/susi.toml"
-TOML2ENV="/usr/local/bin/toml2env"
-source $TOML2ENV $CONFIG
-BASE_DIR="$local_base_directory"
+source $SUSI_INSTALLATION/bin/toml2env $CONFIG
 
 # load tool funs:
 #
-source $BASE_DIR/src/Tools/funs.sh
+source $SUSI_INSTALLATION/src/Tools/funs.sh
 
 # Topics:
 #
-source $BASE_DIR/src/Tools/topics.sh
+source $SUSI_INSTALLATION/src/Tools/topics.sh
 
 cd $local_work_dir
 
