@@ -48,7 +48,7 @@ while true ; do
   #
   $REFRESH_TOKEN_CMD $CREDS
 
-  $BINARY $STT_INPUT $STT_OUTPUT > /dev/null 2>&1
+  $BINARY $STT_INPUT $assistant_language $STT_OUTPUT > /dev/null 2>&1
 
   # generate standardised JSON for Susi
   # and fix if ts is corrupted:
