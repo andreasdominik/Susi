@@ -25,7 +25,7 @@ function constructMQTTcmd(topics; hostname = nothing, port = nothing,
                           user = nothing, password = nothing,
                           timeout = nothing)
 
-    cmd = `mosquitto_sub -v -C 1`
+    cmd = `mosquitto_sub -v -C 1 --qos 1`
     if hostname != nothing
         cmd = `$cmd -h $hostname`
     end

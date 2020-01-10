@@ -6,7 +6,7 @@ title = "NoSnips services config"
 
 [assistant]
 language = "de"
-name = "susi"
+name = "Susi"
 
 [local]
 # satellite = false    false for the main system; if true, only hotword
@@ -15,7 +15,7 @@ name = "susi"
 # base_directory = ""  installation directory (/..../ADoNoSnips)
 satellite = false
 siteId = "default"
-base_directory = "/home/andreas/Documents/Projekte/2019-Susi/Susi"
+# base_directory = "/home/andreas/Documents/Projekte/2019-Susi/Susi"
 work_directory = "/tmp"
 
 
@@ -75,11 +75,11 @@ play = "play"
 
 [play]
 # start = true     start the local service to utter text
-start = false
+start = true
 
 [tts]
 # start = true     start the central text-to-speech service
-start = false
+start = true
 daemon = "src/TextToSpeach/tts.daemon"
 binary = "src/GoogleCloud/tts/ttsWcache.sh"
 cache = "/home/andreas/Documents/Projekte/2019-Susi/ApplicationData/TTScache"
@@ -112,7 +112,7 @@ port = "8017"
 
 [session]
 # The session manager ...
-start = false
+start = true
 daemon = "src/Session/session.daemon"
 session_timeout = 30
 

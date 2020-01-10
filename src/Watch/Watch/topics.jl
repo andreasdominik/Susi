@@ -32,11 +32,13 @@ end
 function showHotwordDetected(payload)
     printTime()
     print("[Hotword] Hotword detected at site "); printSiteId(payload)
+    println()
 end
 
 function showHotwordOn(payload)
     printTime()
     print("[Session] Request to start hotword daemon at site "); printSiteId(payload)
+    println()
 end
 
 
