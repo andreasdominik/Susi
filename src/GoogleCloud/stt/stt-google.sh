@@ -5,12 +5,27 @@
 #   Output: $2 file with transscript only
 
 STT_INPUT=$1
-STT_OUTPUT=$2
+LANGUAGE=$2
+STT_OUTPUT=$3
 TMP_TOKEN="google_cloud.tmptoken"
 REQUEST="sttrequest.json"
 JSON="curl.result"
 
 if [[ -s $STT_INPUT ]] ; then
+
+  case $LANGUAGE in
+      de)
+          COUNTRY="DE"
+          ;;
+      en)
+          COUNTRY="GB"
+          ;;
+      *)
+          LANGUAGE="$(echo ${LANGUAGE:0:2} | tr A-Z a-z)"
+          COUNTRY="$(echo $LANGUAGE | tr a-z A-Z)"
+          ;;
+  esac
+  LANCODE="${LANGUAGE}-${COUNTRY}"
 
   ACCESS_TOKEN="$( cat $TMP_TOKEN )"
 
@@ -18,7 +33,7 @@ if [[ -s $STT_INPUT ]] ; then
             \"config\" : {
                 \"encoding\" : \"FLAC\",
                 \"sampleRateHertz\" : 16000,
-                \"languageCode\" : \"de-DE\",
+                \"languageCode\" : \"$LANCODE\",
                 \"alternativeLanguageCodes\" : [\"en-US\"],
                 \"maxAlternatives\" : 1,
                 \"model\" : \"command_and_search\",
@@ -28,7 +43,6 @@ if [[ -s $STT_INPUT ]] ; then
                 \"content\" : \"$(cat $STT_INPUT)\"
             }
           }"
-
 
 
   curl -v -XPOST --http2 'https://speech.googleapis.com/v1p1beta1/speech:recognize' \
