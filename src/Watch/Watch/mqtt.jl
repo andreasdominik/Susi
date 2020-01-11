@@ -14,6 +14,7 @@ function readOneMQTT(topics; hostname = nothing, port = nothing,
 
     # println("MQTT: $cmd")
     retrieved = runOneMQTT(cmd)
+    println("retrieved: $retrieved")
     topic, payload = parseMQTT(retrieved)
 
     return topic, payload
@@ -25,7 +26,7 @@ function constructMQTTcmd(topics; hostname = nothing, port = nothing,
                           user = nothing, password = nothing,
                           timeout = nothing)
 
-    cmd = `mosquitto_sub -v -C 1 --qos 1`
+    cmd = `mosquitto_sub -v -C 1 --qos 1 --id $(MQTT_CLIENT_ID) -c`
     if hostname != nothing
         cmd = `$cmd -h $hostname`
     end
@@ -58,7 +59,7 @@ function constructMQTTcmd(topics; hostname = nothing, port = nothing,
     end
 
     cmd = Cmd(cmd, ignorestatus = true)
-    #println("Mosquito command is : $cmd")
+    # println("Mosquito command is : $cmd")
 
     return cmd
 end

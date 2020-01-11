@@ -16,6 +16,7 @@ include("topics.jl")
 include("args.jl")
 include("loop.jl")
 
+const MQTT_CLIENT_ID = "watch-$(rand(UInt))"
 
 export parse_commandline, printArgs,
        watchSusi
