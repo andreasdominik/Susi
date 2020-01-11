@@ -37,7 +37,7 @@ while true ; do
 
   # extract base64 audio:
   #
-  extractJSON .audio $MQTT_PAYLOAD > $STT_INPUT
+  extractJSONfile .audio $RECEIVED_PAYLOAD > $STT_INPUT
 
   # check if offline:
   # ${SUSI_DIR}/src/Hardware/Internet/checkservices.sh

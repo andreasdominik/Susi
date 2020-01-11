@@ -1,12 +1,11 @@
 function publishLogSessionStarted() {
 
-  _MESSAGE=$1
   _PAYLOAD="{
              \"sessionId\": \"$SESSION_ID\",
              \"siteId\": \"$SESSION_SITE_ID\",
-             \"init\": {"type": \"$TYPE\"}
+             \"init\": {\"type\": \"$TYPE\"}
             }"
-  publish -t "$TOPIC_LOG_SESSION_STARTED" -m "$_MESSAGE"
+  publish "$TOPIC_LOG_SESSION_STARTED" "$_PAYLOAD"
 }
 
 
@@ -18,7 +17,7 @@ function publishLog() {
              \"siteId\": \"$SESSION_SITE_ID\",
              \"customData\": \"$MESSAGE\"
             }"
-  publish -t "$TOPIC_LOG" -m "$_MESSAGE"
+  publish "$TOPIC_LOG" -m "$_MESSAGE"
 }
 
 
@@ -55,13 +54,14 @@ function publishAsrStart() {
 
 function publishAsrTransscribe() {
 
-  _PAYLOAD="{
+  echo -n "{
             \"sessionId\": \"$SESSION_ID\",
             \"siteId\": \"$SESSION_SITE_ID\",
             \"id\": \"$ID\",
-            \"audio\": \"$AUDIO\"
-           }"
-  publish "$TOPIC_ASR_TRANSSCRIBE" "$_PAYLOAD"
+            \"audio\": \""    >  $PAYLOAD_FILE
+  cat $AUDIO_B64              >> $PAYLOAD_FILE
+  echo "\" }"                 >> $PAYLOAD_FILE
+  publishFile "$TOPIC_ASR_TRANSSCRIBE" "$PAYLOAD_FILE"
 }
 
 
@@ -99,16 +99,16 @@ function publishTTSrequest() {
 function publishPlay() {
 
   _PLAY_SITE=$1
+  echo -n "{
+    \"sessionId\": \"$SESSION_ID\",
+    \"siteId\": \"$PLAY_SITE\",
+    \"id\": \"$ID\",
+    \"audio\": \""              >  $PAYLOAD_FILE
+    cat $AUDIO_B64              >> $PAYLOAD_FILE
+    echo "\" }"                 >> $PAYLOAD_FILE
 
-  _PAYLOAD="{
-            \"sessionId\": \"$SESSION_ID\",
-            \"siteId\": \"$_PLAY_SITE\",
-            \"id\": \"$ID\",
-            \"audio\": \"$AUDIO\"
-           }"
-  publish "$TOPIC_TTS_PLAY" "$_PAYLOAD"
+  publishFile "$TOPIC_TTS_PLAY" "$_PAYLOAD"
 }
-
 
 
 

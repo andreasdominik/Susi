@@ -59,18 +59,18 @@ while true ; do
   # generate standardised JSON for Susi
   # and fix if ts is corrupted:
   #
-  if [[ -s $AUDIO_NAME ]] ; then
-    AUDIO="$(cat $AUDIO_NAME)"
-  else
-    AUDIO=""
+  if [[ ! -e $AUDIO_NAME ]] ; then
+    touch $AUDIO_NAME
   fi
 
-  PAYLOAD="{
+  echo -n "{
             \"sessionId\": \"$MQTT_SESSION_ID\",
             \"id\": \"$MQTT_ID\",
             \"siteId\": \"$MQTT_SITE_ID\",
-            \"audio\": \"$(cat $AUDIO_NAME)\"
-           }"
-  publish "$TOPIC_TTS_AUDIO" "$PAYLOAD"
+            \"audio\": \""      >  $PAYLOAD_FILE
+  cat $AUDIO_NAME               >> $PAYLOAD_FILE
+  echo  "\"  }"                 >> $PAYLOAD_FILE
+
+  publishFile $TOPIC_TTS_AUDIO $PAYLOAD_FILE
 
 done
