@@ -1,4 +1,4 @@
-function showStartSession(payload)
+function showStartedSession(payload)
     println("\n\n")
     printTime()
     print("[Session] ")
@@ -28,6 +28,16 @@ function showEndedSession(payload)
     println()
 end
 
+function showStartSession(payload)
+    println("\n\n")
+    printTime()
+    print("[User] ")
+    printstyled("Request to start session of type $(payload[:init][:type])",
+                bold=true, color=:green)
+    print(" from site "); printSiteId(payload)
+    println()
+    printIntentFilter(payload[:init])
+end
 
 function showHotwordDetected(payload)
     printTime()

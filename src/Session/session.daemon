@@ -91,6 +91,8 @@ while true ; do
     $TOPIC_HOTWORD)
       nextSessionId
       SESSION_SITE_ID=$MQTT_SITE_ID
+      TYPE=hotword
+      publishLogSessionStarted
       publishAsrStart # next: wait for audio recording
       DOING="wait_for_asr"
       ;;
@@ -102,6 +104,7 @@ while true ; do
       # check if action or notification or api or command:
       #
       TYPE="$(extractJSON .init.type $MQTT_PAYLOAD)"
+      publishLogSessionStarted
       if [[ $TYPE == "action" ]] ; then
         publishAsrStart # next: wait for audio recording
         DOING="wait_for_asr"

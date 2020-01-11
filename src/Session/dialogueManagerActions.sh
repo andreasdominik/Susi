@@ -1,3 +1,15 @@
+function publishLogSessionStarted() {
+
+  _MESSAGE=$1
+  _PAYLOAD="{
+             \"sessionId\": \"$SESSION_ID\",
+             \"siteId\": \"$SESSION_SITE_ID\",
+             \"init\": {"type": \"$TYPE\"}
+            }"
+  publish -t "$TOPIC_LOG_SESSION_STARTED" -m "$_MESSAGE"
+}
+
+
 function publishLog() {
 
   _MESSAGE=$1
@@ -6,7 +18,7 @@ function publishLog() {
              \"siteId\": \"$SESSION_SITE_ID\",
              \"customData\": \"$MESSAGE\"
             }"
-  publish -t "$TOPIC_WATCH_LOG" -m "$_MESSAGE"
+  publish -t "$TOPIC_LOG" -m "$_MESSAGE"
 }
 
 

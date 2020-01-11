@@ -12,11 +12,13 @@ function watchSusi(host, port, user, password)
         # println(payload)
         # println(TOPIC_INTENT)
 
-        if topic == TOPIC_START_SESSION
-            showStartSession(payload)
+        if topic == TOPIC_LOG_SESSION_STARTED
+            showStartedSession(payload)
         elseif topic == TOPIC_SESSION_ENDED
             showEndedSession(payload)
 
+        elseif topic == TOPIC_START_SESSION
+            showStartSession(payload)
         elseif topic == TOPIC_HOTWORD
             showHotwordDetected(payload)
         elseif topic == TOPIC_HOTWORD_ON

@@ -38,4 +38,5 @@ TOPIC_INTENT="hermes/intent/"
 # QnD NoSnips topics:
 #
 TOPIC_TIMEOUT="susi/session/timeout"
-TOPIC_WATCH_LOG="susi/watch/log"
+TOPIC_LOG="susi/log/notification"
+TOPIC_LOG_SESSION_STARTED="susi/log/sessionStarted"
