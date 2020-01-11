@@ -107,7 +107,7 @@ function publishPlay() {
     cat $AUDIO_B64              >> $PAYLOAD_FILE
     echo "\" }"                 >> $PAYLOAD_FILE
 
-  publishFile "$TOPIC_TTS_PLAY" "$_PAYLOAD"
+  publishFile "$TOPIC_PLAY" "$_PAYLOAD"
 }
 
 
@@ -160,7 +160,7 @@ function setDMtopics() {
       MATCH="id"
       ;;
     "playing")
-      TOPICS="$TOPIC_TTS_PLAY_FINISHED"
+      TOPICS="$TOPIC_PLAY_FINISHED"
       MATCH="id"
       ;;
     "session_ongoing")

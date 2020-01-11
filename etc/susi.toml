@@ -76,6 +76,8 @@ play = "play"
 [play]
 # start = true     start the local service to utter text
 start = true
+daemon = "src/Play/play.daemon"
+binary = "play"
 
 [tts]
 # start = true     start the central text-to-speech service
@@ -86,7 +88,7 @@ cache = "/home/andreas/Documents/Projekte/2019-Susi/ApplicationData/TTScache"
 
 [stt]
 # start = true     start the central speech-to-text (aka ASR) service
-start = false
+start = true
 daemon = "src/SpeechToText/stt.daemon"
 binary = "src/GoogleCloud/stt/stt-google.sh"
 
@@ -97,13 +99,13 @@ refresh_token_cmd = "src/GoogleCloud/refreshToken.sh"
 [nlu]
 # start = true     start the natural language understanding service
 #                  to identify intents and extract slot values
-start = false
+start = true
 
 [duckling]
 # duckling is used to extract time and ordinal information from raw slot values.
 # a locally inststalled server can be used.
 #
-start = false
+start = true
 install_dir = "/opt/Duckling/duckling"
 daemon = "src/Duckling/duckling.daemon"
 # binary = "stack exec duckling-example-exe"

@@ -30,8 +30,8 @@ TOPIC_NLU_NOT="hermes/nlu/intentNotRecognized"
 TOPIC_TTS_SAY="hermes/tts/say"
 TOPIC_TTS_REQUEST="susi/tts/request"
 TOPIC_TTS_AUDIO="susi/tts/audio"
-TOPIC_TTS_PLAY="susi/tts/play"
-TOPIC_TTS_PLAY_FINISHED="susi/tts/playFinished"
+TOPIC_PLAY_FINISHED="susi/play/playFinished"
+TOPIC_PLAY="susi/play/playAudio"
 
 TOPIC_INTENT="hermes/intent/"
 

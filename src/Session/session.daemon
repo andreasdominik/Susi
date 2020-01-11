@@ -150,7 +150,7 @@ while true ; do
       fi
       ;;
 
-    $TOPIC_TTS_PLAY_FINISHED)
+    $TOPIC_PLAY_FINISHED)
       if [[ $NEXT_DOING == "end_session" ]] ; then
         publishSessionEnded
         publishHotwordOn
@@ -160,6 +160,7 @@ while true ; do
       fi
       ;;
 
+      # TODO: wait or not
     $TOPIC_TTS_SAY)
       TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
       PLAY_SITE="$(extractJSONfile .siteId $RECEIVED_PAYLOAD)"

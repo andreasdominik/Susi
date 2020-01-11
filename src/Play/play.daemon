@@ -1,0 +1,50 @@
+#!/bin/bash -xv
+#
+# STT service for NoSnips replacement.
+# Usage:
+#     stt.daemon path/to/nosnips.toml
+#     stt.daemon #/etc/nosnips.toml
+#
+#
+
+# set config path:
+#
+CONFIG="/etc/susi.toml"
+source $SUSI_INSTALLATION/bin/toml2env $CONFIG
+
+# load tool funs:
+#
+source $SUSI_INSTALLATION/src/Tools/funs.sh
+
+# Topics:
+#
+source $SUSI_INSTALLATION/src/Tools/topics.sh
+
+cd $local_work_directory
+
+BINARY="$(relDir $play_binary)"
+
+while true ; do
+
+  subscribeSiteOnce $local_siteId $TOPIC_PLAY
+  SESSION_ID=$MQTT_SESSION_ID
+  ID=$MQTT_ID
+
+  # extract base64 audio:
+  #
+  extractJSONfile .audio $RECEIVED_PAYLOAD > $AUDIO_B64
+  base64 --decode $AUDIO_B64 > $AUDIO
+  MEDIA_TYPE="$(soxi -t $AUDIO)"
+  AUDIO_NAME="${AUDIO}.${MEDIA_TYPE}"
+  mv $AUDIO $AUDIO_NAME
+
+  $BINARY $AUDIO_NAME
+
+  PAYLOAD="{
+            \"sessionId\": \"$SESSION_ID\",
+            \"id\": \"$ID\",
+            \"siteId\": \"$local_siteId\"
+           }"
+  publish "$TOPIC_PLAY_FINISHED" "$PAYLOAD"
+
+done

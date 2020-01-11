@@ -53,9 +53,9 @@ function watchSusi(host, port, user, password)
             showTTSRequest(payload)
         elseif topic == TOPIC_TTS_AUDIO
             showTTSAudio(payload)
-        elseif topic == TOPIC_TTS_PLAY
+        elseif topic == TOPIC_PLAY
             showPlay(payload)
-        elseif topic == TOPIC_TTS_PLAY_FINISHED
+        elseif topic == TOPIC_PLAY_FINISHED
             showPlayFinished(payload)
         end
     end
