@@ -1,0 +1,15 @@
+[Unit]
+Description=Central service to start all Susi daemons
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=andreas
+ExecStart=/usr/local/bin/susi.sh
+Environment="SUSI_INSTALLATION=/home/andreas/Documents/Projekte/2019-Susi/Susi"
+
+[Install]
+WantedBy=multi-user.target
