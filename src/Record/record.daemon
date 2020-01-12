@@ -53,7 +53,8 @@ while true ; do
   fi
 
 TOPIC=$TOPIC_ASR_AUDIO
-PAYLOAD="recordpayload.json"
+MQTT_COUNTER=$(($MQTT_COUNTER + 1))
+PAYLOAD="${MQTT_BASE_NAME}-$(printf "%04d" $MQTT_COUNTER)"
 
 echo -n "{
   \"siteId\": \"$local_siteId\",

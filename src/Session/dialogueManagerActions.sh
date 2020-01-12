@@ -54,6 +54,8 @@ function publishAsrStart() {
 
 function publishAsrTransscribe() {
 
+  MQTT_COUNTER=$(($MQTT_COUNTER + 1))
+  PAYLOAD_FILE="${MQTT_BASE_NAME}-pub-$(printf "%04d" $MQTT_COUNTER).json"
   echo -n "{
             \"sessionId\": \"$SESSION_ID\",
             \"siteId\": \"$SESSION_SITE_ID\",
