@@ -1,4 +1,4 @@
-#!/bin/bash -xv
+#!/bin/bash 
 #
 # Get STT from Google.
 #   Input: $1 : file with base64-encoded audio

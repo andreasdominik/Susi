@@ -1,4 +1,4 @@
-#!/bin/bash -vx
+#!/bin/bash 
 #
 # Basic service for NoSnips replacement service.
 # Usage:

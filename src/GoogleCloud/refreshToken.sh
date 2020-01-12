@@ -1,4 +1,4 @@
-#!/bin/bash -xv
+#!/bin/bash 
 #
 # refreshes the google access token (valid approx. 1 hour)
 # usage:

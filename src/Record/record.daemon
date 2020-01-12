@@ -1,4 +1,4 @@
-#!/bin/bash -xv
+#!/bin/bash
 #
 # Record service for NoSnips replacement.
 # Usage:
@@ -14,11 +14,14 @@ source $SUSI_INSTALLATION/bin/toml2env $CONFIG
 # load tool funs:
 #
 source $SUSI_INSTALLATION/src/Tools/funs.sh
-
-# Topics:
-#
 source $SUSI_INSTALLATION/src/Tools/topics.sh
 
+# base names for recveived and subm. MQTT message files:
+#
+MQTT_BASE_NAME="recordDaemon"
+MQTT_COUNTER=0
+
+set -xv
 cd $local_work_directory
 
 REC_CMD="$(relDir $record_binary)"

@@ -1,4 +1,4 @@
-#!/bin/bash -xv
+#!/bin/bash 
 #
 # Script to record a command; activated by
 #
