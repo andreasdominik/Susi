@@ -3,9 +3,9 @@
 
 AUDIO_B64="audio.b64"
 AUDIO="audio"
-PAYLOAD_FILE="payload.json"
-RECEIVED_MQTT="received.mqtt"
-RECEIVED_PAYLOAD="received.json"
+# PAYLOAD_FILE="payload.json"
+# RECEIVED_MQTT="received.mqtt"
+# RECEIVED_PAYLOAD="received.json"
 
 
 function relDir() {
@@ -48,6 +48,11 @@ function subscribeOnce() {
   for _T in $@ ; do
     __TOPICS="$__TOPICS -t $_T"
   done
+
+  MQTT_COUNTER=$(($MQTT_COUNTER + 1))
+  RECEIVED_BASE="${MQTT_BASE_NAME}-$(printf "%04d" $MQTT_COUNTER)"
+  RECEIVED_PAYLOAD="${RECEIVED_BASE}.json"
+  RECEIVED_MQTT="${RECEIVED_BASE}.mqtt"
 
   $mqtt_subscribe -C 1 -v $(mqtt_auth) $__TOPICS > $RECEIVED_MQTT
   # _CMD="$mqtt_subscribe -C 1 -v $(mqtt_auth) $__TOPICS"
@@ -96,7 +101,6 @@ function parseMQTT() {
 function extractJSONfile() {
   _FIELD=$1
   if [[ $# -gt 1 ]] ; then
-    shift
     _FILE=$2
   else
     _FILE=$RECEIVED_PAYLOAD

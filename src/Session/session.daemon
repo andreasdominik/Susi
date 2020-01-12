@@ -17,10 +17,12 @@ source $SUSI_INSTALLATION/bin/toml2env $CONFIG
 #
 source $SUSI_INSTALLATION/src/Tools/funs.sh
 source $SUSI_INSTALLATION/src/Session/dialogueManagerActions.sh
-
-# Topics:
-#
 source $SUSI_INSTALLATION/src/Tools/topics.sh
+
+# base names for recveived and subm. MQTT message files:
+#
+MQTT_BASE_NAME="sessionDaemon"
+MQTT_COUNTER=0
 
 cd $local_work_directory
 

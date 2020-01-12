@@ -121,13 +121,13 @@ function scheduleTimeOut() {
 
   _TOPIC=$TOPIC_TIMEOUT
   _PAYLOAD="{\"id\": \"$TIMEOUT_ID\",
-             \"timeout\": $SESSION_TIMEOUT,
+             \"timeout\": \"$session_session_timeout sec timeout\",
              \"siteId\": \"$SESSION_SITE_ID\",
              \"sessionId\": \"$SESSION_ID\",
              \"date\": \"$(date)\"
             }"
 
-  (sleep $SESSION_TIMEOUT; $PUBLISH -t $_TOPIC -m "$_PAYLOAD") &
+  (sleep $session_session_timeout ; publish $_TOPIC "$_PAYLOAD") &
 }
 
 
@@ -173,6 +173,8 @@ function setDMtopics() {
     ;;
   esac
 
+  # always listen to timeouts:
+  #
   if [[ $DOING != "no_session" ]] ; then
     TOPICS="$TOPICS $TOPIC_TIMEOUT"
   fi
