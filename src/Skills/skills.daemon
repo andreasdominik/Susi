@@ -1,0 +1,70 @@
+#!/bin/bash
+#
+# Record service for NoSnips replacement.
+# Usage:
+#     skills.daemon
+#
+#
+
+# set config path:
+#
+CONFIG="/etc/susi.toml"
+source $SUSI_INSTALLATION/bin/toml2env $CONFIG
+
+# load tool funs:
+#
+source $SUSI_INSTALLATION/src/Tools/funs.sh
+source $SUSI_INSTALLATION/src/Tools/topics.sh
+
+# base names for recveived and subm. MQTT message files:
+#
+MQTT_BASE_NAME="skillsDaemon"
+MQTT_COUNTER=0
+
+# set -xv
+cd $local_work_directory
+
+SKILLS="$(find $skills_skills_dir -name 'action-*' -print)"
+
+MONITOR_PIDS=""
+
+function startSkill() {
+
+  _SKILL=$1
+  echo "(re)starting skill $_SKILL"
+  $_SKILL &
+
+  # make list to monitor:
+  #
+  _PID=$!
+  MONITOR_PIDS="$MONITOR_PIDS $_PID $_SKILL"
+}
+
+for SKILL in $SKILLS ; do
+  startSkill $SKILL
+done
+
+
+# monitor all skills and restart:
+#
+while true ; do
+  sleep 10
+  set -- $MONITOR_PIDS
+  MONITOR_PIDS=""
+
+  while [[ $# -gt 1 ]] ; do
+    __PID=$1
+    __SKILL=$2
+    shift 2
+
+    ps -p $__PID
+    __IS_OK=$?
+
+    if [[ $__IS_OK -gt 0 ]] ; then
+      startSkill $__SKILL
+    else
+      MONITOR_PIDS="$MONITOR_PIDS $__PID $__SKILL"
+    fi
+    sleep 1
+  done
+done
