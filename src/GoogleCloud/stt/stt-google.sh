@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash -xv
 #
 # Get STT from Google.
 #   Input: $1 : file with base64-encoded audio
@@ -29,8 +29,8 @@ if [[ -s $STT_INPUT ]] ; then
 
   ACCESS_TOKEN="$( cat $TMP_TOKEN )"
 
-  REQUEST="{
-            \"config\" : {
+  echo -n "{
+            \"config\": {
                 \"encoding\" : \"FLAC\",
                 \"sampleRateHertz\" : 16000,
                 \"languageCode\" : \"$LANCODE\",
@@ -39,16 +39,17 @@ if [[ -s $STT_INPUT ]] ; then
                 \"model\" : \"command_and_search\",
                 \"enableWordTimeOffsets\" : false
             },
-            \"audio\" : {
-                \"content\" : \"$(cat $STT_INPUT)\"
-            }
-          }"
+            \"audio\": {
+                \"content\": \""       >  $REQUEST
+  cat $STT_INPUT | tr -d '\n'           >> $REQUEST
+  echo "\"} }"                          >> $REQUEST
 
+  # curl -v -XPOST --http2 'https://speech.googleapis.com/v1/speech:recognize' \
 
   curl -v -XPOST --http2 'https://speech.googleapis.com/v1p1beta1/speech:recognize' \
      -H "Content-Type: application/json" \
      -H "Authorization: Bearer $ACCESS_TOKEN" \
-     -d "$REQUEST" -o $JSON
+     --data "@$REQUEST" -o $JSON
 
   grep 'transcript' $JSON
   TS_OK=$?

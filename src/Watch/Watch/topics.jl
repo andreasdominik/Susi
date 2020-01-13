@@ -82,9 +82,9 @@ function showTransscript(payload)
     sessionIndent()
     println("[STT] Transscript received:")
     dateIndent(); sessionIndent()
-    if haskey(payload, :transscript) && length(payload[:transscript]) > 1
+    if haskey(payload, :text) && length(payload[:text]) > 1
         sessionIndent()
-        printText(payload[:transscript])
+        printText(payload[:text])
     else
         printError("No transscript received!")
     end

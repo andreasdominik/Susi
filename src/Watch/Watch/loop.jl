@@ -58,5 +58,7 @@ function watchSusi(host, port, user, password)
         elseif topic == TOPIC_PLAY_FINISHED
             showPlayFinished(payload)
         end
+
+        sleep(1.0)
     end
 end

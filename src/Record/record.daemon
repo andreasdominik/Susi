@@ -60,9 +60,9 @@ echo -n "{
   \"siteId\": \"$local_siteId\",
   \"sessionId\": \"$MQTT_SESSION_ID\",
   \"id\": \"$MQTT_ID\",
-  \"audio\": \""                >  $PAYLOAD
-  cat ${REC_FILE}.b64           >> $PAYLOAD
-  echo "\" }"                   >> $PAYLOAD
+  \"audio\": \""                    >  $PAYLOAD
+  cat ${REC_FILE}.b64 | tr -d '\n'  >> $PAYLOAD
+  echo "\" }"                       >> $PAYLOAD
 
 publishFile $TOPIC $PAYLOAD
 done

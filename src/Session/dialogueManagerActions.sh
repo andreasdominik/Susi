@@ -55,13 +55,13 @@ function publishAsrStart() {
 function publishAsrTransscribe() {
 
   MQTT_COUNTER=$(($MQTT_COUNTER + 1))
-  PAYLOAD_FILE="${MQTT_BASE_NAME}-pub-$(printf "%04d" $MQTT_COUNTER).json"
+  PAYLOAD_FILE="${MQTT_BASE_NAME}-$(printf "%04d" $MQTT_COUNTER).payload"
   echo -n "{
             \"sessionId\": \"$SESSION_ID\",
             \"siteId\": \"$SESSION_SITE_ID\",
             \"id\": \"$ID\",
             \"audio\": \""    >  $PAYLOAD_FILE
-  cat $AUDIO_B64              >> $PAYLOAD_FILE
+  cat $AUDIO_B64 | tr -d '\n' >> $PAYLOAD_FILE
   echo "\" }"                 >> $PAYLOAD_FILE
   publishFile "$TOPIC_ASR_TRANSSCRIBE" "$PAYLOAD_FILE"
 }

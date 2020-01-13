@@ -24,8 +24,8 @@ work_directory = "/tmp"
 # port = 8883
 host = ""
 port = ""
-subscribe = "mosquitto_sub --qos 1"
-publish = "mosquitto_pub --qos 1"
+subscribe = "mosquitto_sub --qos 2"
+publish = "mosquitto_pub --qos 2"
 
 # set user/password to use authetication:
 #
