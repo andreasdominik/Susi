@@ -76,7 +76,7 @@ function findIntent(command, filter)
 
     for oneMatch in MATCHES
 
-        println("testing ... $(oneMatch.match)")
+        println("testing ... $(oneMatch.match) => $(oneMatch.matchExpression)")
         if length(filter) == 0 || oneMatch.intent in filter
 
             matched = matchOne(command, oneMatch)

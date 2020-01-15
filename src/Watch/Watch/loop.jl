@@ -59,6 +59,6 @@ function watchSusi(host, port, user, password)
             showPlayFinished(payload)
         end
 
-        sleep(1.0)
+        # sleep(10.0)
     end
 end

@@ -100,6 +100,7 @@ refresh_token_cmd = "src/GoogleCloud/refreshToken.sh"
 # start = true     start the natural language understanding service
 #                  to identify intents and extract slot values
 start = true
+daemon = "src/NLU/nlu.daemon.jl"
 
 [duckling]
 # duckling is used to extract time and ordinal information from raw slot values.
@@ -122,4 +123,4 @@ session_timeout = 15
 start = false
 daemon = "src/Skillserver/skills.daemon"
 
-skills_dir = "/home/andreas/Documents/Projekte/2019-Susi/Susi/src/NLU"
+skills_dir = "/home/andreas/Documents/Projekte/2019-Susi/Skills"

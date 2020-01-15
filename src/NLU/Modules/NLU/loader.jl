@@ -5,7 +5,7 @@ function loadIntents()
     skills = AbstractString[]
     for (root, dirs, files) in walkdir(SKILLS_DIR)
 
-        files = filter(f->f=="nlu.toml", files)
+        files = filter(f->occursin(Regex("^nlu-$LANG.toml\$"), f), files)
         paths = joinpath.(root, files)
         append!(skills, paths)
     end
@@ -13,7 +13,7 @@ function loadIntents()
     println("[NLU loader]: $(length(skills)) skills found to recognise.")
 
     for skill in skills
-        println("[NLU loader]: loading nlu.toml for $skill.")
+        println("[NLU loader]: loading $skill.")
 
         toml = TOML.parsefile(skill)
         toml = fixToml(toml)
@@ -49,7 +49,7 @@ function extractPhrases(toml, slots, intent)
         # add slots as named capture groups:
         #
         for (slotName,slot) in slots
-            phrase = replace(phrase, "<$(slot.name)>" => slot.regex )
+            phrase = replace(phrase, "<<$(slot.name)>>" => slot.regex )
         end
 
         # not for Regex-type:
@@ -63,8 +63,9 @@ function extractPhrases(toml, slots, intent)
 
             # word alternatives.
             # or "none" can be defined as <<word1|word2|>>
+            # match all chars in list but NOT greedy (.*?):
             #
-            phrase = replace(phrase, r"<<(?P<aword>\S*)>>" => s"(?:\g<aword>)")
+            phrase = replace(phrase, r"<<(?P<aword>.*?)>>" => s"(?:\g<aword>)")
 
 
 
@@ -78,9 +79,9 @@ function extractPhrases(toml, slots, intent)
             phrase = replace(phrase, r"( \?){2,}" => " ?")
         end
 
-        # println("raw:     $raw")
-        # println("phrase:  $phrase")
-        # println("regex:  $(Regex(phrase))")
+        println("raw:     $raw")
+        println("phrase:  $phrase")
+        println("regex:  $(Regex(phrase))")
 
         # make exact regex:
         #
@@ -159,7 +160,7 @@ function extractSlots(toml)
             if type in ["Any","ListOfValues"]
                 fun = function(slotParsed)
                     for (synName,synWords) in syns
-                        synRe = Regex("^$(join(synWords,"|"))\$")
+                        synRe = Regex("^$(join(synWords,"|"))\$", "i")
                         if occursin(synRe, slotParsed)
                             return(synName)
                         end
