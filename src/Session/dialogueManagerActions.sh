@@ -75,7 +75,7 @@ function publishNluQuery() {
             \"id\": \"$ID\",
             \"input\": \"$TEXT\"
            }"
-  publish "$TOPIC_ASR_TRANSSCRIBE" "$_PAYLOAD"
+  publish "$TOPIC_NLU_QUERY" "$_PAYLOAD"
 }
 
 function pubishIntent() {

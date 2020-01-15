@@ -72,6 +72,6 @@ while true ; do
             \"id\": \"$ID\",
             \"text\": \"$TRANSSCRIPT\"
            }"
-  publish "$TOPIC_ASR_TEXT" "$PAYLOAD"
+  publishFile "$TOPIC_ASR_TEXT" "$PAYLOAD"
 
 done

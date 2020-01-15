@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash -xv
 #
 # STT service for NoSnips replacement.
 # Usage:
@@ -15,10 +15,12 @@ source $SUSI_INSTALLATION/bin/toml2env $CONFIG
 # load tool funs:
 #
 source $SUSI_INSTALLATION/src/Tools/funs.sh
-
-# Topics:
-#
 source $SUSI_INSTALLATION/src/Tools/topics.sh
+
+# base names for recveived and subm. MQTT message files:
+#
+MQTT_BASE_NAME="skillsDaemon"
+MQTT_COUNTER=0
 
 cd $local_work_directory
 
@@ -33,8 +35,8 @@ while true ; do
 
   # extract text to be spoken:
   #
-  TEXT="$(extractJSON .input $MQTT_PAYLOAD)"
-  LANG="$(extractJSON .lang $MQTT_PAYLOAD)"
+  TEXT="$(extractJSONfile .input $RECEIVED_PAYLOAD)"
+  LANG="$(extractJSONfile .lang $RECEIVED_PAYLOAD)"
   if [[ -z $LANG ]] ; then
     LANG="de"
   fi
@@ -63,7 +65,7 @@ while true ; do
     touch $AUDIO_NAME
   fi
 
-  echo -n "{
+  echo "{
             \"sessionId\": \"$MQTT_SESSION_ID\",
             \"id\": \"$MQTT_ID\",
             \"siteId\": \"$MQTT_SITE_ID\",

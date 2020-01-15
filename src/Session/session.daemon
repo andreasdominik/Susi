@@ -26,7 +26,7 @@ MQTT_COUNTER=0
 
 cd $local_work_directory
 
-set -xv
+# set -xv
 # core loop that catches all MQTTs depending on
 # state:
 #
@@ -34,8 +34,10 @@ DOING="no_session"
 while true ; do
 
   setDMtopics
+  echo "doing: $DOING"
   subscribeSmart $MATCH $TOPICS
 
+  echo "       MQTT received topic: $MQTT_TOPIC"
   ID="id:$(uuidgen)"    # set request ID for next round.
 
   # manage timeouts:
@@ -68,20 +70,20 @@ while true ; do
       ;;
 
     $TOPIC_ASR_TEXT)
-      TEXT="$(extractJSONfile .transscript $RECEIVED_PAYLOAD)"
-      if [[ -z $TEXT ]] ; then
+      TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
+      if [[ -z $TEXT || ${#TEXT} -lt 10 ]] ; then
         publishSessionEnded "error: no transscript"
         publishHotwordOn
         DOING="no_session"
       else
-        publishNluQuery # next: wait for NLU result
+        publishNluQuery
         DOING="wait_for_nlu"
       fi
       ;;
 
     $TOPIC_NLU_NOT)
       publishSessionEnded "error: NLU failed"
-      qndSay "failedNLU"
+      # qndSay "failedNLU"
       publishHotwordOn
       DOING="no_session"
       ;;
@@ -127,7 +129,7 @@ while true ; do
         DOING="session_ongoing"
 
       elif [[ $TYPE == "command" ]] ; then
-        TEXT="$(extractJSONfile .init.command $RECEIVED_PAYLOAD)"
+        TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
         publishNluQuery
         DOING="wait_for_nlu"
 
