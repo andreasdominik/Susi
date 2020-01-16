@@ -147,7 +147,7 @@ function extractJSONdir() {
 function publish() {
 
   _TOPIC="$1"
-  _PAYLOAD="$2"
+  _PAYLOAD="$(echo $2)"   # remove newlines
   $mqtt_publish  -t "$_TOPIC" -m "$_PAYLOAD"
 }
 
@@ -155,5 +155,13 @@ function publishFile() {
 
   _TOPIC="$1"
   _PAYLOAD="$2"
+
+  # rm newlines and add one at the end:
+  #
+  _PAYLOAD="${_PAYLOAD}.tmp"
+  cat $_PAYLOAD | tr -d '\n' | tr -s ' ' > $_PAYLOAD_TMP
+  mv $_PAYLOAD_TMP $_PAYLOAD
+  echo "" >> $_PAYLOAD
+
   $mqtt_publish  -t "$_TOPIC" -s <"$_PAYLOAD"
 }
