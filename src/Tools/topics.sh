@@ -33,7 +33,7 @@ TOPIC_TTS_AUDIO="susi/tts/audio"
 TOPIC_PLAY_FINISHED="susi/play/playFinished"
 TOPIC_PLAY="susi/play/playAudio"
 
-TOPIC_INTENT="hermes/intent/"
+TOPIC_INTENT="hermes/intent"
 
 # QnD NoSnips topics:
 #

@@ -17,6 +17,7 @@ include("args.jl")
 include("loop.jl")
 
 const MQTT_CLIENT_ID = "watch-$(rand(UInt))"
+const MQTT_MESSAGE_PIPE = "/tmp/susi.watch.messages.fifo"
 
 export parse_commandline, printArgs,
        watchSusi

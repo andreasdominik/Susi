@@ -16,18 +16,31 @@ EXEC="$SUSI_INSTALLATION/src/Watch/watch.jl"
 #
 ARG_STR=""
 if [[ ! -z $mqtt_host ]] ; then
-  ARG_STR="$ARG_STR --host $mqtt_host"
+  ARG_STR="$ARG_STR -h $mqtt_host"
 fi
 if [[ ! -z $mqtt_port ]] ; then
-  ARG_STR="$ARG_STR --port $mqtt_port"
+  ARG_STR="$ARG_STR -p $mqtt_port"
 fi
 if [[ ! -z $mqtt_user ]] ; then
-  ARG_STR="$ARG_STR --user $mqtt_user"
+  ARG_STR="$ARG_STR -u $mqtt_user"
 fi
 if [[ ! -z $mqtt_password ]] ; then
-  ARG_STR="$ARG_STR --password $mqtt_password"
+  ARG_STR="$ARG_STR -P $mqtt_password"
 fi
 
+# TOPICS="-t 'hermes/#' -t 'susi/#'"
+MQTT_MESSAGE_PIPE=/tmp/susi.watch.messages.fifo
+
+# start listener and write to pipe:
+#
+if [[ -e $MQTT_MESSAGE_PIPE ]] ; then
+  rm -f $MQTT_MESSAGE_PIPE
+fi
+mkfifo $MQTT_MESSAGE_PIPE
+
+set -xv
+$mqtt_subscribe -v $ARG_STR -t 'hermes/#' -t 'susi/#' > /tmp/susi.watch.messages.fifo &
+set +xv
 # run:
 #
 julia --color=yes -- $EXEC $ARG_STR

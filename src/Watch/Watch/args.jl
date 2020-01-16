@@ -1,18 +1,18 @@
 
 function parse_commandline()
 
-    s = ArgParseSettings()
+    s = ArgParseSettings(add_help=false)
     @add_arg_table s begin
-        "--host", "-H"
+        "-h"
             help = "hostname of MQTT-server; default = nothing"
             default = nothing
-        "--port", "-P"
+        "-p"
             help = "port of MQTT-server; default = nothing"
             default = nothing
-        "--user", "-u"
+        "-u"
             help = "username for MQTT-server; default = nothing"
             default = nothing
-        "--password", "-p"
+        "-P"
             help = "password for MQTT-server; default = nothing"
             default = nothing
     end

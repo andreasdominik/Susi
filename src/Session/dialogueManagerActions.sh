@@ -89,10 +89,10 @@ function publishIntent() {
               \"siteId\": \"$SESSION_SITE_ID\",
               \"id\": \"$ID\",
               \"input\": \"$(extractJSONfile .input $MQTT_PAYLOAD)\",
-              \"slots\": \"$(extractJSONfile .slots $MQTT_PAYLOAD)\"
-              \"intent\": \"$(extractJSONfile .intent $MQTT_PAYLOAD)\"
+              \"slots\": $(extractJSONfile .slots $MQTT_PAYLOAD),
+              \"intent\": $(extractJSONfile .intent $MQTT_PAYLOAD)
              }"
-  
+
   publish "$_INTENT_NAME" "$_PAYLOAD"
 }
 

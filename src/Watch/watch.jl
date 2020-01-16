@@ -13,9 +13,10 @@ function main()
     args = parse_commandline()
     # printArgs(args)
 
-    sayHello(args[:host], args[:port])
+    sayHello(args[:h], args[:p])
 
-    watchSusi(args[:host], args[:port], args[:user], args[:password])
+    watchSusi()
+    # watchSusi(args[:host], args[:port], args[:user], args[:password])
 end
 
 
