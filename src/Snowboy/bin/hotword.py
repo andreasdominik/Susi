@@ -30,7 +30,10 @@ signal.signal(signal.SIGINT, signal_handler)
 detector = snowboydecoder.HotwordDetector(model, sensitivity=sensi)
 
 # main loop
-reason = detector.start(detected_callback=snowboydecoder.play_audio_file,
+# reason = detector.start(detected_callback=snowboydecoder.play_audio_file,
+#                interrupt_check=interrupt_callback,
+#                sleep_time=0.03)
+reason = detector.start(detected_callback=snowboydecoder.print_detected,
                interrupt_check=interrupt_callback,
                sleep_time=0.03)
 

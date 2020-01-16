@@ -33,6 +33,11 @@ class RingBuffer(object):
         self._buf.clear()
         return tmp
 
+def print_detected():
+    """even more simple callback wit honly console output
+    """
+    print("hotword detected")
+
 
 def play_audio_file(fname=DETECT_DING):
     """Simple callback function to play a wave file. By default it plays
