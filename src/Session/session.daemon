@@ -180,7 +180,6 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
         ;;
 
       $TOPIC_NLU_PARSED)
-        INTENT="$(extractJSONfile .intent $RECEIVED_PAYLOAD)"
         publishIntent
         DOING="session_ongoing"
         ;;
