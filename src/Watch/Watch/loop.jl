@@ -58,6 +58,10 @@ function watchSusi()
                     showPlay(payload)
                 elseif topic == TOPIC_PLAY_FINISHED
                     showPlayFinished(payload)
+                elseif topic == TOPIC_NOTIFICATION_ON
+                    showNotification(payload, :on)
+                elseif topic == TOPIC_NOTIFICATION_OFF
+                    showNotification(payload, :off)
                 end
             end
             # sleep(10.0)

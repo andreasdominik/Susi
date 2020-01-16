@@ -213,6 +213,20 @@ end
 
 
 
+function showNotification(payload, onoff)
+    printTime()
+    print("[User] Feedback 'ding-dong' toggled ")
+
+    if onoff == :on
+        printstyled("on", color = :red)
+    else
+        printstyled("off", color = :red)
+    end
+
+    print(" at site "); printSiteId(payload)
+    println()
+end
+
 
 
 

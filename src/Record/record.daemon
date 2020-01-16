@@ -39,34 +39,44 @@ END_SOUND="$(relDir $record_notification_end)"
 #
 while true ; do
 
-  subscribeSiteOnce $local_siteId $TOPIC_ASR_START
+  subscribeSiteOnce $local_siteId $TOPIC_ASR_START $TOPIC_NOTIFICATION_ON $TOPIC_NOTIFICATION_OFF
 
-  if [[ $NOTIFICATION == true ]] ; then
-    $record_play $START_SOUND
+  echo "this site: $local_siteId, MQTT: $MQTT_SITE_ID"
+  
+  if [[ $MQTT_TOPIC == $TOPIC_ASR_START ]] ; then
+
+    if [[ $NOTIFICATION == true ]] ; then
+      $record_play $START_SOUND
+    fi
+    rm -f $REC_FILE
+    $REC_CMD $REC_FILE $REC_LIMIT
+    if [[ $NOTIFICATION == true ]] ; then
+      $record_play $END_SOUND &
+    fi
+
+    if [[ -s $REC_FILE ]] ; then
+      base64 -w 0 $REC_FILE > ${REC_FILE}.b64
+    else
+      touch ${REC_FILE}.b64
+    fi
+
+    TOPIC=$TOPIC_ASR_AUDIO
+    MQTT_COUNTER=$(($MQTT_COUNTER + 1))
+    PAYLOAD="${MQTT_BASE_NAME}-$(printf "%04d" $MQTT_COUNTER)"
+
+    echo -n "{
+      \"siteId\": \"$local_siteId\",
+      \"sessionId\": \"$MQTT_SESSION_ID\",
+      \"id\": \"$MQTT_ID\",
+      \"audio\": \""                    >  $PAYLOAD
+      cat ${REC_FILE}.b64 | tr -d '\n'  >> $PAYLOAD
+      echo "\" }"                       >> $PAYLOAD
+
+    publishFile $TOPIC $PAYLOAD
+
+  elif [[ $MQTT_TOPIC == $TOPIC_NOTIFICATION_ON && $MQTT_SITE_ID == $local_siteId ]] ; then
+    NOTIFICATION=true
+  elif [[ $MQTT_TOPIC == $TOPIC_NOTIFICATION_OFF && $MQTT_SITE_ID == $local_siteId ]] ; then
+    NOTIFICATION=false
   fi
-  rm -f $REC_FILE
-  $REC_CMD $REC_FILE $REC_LIMIT
-  if [[ $NOTIFICATION == true ]] ; then
-    $record_play $END_SOUND &
-  fi
-
-  if [[ -s $REC_FILE ]] ; then
-    base64 -w 0 $REC_FILE > ${REC_FILE}.b64
-  else
-    touch ${REC_FILE}.b64
-  fi
-
-TOPIC=$TOPIC_ASR_AUDIO
-MQTT_COUNTER=$(($MQTT_COUNTER + 1))
-PAYLOAD="${MQTT_BASE_NAME}-$(printf "%04d" $MQTT_COUNTER)"
-
-echo -n "{
-  \"siteId\": \"$local_siteId\",
-  \"sessionId\": \"$MQTT_SESSION_ID\",
-  \"id\": \"$MQTT_ID\",
-  \"audio\": \""                    >  $PAYLOAD
-  cat ${REC_FILE}.b64 | tr -d '\n'  >> $PAYLOAD
-  echo "\" }"                       >> $PAYLOAD
-
-publishFile $TOPIC $PAYLOAD
 done
