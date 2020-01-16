@@ -152,7 +152,7 @@ function publishMQTT(topic, payload; hostname = nothing, port = nothing,
     # build cmd string:
     #
     # TODO: `$(CONFIG["mqtt_publish"])`
-    cmd = `mosquitto_pub`
+    cmd = `mosquitto_pub --qos 2`
     if hostname != nothing
         cmd = `$cmd -h $hostname`
     end
