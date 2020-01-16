@@ -137,10 +137,12 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       fi
     fi
 
-  # in the session only do something if the id matches the request:
+  # a) in the chain only do something if the id matches the request:
+  # b) some topics need to match the session id only (continue, end)
+  # c) say should work always:
   #
+  # a:
   elif [[ $MQTT_ID == $ID ]] ; then
-
     echo "with correct id: $MQTT_TOPIC"
     nextId
 
@@ -184,14 +186,12 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
         DOING="session_ongoing"
         ;;
 
-
-
       $TOPIC_TTS_AUDIO)
         extractJSONfile .audio $RECEIVED_PAYLOAD > $AUDIO_B64
         if [[ -z $AUDIO ]] ; then
-          publishSessionEnded "error: no audio from TTS"
-          publishHotwordOn
-          DOING="no_session"
+          # publishSessionEnded "error: no audio from TTS"
+          # publishHotwordOn
+          DOING="session_ongoing"
         else
           if [[ -z $PLAY_SITE ]] ; then
             PLAY_SITE=$SESSION_SITE_ID
@@ -211,16 +211,35 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
           DOING="session_ongoing"
         fi
         ;;
+      esac
+    # end only if id matches - now sessionId:
+    # b:
+  elif [[ $MQTT_SESSION_ID == $SESSION_ID ]] ; then
+    echo "with correct sessionId: $MQTT_TOPIC"
 
-        # TODO: wait or not
-      $TOPIC_TTS_SAY)
-        TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
-        PLAY_SITE="$(extractJSONfile .siteId $RECEIVED_PAYLOAD)"
-        publishTTSrequest
-        DOING="wait_for_tts"
-        NEXT_DOING="session_ongoing"
-        ;;
+    if [[ $MQTT_TOPIC == $TOPIC_END_SESSION ]] ; then
+      TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
+      publishTTSrequest
+      DOING="wait_for_tts"
+      NEXT_DOING="end_session"
+      PLAY_SITE=$SESSION_SITE_ID
 
-    esac
-  fi  # end only if id matches
+    elif [[ $MQTT_TOPIC == $TOPIC_CONTINUE_SESSION ]] ; then
+      TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
+      publishTTSrequest
+      DOING="wait_for_tts"
+      NEXT_DOING="wait_for_asr"
+      PLAY_SITE=$SESSION_SITE_ID
+    fi
+
+    # say is always possible:
+    #
+  elif [[ $MQTT_TOPIC == $TOPIC_TTS_SAY ]] ; then
+    TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
+    PLAY_SITE="$(extractJSONfile .siteId $RECEIVED_PAYLOAD)"
+    publishTTSrequest
+    NEXT_DOING=$DOING
+    DOING="wait_for_tts"
+  fi
+
 done  # loop read messages from pipe

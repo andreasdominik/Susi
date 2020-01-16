@@ -44,6 +44,14 @@ if [[ -s $STT_INPUT ]] ; then
   cat $STT_INPUT | tr -d '\n'           >> $REQUEST
   echo "\"} }"                          >> $REQUEST
 
+  # remove spaces and line breaks:
+  #
+  REQUEST_TMP=${REQUEST}.tmp
+  cat $REQUEST | tr -d '\n' | tr -s ' ' > $REQUEST_TMP
+  mv $REQUEST_TMP $REQUEST
+  echo "" >> $REQUEST
+
+
   # curl -v -XPOST --http2 'https://speech.googleapis.com/v1/speech:recognize' \
 
   curl -v -XPOST --http2 'https://speech.googleapis.com/v1p1beta1/speech:recognize' \

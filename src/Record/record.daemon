@@ -42,7 +42,7 @@ while true ; do
   subscribeSiteOnce $local_siteId $TOPIC_ASR_START $TOPIC_NOTIFICATION_ON $TOPIC_NOTIFICATION_OFF
 
   echo "this site: $local_siteId, MQTT: $MQTT_SITE_ID"
-  
+
   if [[ $MQTT_TOPIC == $TOPIC_ASR_START ]] ; then
 
     if [[ $NOTIFICATION == true ]] ; then

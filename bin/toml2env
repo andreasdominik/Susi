@@ -1,4 +1,4 @@
-#!/bin/bash -xv
+#!/bin/bash
 #
 # read a toml file and
 # all settings will be stored in env directlywith names:
@@ -31,7 +31,7 @@ while read -r _LINE ; do
 
     eval ${_FULL_KEY}="${_VAL}"
     export ${_FULL_KEY}
-    echo "VARIABLE: ${_FULL_KEY}=${!_FULL_KEY}"
+    # echo "VARIABLE: ${_FULL_KEY}=${!_FULL_KEY}"
 
   elif [[ "$_LINE" =~ $REGEX_PATH ]]; then
     _PATH="${BASH_REMATCH[1]}_"
