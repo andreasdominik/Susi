@@ -78,7 +78,7 @@ function publishNluQuery() {
   publish "$TOPIC_NLU_QUERY" "$_PAYLOAD"
 }
 
-function pubishIntent() {
+function publishIntent() {
 
   _INTENT_NAME="${TOPIC_INTENT}/$(extractJSON .intent.intentName $INTENT)"
   publish "$_INTENT_NAME" "$INTENT"
@@ -182,6 +182,46 @@ function setDMtopics() {
   fi
 }
 
+function waitForMessage() {
+
+  _MATCH=$1
+  shift
+  _TOPICS="$@"
+
+  LISTEN="continue"
+  while [[ $LISTEN == "continue" ]] ; do
+
+    subscribeOnce "hermes/# susi/#"
+    # test, if the message is the correct one:
+    #
+    echo "received Topic: $MQTT_TOPIC"
+    if [[ $_TOPICS =~ $MQTT_TOPIC ]] ; then
+
+      echo "    match with $_TOPICS"
+      if [[ $MQTT_TOPIC == $TOPIC_TIMEOUT ]] ; then
+        if [[ $MQTT_ID == $TIMEOUT_ID ]] ; then
+          LISTEN="done"
+        fi
+      elif [[ $MQTT_TOPIC == $TOPIC_START_SESSION ]] ||
+           [[ $MQTT_TOPIC == $TOPIC_HOTWORD ]] ; then
+        LISTEN="done"
+      elif [[ $_MATCH == "id" ]] ; then
+        if [[ $MQTT_ID == $ID ]] ; then
+          LISTEN="done"
+        fi
+      elif [[ $_MATCH == "session" ]] ; then
+        if [[ $MQTT_SESSION_ID == $SESSION_ID ]] ; then
+          LISTEN="done"
+        fi
+      elif [[ $_MATCH == "site" ]] ; then
+        if [[ $MQTT_SITE_ID == $SESSION_SITE_ID ]] ; then
+          LISTEN="done"
+        fi
+      fi
+    fi
+  done
+}
+
 function subscribeSmart() {
 
   _MATCH=$1
@@ -191,27 +231,32 @@ function subscribeSmart() {
   LISTEN="continue"
   while [[ $LISTEN == "continue" ]] ; do
 
-    subscribeOnce $_TOPICS
+    subscribeOnce "hermes/# susi/#"
     # test, if the message is the correct one:
     #
-    if [[ $MQTT_TOPIC == $TOPIC_TIMEOUT ]] ; then
-      if [[ $MQTT_ID == $TIMEOUT_ID ]] ; then
+    echo "received Topic: $MQTT_TOPIC"
+    if [[ $_TOPICS =~ $MQTT_TOPIC ]] ; then
+
+      echo "    match with $_TOPICS"
+      if [[ $MQTT_TOPIC == $TOPIC_TIMEOUT ]] ; then
+        if [[ $MQTT_ID == $TIMEOUT_ID ]] ; then
+          LISTEN="done"
+        fi
+      elif [[ $MQTT_TOPIC == $TOPIC_START_SESSION ]] ||
+           [[ $MQTT_TOPIC == $TOPIC_HOTWORD ]] ; then
         LISTEN="done"
-      fi
-    elif [[ $MQTT_TOPIC == $TOPIC_START_SESSION ]] ||
-         [[ $MQTT_TOPIC == $TOPIC_HOTWORD ]] ; then
-      LISTEN="done"
-    elif [[ $_MATCH == "id" ]] ; then
-      if [[ $MQTT_ID == $ID ]] ; then
-        LISTEN="done"
-      fi
-    elif [[ $_MATCH == "session" ]] ; then
-      if [[ $MQTT_SESSION_ID == $SESSION_ID ]] ; then
-        LISTEN="done"
-      fi
-    elif [[ $_MATCH == "site" ]] ; then
-      if [[ $MQTT_SITE_ID == $SESSION_SITE_ID ]] ; then
-        LISTEN="done"
+      elif [[ $_MATCH == "id" ]] ; then
+        if [[ $MQTT_ID == $ID ]] ; then
+          LISTEN="done"
+        fi
+      elif [[ $_MATCH == "session" ]] ; then
+        if [[ $MQTT_SESSION_ID == $SESSION_ID ]] ; then
+          LISTEN="done"
+        fi
+      elif [[ $_MATCH == "site" ]] ; then
+        if [[ $MQTT_SITE_ID == $SESSION_SITE_ID ]] ; then
+          LISTEN="done"
+        fi
       fi
     fi
   done

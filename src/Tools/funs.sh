@@ -54,11 +54,12 @@ function subscribeOnce() {
   RECEIVED_PAYLOAD="${RECEIVED_BASE}.json"
   RECEIVED_MQTT="${RECEIVED_BASE}.mqtt"
 
+  echo "subscribeOnce to: $mqtt_subscribe -C 1 -v $(mqtt_auth) $__TOPICS"
   $mqtt_subscribe -C 1 -v $(mqtt_auth) $__TOPICS > $RECEIVED_MQTT
   # _CMD="$mqtt_subscribe -C 1 -v $(mqtt_auth) $__TOPICS"
   # _RECIEVED="$($_CMD)"
   # _CMD="$mqtt_subscribe -C 1 -v $(mqtt_auth) $__TOPICS"
-  parseMQTT $RECEIVED_MQTT
+  parseMQTTfile $RECEIVED_MQTT
 }
 
 function subscribeSiteOnce() {
@@ -73,19 +74,26 @@ function subscribeSiteOnce() {
   done
 }
 
-function parseMQTT() {
-  _MQTT=$1
+# needs teh filenames to be predefined!
+#
+function parseMQTTfile() {
 
   MQTT_TOPIC=$(cat $RECEIVED_MQTT | grep -Po '^.*?(?= {)')
   cat $RECEIVED_MQTT | grep -Pzo '\{[\s\S]*\}' > $RECEIVED_PAYLOAD
   MQTT_SITE_ID=$(extractJSONfile .siteId $RECEIVED_PAYLOAD)
   MQTT_SESSION_ID=$(extractJSONfile .sessionId $RECEIVED_PAYLOAD)
   MQTT_ID=$(extractJSONfile .id $RECEIVED_PAYLOAD)
-  # MQTT_TOPIC=$(echo "$_MQTT" | grep -Po '^.*?(?= {)')
-  # MQTT_PAYLOAD=$(echo "$_MQTT" | grep -Pzo '\{[\s\S]*\}')
-  # MQTT_SITE_ID=$(extractJSON .siteId $MQTT_PAYLOAD)
-  # MQTT_SESSION_ID=$(extractJSON .sessionId $MQTT_PAYLOAD)
-  # MQTT_ID=$(extractJSON .id $MQTT_PAYLOAD)
+}
+
+
+function parseMQTT() {
+  _MQTT=$1
+
+  MQTT_TOPIC=$(echo "$_MQTT" | grep -Po '^.*?(?= {)')
+  MQTT_PAYLOAD=$(echo "$_MQTT" | grep -Pzo '\{[\s\S]*\}')
+  MQTT_SITE_ID=$(extractJSON .siteId $MQTT_PAYLOAD)
+  MQTT_SESSION_ID=$(extractJSON .sessionId $MQTT_PAYLOAD)
+  MQTT_ID=$(extractJSON .id $MQTT_PAYLOAD)
 }
 
 
