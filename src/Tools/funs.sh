@@ -74,7 +74,7 @@ function subscribeSiteOnce() {
   done
 }
 
-# needs teh filenames to be predefined!
+# needs the filenames to be predefined!
 #
 function parseMQTTfile() {
 

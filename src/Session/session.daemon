@@ -36,7 +36,25 @@ if [[ -e $MQTT_MESSAGE_PIPE ]] ; then
   rm -f $MQTT_MESSAGE_PIPE
 fi
 mkfifo $MQTT_MESSAGE_PIPE
-$mqtt_subscribe -v $(mqtt_auth) -t 'hermes/#' -t 'susi/#' > $MQTT_MESSAGE_PIPE &
+
+# subscribe to all incoming topics:
+#
+_TOPICS="-t $TOPIC_ASR_AUDIO \
+        -t $TOPIC_ASR_TEXT \
+        -t $TOPIC_NLU_NOT \
+        -t $TOPIC_NLU_PARSED \
+        -t $TOPIC_TTS_AUDIO \
+        -t $TOPIC_PLAY_FINISHED \
+        -t $TOPIC_TTS_SAY \
+        -t $TOPIC_TIMEOUT \
+        -t $TOPIC_HOTWORD \
+        -t $TOPIC_START_SESSION"
+TOPICS=$(echo $_TOPICS)
+
+echo $TOPICS
+set -xv
+$mqtt_subscribe -v $(mqtt_auth) $TOPICS > $MQTT_MESSAGE_PIPE &
+set +xv
 
 # set -xv
 # core loop that catches all MQTTs depending on
@@ -52,7 +70,9 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   echo $ONE_MESSAGE > $RECEIVED_MQTT
   parseMQTTfile
 
-  echo "       MQTT received topic: $MQTT_TOPIC"
+  echo "doing: $DOING"
+  echo "MQTT received topic: $MQTT_TOPIC"
+  echo "id: $ID, mqttId: $MQTT_ID"
 
   # always manage timeouts:
   #
@@ -121,7 +141,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   #
   elif [[ $MQTT_ID == $ID ]] ; then
 
-    echo "       MQTT with correct id: $MQTT_TOPIC"
+    echo "with correct id: $MQTT_TOPIC"
     nextId
 
     # manage dialogue manager sequences:
