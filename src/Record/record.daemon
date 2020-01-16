@@ -41,10 +41,14 @@ while true ; do
 
   subscribeSiteOnce $local_siteId $TOPIC_ASR_START
 
-  [[ $NOTIFICATION == true ]] && $PLAY_CMD $START_SOUND
+  if [[ $NOTIFICATION == true ]] ; then
+    $record_play $START_SOUND
+  fi
   rm -f $REC_FILE
   $REC_CMD $REC_FILE $REC_LIMIT
-  [[ $NOTIFICATION == true ]] && $PLAY_CMD $END_SOUND
+  if [[ $NOTIFICATION == true ]] ; then
+    $record_play $END_SOUND &
+  fi
 
   if [[ -s $REC_FILE ]] ; then
     base64 -w 0 $REC_FILE > ${REC_FILE}.b64

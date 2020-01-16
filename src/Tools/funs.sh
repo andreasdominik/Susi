@@ -158,7 +158,7 @@ function publishFile() {
 
   # rm newlines and add one at the end:
   #
-  _PAYLOAD="${_PAYLOAD}.tmp"
+  _PAYLOAD_TMP="${_PAYLOAD}.tmp"
   cat $_PAYLOAD | tr -d '\n' | tr -s ' ' > $_PAYLOAD_TMP
   mv $_PAYLOAD_TMP $_PAYLOAD
   echo "" >> $_PAYLOAD
