@@ -5,7 +5,7 @@
 # DialogueManager topics:
 #
 TOPIC_START_SESSION="hermes/dialogueManager/startSession"
-TOPIC_END="hermes/dialogueManager/endSession"
+TOPIC_END_SESSION="hermes/dialogueManager/endSession"
 TOPIC_CONTINUE_SESSION="hermes/dialogueManager/continueSession"
 TOPIC_SESSION_ENDED="hermes/dialogueManager/sessionEnded"
 # TOPIC_COMMAND="qnd/dialogueManager/startCommand"
@@ -20,7 +20,7 @@ TOPIC_HOTWORD="hermes/hotword/detected"
 
 TOPIC_ASR_START="hermes/asr/startListening"
 TOPIC_ASR_AUDIO="susi/asr/audioCaptured"
-TOPIC_ASR_TRANSSCRIBE="susi/asr/transsribe"
+TOPIC_ASR_TRANSSCRIBE="susi/asr/transscribe"
 TOPIC_ASR_TEXT="hermes/asr/textCaptured"
 TOPIC_NOTIFICATION_ON="hermes/feedback/sound/toggleOn"
 TOPIC_NOTIFICATION_OFF="hermes/feedback/sound/toggleOff"
