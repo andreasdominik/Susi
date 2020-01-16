@@ -103,6 +103,7 @@ function publishTTSrequest() {
   _PAYLOAD="{
             \"sessionId\": \"$SESSION_ID\",
             \"siteId\": \"$SESSION_SITE_ID\",
+            \"lang\": \"$LANG\",
             \"id\": \"$ID\",
             \"input\": \"$TEXT\"
            }"
@@ -113,6 +114,8 @@ function publishTTSrequest() {
 function publishPlay() {
 
   _PLAY_SITE=$1
+  MQTT_COUNTER=$(($MQTT_COUNTER + 1))
+  PAYLOAD_FILE="${MQTT_BASE_NAME}-$(printf "%04d" $MQTT_COUNTER).payload"
   echo -n "{
     \"sessionId\": \"$SESSION_ID\",
     \"siteId\": \"$PLAY_SITE\",
@@ -121,7 +124,7 @@ function publishPlay() {
     cat $AUDIO_B64              >> $PAYLOAD_FILE
     echo "\" }"                 >> $PAYLOAD_FILE
 
-  publishFile "$TOPIC_PLAY" "$_PAYLOAD"
+  publishFile "$TOPIC_PLAY" "$PAYLOAD_FILE"
 }
 
 

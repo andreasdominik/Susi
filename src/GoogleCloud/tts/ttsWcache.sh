@@ -34,10 +34,10 @@ LANCODE="${LANGUAGE}-${COUNTRY}"
 
 # language-specfic cache:
 #
-if [[ ! -d "${CACHE}/$LANCODE" ]] ; then
-    mkdir "${CACHE}/$LANCODE"
-fi
 CACHE="${CACHE}/${LANCODE}"
+if [[ ! -d $CACHE ]] ; then
+    mkdir -p ${CACHE}
+fi
 
 # TTS_SERVICE=${GOOGLE_TTS_DIR}/src/ttsREST.sh
 
@@ -52,7 +52,7 @@ if [[ -e ${CACHE}/${CACHED_NAME} ]] ; then
 # get audio from Google Wavenet:
 #
 else
-    if [[ $LANGUAGE == de-DE ]] ; then
+    if [[ $LANCODE == de-DE ]] ; then
       VOICE="de-DE-Wavenet-B"
       LAN="de-DE"
       VOICE_SET="\"voice\":

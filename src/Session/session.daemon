@@ -231,11 +231,13 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       NEXT_DOING="wait_for_asr"
       PLAY_SITE=$SESSION_SITE_ID
     fi
+  fi
 
-    # say is always possible:
-    #
-  elif [[ $MQTT_TOPIC == $TOPIC_TTS_SAY ]] ; then
+  # say is always possible:
+  #
+  if [[ $MQTT_TOPIC == $TOPIC_TTS_SAY ]] ; then
     TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
+    LANG="$(extractJSONfile .lang $RECEIVED_PAYLOAD)"
     PLAY_SITE="$(extractJSONfile .siteId $RECEIVED_PAYLOAD)"
     publishTTSrequest
     NEXT_DOING=$DOING
