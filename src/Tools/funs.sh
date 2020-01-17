@@ -102,10 +102,6 @@ function parseMQTT() {
 #    usage:
 #    VAL=$(extractJSON .field {json})
 #
-# if only one arg, JSON is assumed to be in $TOML
-# dirs read with extractJSONdir() will be subdirs
-# to BASE_DIR if relative.
-#
 function extractJSONfile() {
   _FIELD=$1
   if [[ $# -gt 1 ]] ; then
@@ -113,7 +109,8 @@ function extractJSONfile() {
   else
     _FILE=$RECEIVED_PAYLOAD
   fi
-  cat $_FILE | jq -r $_FIELD
+  # make empty if null:
+  cat $_FILE | jq -r $_FIELD | sed 's/^null$//'
 }
 
 

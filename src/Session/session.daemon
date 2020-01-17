@@ -64,6 +64,8 @@ set +xv
 DOING="no_session"
 NEXT_DOING="nothing_special"
 SESSION_ID="no_session"
+LANG=$assistant_language
+
 cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
   MQTT_COUNTER=$(($MQTT_COUNTER + 1))
@@ -117,8 +119,16 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       TYPE="$(extractJSONfile .init.type $RECEIVED_PAYLOAD)"
       publishLogSessionStarted
       if [[ $TYPE == "action" ]] ; then
-        publishAsrStart # next: wait for audio recording
-        DOING="wait_for_asr"
+        TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
+        if [[ -z $TEXT || $TEXT ]] ; then
+          publishAsrStart # next: wait for audio recording
+          DOING="wait_for_asr"
+        else
+          publishTTSrequest
+          PLAY_SITE=$SESSION_SITE_ID
+          DOING="wait_for_tts"
+          NEXT_DOING="wait_for_asr"
+        fi
 
       elif [[ $TYPE == "notification" ]] ; then
         TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
@@ -215,12 +225,13 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       # playFinished is more, because a session may end afer play:
       #
       $TOPIC_PLAY_FINISHED)
+        echo "NEXT_DOING: $NEXT_DOING"
         if [[ $NEXT_DOING == "end_session" ]] ; then
           publishSessionEnded
           publishHotwordOn
           DOING="no_session"
           SESSION_ID="no_session"
-        elif [[ NEXT_DOING == "wait_for_asr " ]] ; then  # continue session
+        elif [[ $NEXT_DOING == "wait_for_asr" ]] ; then  # continue session
           nextId
           publishAsrStart # next: wait for audio recording
           DOING="wait_for_asr"
@@ -237,6 +248,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
     if [[ $MQTT_TOPIC == $TOPIC_END_SESSION ]] ; then
       TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
+      nextId
       publishTTSrequest
       DOING="wait_for_tts"
       NEXT_DOING="end_session"
@@ -244,10 +256,16 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
     elif [[ $MQTT_TOPIC == $TOPIC_CONTINUE_SESSION ]] ; then
       TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
-      publishTTSrequest
-      DOING="wait_for_tts"
-      NEXT_DOING="wait_for_asr"
-      PLAY_SITE=$SESSION_SITE_ID
+      nextId
+      if [[ -z $TEXT ]] ; then
+        publishAsrStart # next: wait for audio recording
+        DOING="wait_for_asr"
+      else
+        publishTTSrequest
+        PLAY_SITE=$SESSION_SITE_ID
+        DOING="wait_for_tts"
+        NEXT_DOING="wait_for_asr"
+      fi
     fi
   fi
 
@@ -257,6 +275,9 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
     nextId
     TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
     LANG="$(extractJSONfile .lang $RECEIVED_PAYLOAD)"
+    if [[ -z $LANG ]] ; then
+      LANG=$assistant_language
+    fi
     PLAY_SITE="$(extractJSONfile .siteId $RECEIVED_PAYLOAD)"
     publishTTSrequest
     NEXT_DOING=$DOING

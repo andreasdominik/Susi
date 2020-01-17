@@ -41,6 +41,16 @@ function publishHotwordOn() {
 }
 
 
+function publishHotwordOff() {
+
+  _PAYLOAD="{
+            \"sessionId\": \"no_session\",
+            \"siteId\": \"$SESSION_SITE_ID\"
+           }"
+  publish "$TOPIC_HOTWORD_OFF" "$_PAYLOAD"
+}
+
+
 function publishAsrStart() {
 
   _PAYLOAD="{
@@ -108,6 +118,7 @@ function publishTTSrequest() {
             \"input\": \"$TEXT\"
            }"
   publish "$TOPIC_TTS_REQUEST" "$_PAYLOAD"
+  LANG=$assistant_language
 }
 
 
