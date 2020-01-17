@@ -22,7 +22,20 @@ function setIntentFilter(payload)
     if haskey(payload, :intents) && payload[:intents] isa AbstractArray
         for oneIntent in payload[:intents]
             if haskey(oneIntent, :intentId) && haskey(oneIntent, :enable)
-                global intentFilter[(siteId, oneIntent[:intentId])] = oneIntent[:enable]
+
+                global intentFilter
+                # add to list if disable
+                # delete from list if enable:
+                #
+                if !oneIntent[:enable]
+                    push!(intentFilter, (siteId, oneIntent[:intentId]))
+                else
+                    if siteId == "#"
+                        filter!(elem->!(elem[2]==oneIntent[:intentId]), intentFilter)
+                    else
+                        filter!(elem->!(elem[1]==siteId && elem[2]==oneIntent[:intentId]), intentFilter)
+                    end
+                end
             end
         end
     end
@@ -46,14 +59,10 @@ end
 function resetFiltersSite(siteId)
 
     global intentFilter
-    for ((filterSiteId, intent), enable) in intentFilter
-        if siteId == filterSiteId
-            delete!(intentFilter, (filterSiteId, intent))
-        end
-    end
+    filter!(elem->!(elem[1]==siteId), intentFilter)
 end
 
 function resetFiltersAll()
 
-    global intentFilter = Dict{Tuple{AbstractString,AbstractString}, Bool}() 
+    global intentFilter = Tuple{AbstractString,AbstractString}[]
 end

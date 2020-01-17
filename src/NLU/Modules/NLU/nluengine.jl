@@ -35,16 +35,19 @@ function listener()
                           :sessionId => payload[:sessionId],
                           :input => payload[:input])
 
-            if !haskey(payload, :intentFilter)
-                payload[:intentFilter] = []
+            if haskey(payload, :intentFilter)
+               posFilter = payload[:intentFilter]
+            else
+               posFilter = []
             end
 
             if !haskey(payload, :siteId)
                payload[:siteId] = "default"
             end
+            negFilter = mkFilter(payload[:siteId])
 
-            matched = findIntent(payload[:input], payload[:intentFilter],
-                                 payload[:siteId])
+            matched = findIntent(payload[:input], payload[:siteId],
+                                 posFilter, negFilter)
 
             if matched[:matched]
                 # make nlu result payload:
@@ -67,7 +70,7 @@ function listener()
                 printDict(result)
             end
         end
-        # println("Filter: $intentFilter")
+        println("Intentfilter after edit: $intentFilter")
     end
 end
 
@@ -82,7 +85,7 @@ Dict Input (text to analyse)
      sessionId
 ```
 """
-function findIntent(command, filter, siteId)
+function findIntent(command, siteId, posFilter, negFilter)
 
     # clean command:
     #
@@ -91,18 +94,22 @@ function findIntent(command, filter, siteId)
 
     for oneMatch in MATCHES
 
+        println("testing ... $(oneMatch.match) => $(oneMatch.matchExpression)")
+
         # test if filtered:
         #
-        if !((siteId, oneMatch.intent) in keys(intentFilter) &&
-             !intentFilter[(siteId, oneMatch.intent)])
+        useit = true
+        if oneMatch.intent in negFilter
+            useit = false
+        end
+        if oneMatch.intent in posFilter
+            useit = true
+        end
 
-            println("testing ... $(oneMatch.match) => $(oneMatch.matchExpression)")
-            if length(filter) == 0 || oneMatch.intent in filter
-
-                matched = matchOne(command, oneMatch)
-                if matched[:matched]
-                    return matched
-                end
+        if useit
+            matched = matchOne(command, oneMatch)
+            if matched[:matched]
+                return matched
             end
         end
     end
@@ -167,4 +174,22 @@ function matchOne(command, oneMatch)
 
     matched = Dict(:matched => false)
     return matched
+end
+
+
+"""
+make a list of filtered intents for this NLU request from
+paylod list and from global intentFilter list
+"""
+function mkFilter(siteId)
+
+    global intentFilter
+    negFilter = []
+
+    for (s, f) in intentFilter
+        if s == siteId || s == "#"
+            push!(negFilter, f)
+        end
+    end
+    return negFilter
 end

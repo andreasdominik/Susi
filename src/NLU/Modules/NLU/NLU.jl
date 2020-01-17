@@ -19,7 +19,7 @@ include("nluengine.jl")
 CONFIG = Dict()
 SKILLS_DIR = AbstractString
 MATCHES = MatchEx[]
-intentFilter = Dict{Tuple{AbstractString,AbstractString}, Bool}()
+intentFilter = Tuple{AbstractString,AbstractString}[]  # ("siteId","dev:intentname")
 
 LANG = "en"
 DUCKLING_HOST = "localhost"

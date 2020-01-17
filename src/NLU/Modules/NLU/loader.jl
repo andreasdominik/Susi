@@ -21,9 +21,13 @@ function loadIntents()
 
         slots = extractSlots(toml)
         for intentName in toml["inventory"]["intents"]
-            extractPhrases(toml, slots, intentName)
+            config = toml[intentName]
+            phrases = removeConfig(toml["developer"], intentName, config)
+            extractPhrases(toml, slots, intentName, phrases)
         end
     end
+
+    println("intentFilter: $intentFilter")
 end
 
 
@@ -31,16 +35,15 @@ end
 """
 Extract the match expressions and add them to global list of MATCHES.
 """
-function extractPhrases(toml, slots, intent)
+function extractPhrases(toml, slots, intentName, phrases)
 
     skill = toml["skill"]
-    all = toml[intent]
     global MATCHES
-    fullIntent = "$(toml["developer"]):$intent"
+    fullIntent = "$(toml["developer"]):$intentName"
 
     # make regexes from phrases:
     #
-    for (name, raw) in all
+    for (name, raw) in phrases
 
         # get type from first word:
         #
@@ -61,8 +64,8 @@ function extractPhrases(toml, slots, intent)
             phrase = replace(phrase, ">> " => ">>  ?")
             phrase = replace(phrase, "<<>>" => "\\S*")
 
-            # word alternatives.
-            # or "none" can be defined as <<word1|word2|>>
+            # word alternatives
+            # can be defined as <<word1|word2|>>
             # match all chars in list but NOT greedy (.*?):
             #
             phrase = replace(phrase, r"<<(?P<aword>.*?)>>" => s"(?:\g<aword>)")
@@ -95,6 +98,28 @@ function extractPhrases(toml, slots, intent)
     end
 end
 
+
+"""
+find config settings in the list for an intent
+i.e.: "disable_on_startup = true/false"
+and remove from thelist, so that only match expressions are
+in the list
+"""
+function removeConfig(developerName, intentName, config)
+
+    global intentFilter
+    for (key, val) in config
+
+        if key == "disable_on_startup"
+            if val isa Bool && val
+                push!(intentFilter, ("#", "$developerName:$intentName"))
+            end
+
+            delete!(config, key)
+        end
+    end
+    return config
+end
 
 
 
