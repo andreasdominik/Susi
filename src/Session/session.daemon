@@ -122,7 +122,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       publishLogSessionStarted
       if [[ $TYPE == "action" ]] ; then
         TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
-        if [[ -z $TEXT || $TEXT ]] ; then
+        if [[ -z $TEXT ]] ; then
           publishAsrStart # next: wait for audio recording
           DOING="wait_for_asr"
         else
@@ -229,7 +229,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       $TOPIC_PLAY_FINISHED)
         echo "NEXT_DOING: $NEXT_DOING"
         if [[ $NEXT_DOING == "end_session" ]] ; then
-          publishSessionEnded
+          publishSessionEnded "regular session end"
           publishHotwordOn
           DOING="no_session"
           SESSION_ID="no_session"
