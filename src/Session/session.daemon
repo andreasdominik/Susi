@@ -50,6 +50,7 @@ _TOPICS="-t $TOPIC_ASR_AUDIO \
         -t $TOPIC_TIMEOUT \
         -t $TOPIC_HOTWORD \
         -t $TOPIC_CONTINUE_SESSION \
+        -t $TOPIC_END_SESSION \
         -t $TOPIC_START_SESSION"
 TOPICS=$(echo $_TOPICS)
 
@@ -121,7 +122,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       if [[ $TYPE == "action" ]] ; then
         extractIntentFilter ".init.intentFilter" $RECEIVED_PAYLOAD
         echo "intentfilter: $INTENT_FILTER"
-        
+
         TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
         if [[ -z $TEXT ]] ; then
           publishAsrStart # next: wait for audio recording
