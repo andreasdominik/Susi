@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 #
 # Basic service for NoSnips replacement service.
 # Usage:
@@ -17,16 +17,9 @@ source $SUSI_INSTALLATION/bin/toml2env $CONFIG
 # load tool funs:
 #
 source $SUSI_INSTALLATION/src/Tools/funs.sh
-
-# Topics:
-#
 source $SUSI_INSTALLATION/src/Tools/topics.sh
 
 cd $local_work_directory
-
-# load tool funs:
-#
-source $SUSI_INSTALLATION/src/Tools/funs.sh
 
 if [[ $local_satellite == true ]] ; then
   DAEMONS="hotword record say"

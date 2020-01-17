@@ -110,7 +110,7 @@ function removeConfig(developerName, intentName, config)
     global intentFilter
     for (key, val) in config
 
-        if key == "disable_on_startup"
+        if key == "disable_on_start"
             if val isa Bool && val
                 push!(intentFilter, ("#", "$developerName:$intentName"))
             end
