@@ -71,20 +71,21 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   parseMQTTfile
 
   echo "doing: $DOING"
-  echo "MQTT received topic: $MQTT_TOPIC"
+  echo -n "MQTT received topic: $MQTT_TOPIC"
   echo "id: $ID, mqttId: $MQTT_ID"
 
-  # always manage timeouts:
+  # always manage timeouts if in session:
   #
-  if [[ $MQTT_TOPIC == $TOPIC_TIMEOUT ]] ; then
-    if [[ $MQTT_ID == $TIMEOUT_ID ]] &&
-       [[ $DOING != "no_session" ]] ; then
-      publishSessionEnded "timeout"
-      publishHotwordOn
-      DOING="no_session"
+  if [[ $DOING != "no_session" ]] ; then
+    if [[ $MQTT_TOPIC == $TOPIC_TIMEOUT ]] ; then
+      if [[ $MQTT_ID == $TIMEOUT_ID ]] ; then
+        publishSessionEnded "timeout"
+        publishHotwordOn
+        DOING="no_session"
+      fi
+    else
+      scheduleTimeOut
     fi
-  else
-    scheduleTimeOut
   fi
 
   # start new session:
@@ -233,15 +234,25 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
     fi
   fi
 
-  # say is always possible:
+  # say and play always possible:
   #
   if [[ $MQTT_TOPIC == $TOPIC_TTS_SAY ]] ; then
+    nextId
     TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
     LANG="$(extractJSONfile .lang $RECEIVED_PAYLOAD)"
     PLAY_SITE="$(extractJSONfile .siteId $RECEIVED_PAYLOAD)"
     publishTTSrequest
     NEXT_DOING=$DOING
     DOING="wait_for_tts"
+  fi
+
+  if [[ $MQTT_TOPIC == $TOPIC_PLAY ]] ; then
+    nextId
+    extractJSONfile .audio $RECEIVED_PAYLOAD > $AUDIO_B64
+    PLAY_SITE="$(extractJSONfile .siteId $RECEIVED_PAYLOAD)"
+    publishPlay
+    NEXT_DOING=$DOING
+    DOING="playing"
   fi
 
 done  # loop read messages from pipe
