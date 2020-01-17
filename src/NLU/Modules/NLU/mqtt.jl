@@ -55,7 +55,6 @@ function constructMQTTcmd(topics; hostname = nothing, port = nothing,
                           user = nothing, password = nothing,
                           timeout = nothing)
 
-    # TODO: `$(CONFIG["mqtt_subsribe"] -v -C 1)`
     cmd = `mosquitto_sub -v -C 1 --qos 2`
     if hostname != nothing
         cmd = `$cmd -h $hostname`
@@ -81,7 +80,7 @@ function constructMQTTcmd(topics; hostname = nothing, port = nothing,
             cmd = `$cmd -t $topic`
         end
     else
-        cmd = `$cmd -t 'hermes/#' -t 'susi/#'`
+        cmd = `$cmd -t 'hermes/intent#' -t 'susi/intent#'`
     end
 
     if timeout != nothing
@@ -89,7 +88,7 @@ function constructMQTTcmd(topics; hostname = nothing, port = nothing,
     end
 
     cmd = Cmd(cmd, ignorestatus = true)
-    #println("Mosquito command is : $cmd")
+    println("Mosquito command is : $cmd")
 
     return cmd
 end

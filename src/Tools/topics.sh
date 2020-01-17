@@ -27,6 +27,9 @@ TOPIC_NLU_QUERY="hermes/nlu/query"
 TOPIC_NLU_PARSED="hermes/nlu/intentParsed"
 TOPIC_NLU_NOT="hermes/nlu/intentNotRecognized"
 
+TOPIC_NLU_INTENT_FILTER="hermes/dialogueManager/configure"
+TOPIC_NLU_RESET_INTENT_FILTER="hermes/dialogueManager/configureReset"
+
 TOPIC_TTS_SAY="hermes/tts/say"
 TOPIC_TTS_REQUEST="susi/tts/request"
 TOPIC_TTS_AUDIO="susi/tts/audio"

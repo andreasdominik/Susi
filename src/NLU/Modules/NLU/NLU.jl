@@ -13,11 +13,13 @@ include("util.jl")
 include("types.jl")
 include("loader.jl")
 include("mqtt.jl")
+include("filter.jl")
 include("nluengine.jl")
 
 CONFIG = Dict()
 SKILLS_DIR = AbstractString
 MATCHES = MatchEx[]
+intentFilter = Dict{Tuple{AbstractString,AbstractString}, Bool}()
 
 LANG = "en"
 DUCKLING_HOST = "localhost"

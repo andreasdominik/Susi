@@ -10,17 +10,26 @@ function listener()
     (length(user) < 1) && (user = nothing)
     (length(password) < 1) && (password = nothing)
 
-    topics = TOPIC_NLU_QUERY
+    topics = [TOPIC_NLU_QUERY,
+              TOPIC_NLU_INTENT_FILTER,
+              TOPIC_NLU_RESET_INTENT_FILTER]
+
     while true
         (topic, payload) = readOneMQTT(topics,
                                        hostname = host, port = port,
                                        user = user,password =password)
 
+        if topic == TOPIC_NLU_INTENT_FILTER
+            setIntentFilter(payload)
+
+        elseif topic == TOPIC_NLU_RESET_INTENT_FILTER
+            resetIntentFilter(payload)
+
         # aboard silently:
         #
-        if !(haskey(payload, :input) && length(payload[:input]) > 0)
+        elseif !(haskey(payload, :input) && length(payload[:input]) > 0)
             println("[NLU]: No input text in NLU request!")
-            return
+
         else
             result = Dict{Symbol,Any}(:id => payload[:id],
                           :sessionId => payload[:sessionId],
@@ -30,7 +39,12 @@ function listener()
                 payload[:intentFilter] = []
             end
 
-            matched = findIntent(payload[:input], payload[:intentFilter])
+            if !haskey(payload, :siteId)
+               payload[:siteId] = "default"
+            end
+
+            matched = findIntent(payload[:input], payload[:intentFilter],
+                                 payload[:siteId])
 
             if matched[:matched]
                 # make nlu result payload:
@@ -53,6 +67,7 @@ function listener()
                 printDict(result)
             end
         end
+        println("Filter: $intentFilter")
     end
 end
 
@@ -67,7 +82,7 @@ Dict Input (text to analyse)
      sessionId
 ```
 """
-function findIntent(command, filter)
+function findIntent(command, filter, siteId)
 
     # clean command:
     #
@@ -76,12 +91,18 @@ function findIntent(command, filter)
 
     for oneMatch in MATCHES
 
-        println("testing ... $(oneMatch.match) => $(oneMatch.matchExpression)")
-        if length(filter) == 0 || oneMatch.intent in filter
+        # test if filtered:
+        #
+        if !((siteId, oneMatch.intent) in keys(intentFilter) &&
+             !intentFilter[(siteId, oneMatch.intent)])
 
-            matched = matchOne(command, oneMatch)
-            if matched[:matched]
-                return matched
+            println("testing ... $(oneMatch.match) => $(oneMatch.matchExpression)")
+            if length(filter) == 0 || oneMatch.intent in filter
+
+                matched = matchOne(command, oneMatch)
+                if matched[:matched]
+                    return matched
+                end
             end
         end
     end

@@ -79,9 +79,9 @@ function extractPhrases(toml, slots, intent)
             phrase = replace(phrase, r"( \?){2,}" => " ?")
         end
 
-        println("raw:     $raw")
-        println("phrase:  $phrase")
-        println("regex:  $(Regex(phrase))")
+        # println("raw:     $raw")
+        # println("phrase:  $phrase")
+        # println("regex:  $(Regex(phrase))")
 
         # make exact regex:
         #
