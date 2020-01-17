@@ -63,6 +63,7 @@ set +xv
 #
 DOING="no_session"
 NEXT_DOING="nothing_special"
+SESSION_ID="no_session"
 cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
   MQTT_COUNTER=$(($MQTT_COUNTER + 1))
@@ -72,13 +73,14 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   echo $ONE_MESSAGE > $RECEIVED_MQTT
   parseMQTTfile
 
-  echo "doing: $DOING"
+  echo ""
+  echo "doing: $DOING, session: $SESSION_ID"
   echo -n "MQTT received topic: $MQTT_TOPIC, "
   echo "id: $ID, mqttId: $MQTT_ID"
 
   # always manage timeouts if in session:
   #
-  if [[ $DOING != "no_session" ]] ; then
+  if [[ $SESSION_ID != "no_session" ]] ; then
     if [[ $MQTT_TOPIC == $TOPIC_TIMEOUT ]] ; then
       if [[ $MQTT_ID == $TIMEOUT_ID ]] ; then
         publishSessionEnded "timeout"
@@ -137,6 +139,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
       else  # wrong formatted payload:
         DOING="no_session"
+        SESSION_ID="no_session"
       fi
     fi
   fi
@@ -160,6 +163,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
           publishSessionEnded "error: no audio"
           publishHotwordOn
           DOING="no_session"
+          SESSION_ID="no_session"
         else
           publishAsrTransscribe  # next: wait for STT result
           DOING="wait_for_stt"
@@ -172,6 +176,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
           publishSessionEnded "error: no transscript"
           publishHotwordOn
           DOING="no_session"
+          SESSION_ID="no_session"
         else
           publishNluQuery
           DOING="wait_for_nlu"
@@ -183,6 +188,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
         # qndSay "failedNLU"
         publishHotwordOn
         DOING="no_session"
+        SESSION_ID="no_session"
         ;;
 
       $TOPIC_NLU_PARSED)
@@ -213,6 +219,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
           publishSessionEnded
           publishHotwordOn
           DOING="no_session"
+          SESSION_ID="no_session"
         elif [[ NEXT_DOING == "wait_for_asr " ]] ; then  # continue session
           nextId
           publishAsrStart # next: wait for audio recording
