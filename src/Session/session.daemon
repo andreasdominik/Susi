@@ -242,7 +242,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
     echo "with correct sessionId: $MQTT_TOPIC"
 
     if [[ $MQTT_TOPIC == $TOPIC_END_SESSION ]] ; then
-      TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
+      TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
       nextId
       publishTTSrequest
       DOING="wait_for_tts"
