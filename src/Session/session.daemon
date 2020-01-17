@@ -119,9 +119,11 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       TYPE="$(extractJSONfile .init.type $RECEIVED_PAYLOAD)"
       publishLogSessionStarted
       if [[ $TYPE == "action" ]] ; then
+        extractIntentFilter ".init.intentFilter" $RECEIVED_PAYLOAD
+        echo "intentfilter: $INTENT_FILTER"
+        
         TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
         if [[ -z $TEXT ]] ; then
-          extractIntentFilter ".init.intentFilter" $RECEIVED_PAYLOAD
           publishAsrStart # next: wait for audio recording
           DOING="wait_for_asr"
         else
