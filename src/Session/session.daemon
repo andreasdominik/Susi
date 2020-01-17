@@ -66,6 +66,7 @@ DOING="no_session"
 NEXT_DOING="nothing_special"
 SESSION_ID="no_session"
 LANG=$assistant_language
+INTENT_FILTER="[]"
 
 cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
@@ -86,10 +87,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   if [[ $SESSION_ID != "no_session" ]] ; then
     if [[ $MQTT_TOPIC == $TOPIC_TIMEOUT ]] ; then
       if [[ $MQTT_ID == $TIMEOUT_ID ]] ; then
-        publishSessionEnded "timeout"
-        publishHotwordOn
-        SESSION_ID="no_session"
-        DOING="no_session"
+        makeSessionEnd "timeout"
       fi
     else
       scheduleTimeOut
@@ -123,6 +121,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       if [[ $TYPE == "action" ]] ; then
         TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
         if [[ -z $TEXT ]] ; then
+          extractIntentFilter ".init.intentFilter" $RECEIVED_PAYLOAD
           publishAsrStart # next: wait for audio recording
           DOING="wait_for_asr"
         else
@@ -134,6 +133,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
       elif [[ $TYPE == "notification" ]] ; then
         TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
+        extractIntentFilter ".init.intentFilter" $RECEIVED_PAYLOAD
         publishTTSrequest
         DOING="wait_for_tts"
         NEXT_DOING="end_session"
@@ -141,18 +141,18 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
       elif [[ $TYPE == "api" ]] ; then
         INTENT="$(extractJSONfile .init.intent $RECEIVED_PAYLOAD)"
-        publishIntent
+        publishIntent ".init.intent"
         scheduleTimeOut # because no other timeout will be issued
         DOING="session_ongoing"
 
       elif [[ $TYPE == "command" ]] ; then
         TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
+        extractIntentFilter ".init.intentFilter" $RECEIVED_PAYLOAD
         publishNluQuery
         DOING="wait_for_nlu"
 
       else  # wrong formatted payload:
-        DOING="no_session"
-        SESSION_ID="no_session"
+        makeSessionEnd "payload wrong formatted"
       fi
     fi
   fi
@@ -173,10 +173,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       $TOPIC_ASR_AUDIO)
         extractJSONfile .audio $RECEIVED_PAYLOAD > $AUDIO_B64
         if [[ ! -s $AUDIO_B64 ]] ; then
-          publishSessionEnded "error: no audio"
-          publishHotwordOn
-          DOING="no_session"
-          SESSION_ID="no_session"
+          makeSessionEnd "error: no audio"
         else
           publishAsrTransscribe  # next: wait for STT result
           DOING="wait_for_stt"
@@ -186,10 +183,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       $TOPIC_ASR_TEXT)
         TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
         if [[ -z $TEXT || ${#TEXT} -lt 10 ]] ; then
-          publishSessionEnded "error: no transscript"
-          publishHotwordOn
-          DOING="no_session"
-          SESSION_ID="no_session"
+          makeSessionEnd "error: no transscript"
         else
           publishNluQuery
           DOING="wait_for_nlu"
@@ -197,15 +191,13 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
         ;;
 
       $TOPIC_NLU_NOT)
-        publishSessionEnded "error: NLU failed"
+        makeSessionEnd "error: NLU failed"
         # qndSay "failedNLU"
-        publishHotwordOn
-        DOING="no_session"
-        SESSION_ID="no_session"
         ;;
 
       $TOPIC_NLU_PARSED)
-        publishIntent
+        publishIntent ""
+        INTENT_FILTER="[]"
         DOING="session_ongoing"
         ;;
 
@@ -230,10 +222,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       $TOPIC_PLAY_FINISHED)
         echo "NEXT_DOING: $NEXT_DOING"
         if [[ $NEXT_DOING == "end_session" ]] ; then
-          publishSessionEnded "regular session end"
-          publishHotwordOn
-          DOING="no_session"
-          SESSION_ID="no_session"
+          makeSessionEnd "regular session end"
         elif [[ $NEXT_DOING == "wait_for_asr" ]] ; then  # continue session
           nextId
           publishAsrStart # next: wait for audio recording
@@ -259,6 +248,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
     elif [[ $MQTT_TOPIC == $TOPIC_CONTINUE_SESSION ]] ; then
       TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
+      extractIntentFilter ".init.intentFilter" $RECEIVED_PAYLOAD
       nextId
       if [[ -z $TEXT ]] ; then
         publishAsrStart # next: wait for audio recording

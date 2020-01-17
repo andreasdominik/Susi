@@ -77,20 +77,35 @@ function publishAsrTransscribe() {
 }
 
 
+function extractIntentFilter() {
+
+  _FIELD=$1
+  _FILENAME=$2
+  _INTENT_FILTER="$(extractJSONfile $_FIELD $_FILENAME)"
+
+  if [[ -z $_INTENT_FILTER ]] ; then
+    INTENT_FILTER="[]"
+  else
+    INTENT_FILTER=$_INTENT_FILTER
+  fi
+}
+
 function publishNluQuery() {
 
   _PAYLOAD="{
             \"sessionId\": \"$SESSION_ID\",
             \"siteId\": \"$SESSION_SITE_ID\",
             \"id\": \"$ID\",
-            \"input\": \"$TEXT\"
+            \"input\": \"$TEXT\",
+            \"intentFilter\": $INTENT_FILTER
            }"
   publish "$TOPIC_NLU_QUERY" "$_PAYLOAD"
 }
 
 function publishIntent() {
 
-  _INTENT_NAME="${TOPIC_INTENT}/$(extractJSONfile .init.intent.intent.intentName $MQTT_PAYLOAD)"
+  _INTENT_PATH=$1
+  _INTENT_NAME="${TOPIC_INTENT}/$(extractJSONfile $_INTENT_PATH.intent.intentName $MQTT_PAYLOAD)"
 
   MQTT_COUNTER=$(($MQTT_COUNTER + 1))
   PAYLOAD_FILE="${MQTT_BASE_NAME}-$(printf "%04d" $MQTT_COUNTER).payload"
@@ -98,9 +113,9 @@ function publishIntent() {
               \"sessionId\": \"$SESSION_ID\",
               \"siteId\": \"$SESSION_SITE_ID\",
               \"id\": \"$ID\",
-              \"input\": \"$(extractJSONfile .init.intent.input $MQTT_PAYLOAD)\",
-              \"slots\": $(extractJSONfile .init.intent.slots $MQTT_PAYLOAD),
-              \"intent\": $(extractJSONfile .init.intent.intent $MQTT_PAYLOAD)
+              \"input\": \"$(extractJSONfile $_INTENT_PATH.input $MQTT_PAYLOAD)\",
+              \"slots\": $(extractJSONfile $_INTENT_PATH.slots $MQTT_PAYLOAD),
+              \"intent\": $(extractJSONfile $_INTENT_PATH.intent $MQTT_PAYLOAD)
              }"
 
   publish "$_INTENT_NAME" "$_PAYLOAD"
@@ -159,95 +174,6 @@ function scheduleTimeOut() {
 }
 
 
-
-
-# function setDMtopics() {
-#
-#   case "$DOING" in
-#     "no_session")
-#       TOPICS="$TOPIC_HOTWORD $TOPIC_START_SESSION"
-#       MATCH="no_match"
-#       SESSION_ID="no_session"
-#       SESSION_SITE_ID="no_site"
-#       TIMEOUT_ID="no_timeout"
-#       ;;
-#     "wait_for_asr")
-#       TOPICS="$TOPIC_ASR_AUDIO"
-#       MATCH="id"
-#       ;;
-#     "wait_for_stt")
-#       TOPICS="$TOPIC_ASR_TEXT"
-#       MATCH="id"
-#       ;;
-#     "wait_for_nlu")
-#       TOPICS="$TOPIC_NLU_PARSED $TOPIC_NLU_NOT"
-#       MATCH="id"
-#       ;;
-#     "wait_for_tts")
-#       TOPICS="$TOPIC_TTS_AUDIO"
-#       MATCH="id"
-#       ;;
-#     "playing")
-#       TOPICS="$TOPIC_PLAY_FINISHED"
-#       MATCH="id"
-#       ;;
-#     "session_ongoing")
-#       TOPICS="$TOPIC_END_SESSION $TOPIC_CONTINUE_SESSION $TOPIC_DM_SAY"
-#       MATCH="id"
-#       ;;
-#     *)
-#       TOPICS=""
-#       MATCH="no_match"
-#     ;;
-#   esac
-#
-#   # always listen to timeouts:
-#   #
-#   if [[ $DOING != "no_session" ]] ; then
-#     TOPICS="$TOPICS $TOPIC_TIMEOUT"
-#   fi
-# }
-
-# function subscribeSmart() {
-#
-#   _MATCH=$1
-#   shift
-#   _TOPICS="$@"
-#
-#   LISTEN="continue"
-#   while [[ $LISTEN == "continue" ]] ; do
-#
-#     subscribeOnce "hermes/# susi/#"
-#     # test, if the message is the correct one:
-#     #
-#     echo "received Topic: $MQTT_TOPIC"
-#     if [[ $_TOPICS =~ $MQTT_TOPIC ]] ; then
-#
-#       echo "    match with $_TOPICS"
-#       if [[ $MQTT_TOPIC == $TOPIC_TIMEOUT ]] ; then
-#         if [[ $MQTT_ID == $TIMEOUT_ID ]] ; then
-#           LISTEN="done"
-#         fi
-#       elif [[ $MQTT_TOPIC == $TOPIC_START_SESSION ]] ||
-#            [[ $MQTT_TOPIC == $TOPIC_HOTWORD ]] ; then
-#         LISTEN="done"
-#       elif [[ $_MATCH == "id" ]] ; then
-#         if [[ $MQTT_ID == $ID ]] ; then
-#           LISTEN="done"
-#         fi
-#       elif [[ $_MATCH == "session" ]] ; then
-#         if [[ $MQTT_SESSION_ID == $SESSION_ID ]] ; then
-#           LISTEN="done"
-#         fi
-#       elif [[ $_MATCH == "site" ]] ; then
-#         if [[ $MQTT_SITE_ID == $SESSION_SITE_ID ]] ; then
-#           LISTEN="done"
-#         fi
-#       fi
-#     fi
-#   done
-# }
-
 function nextSessionId() {
   if [[ -z SESSION_ID_COUNTER ]] ; then
     SESSION_ID_COUNTER=1
@@ -260,4 +186,16 @@ function nextSessionId() {
 
 function nextId() {
     ID="id:$(uuidgen)"
+}
+
+
+function makeSessionEnd() {
+
+  _LOG_MESSAGE=$@
+
+  publishSessionEnded "$_LOG_MESSAGE"
+  publishHotwordOn
+  DOING="no_session"
+  SESSION_ID="no_session"
+  INTENT_FILTER="[]"
 }

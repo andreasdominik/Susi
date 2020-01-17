@@ -67,7 +67,7 @@ function listener()
                 printDict(result)
             end
         end
-        println("Filter: $intentFilter")
+        # println("Filter: $intentFilter")
     end
 end
 
