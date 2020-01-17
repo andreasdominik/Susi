@@ -44,8 +44,9 @@ _TOPICS="-t $TOPIC_ASR_AUDIO \
         -t $TOPIC_NLU_NOT \
         -t $TOPIC_NLU_PARSED \
         -t $TOPIC_TTS_AUDIO \
-        -t $TOPIC_PLAY_FINISHED \
         -t $TOPIC_TTS_SAY \
+        -t $TOPIC_PLAY \
+        -t $TOPIC_PLAY_FINISHED \
         -t $TOPIC_TIMEOUT \
         -t $TOPIC_HOTWORD \
         -t $TOPIC_START_SESSION"
@@ -61,6 +62,7 @@ set +xv
 # state:
 #
 DOING="no_session"
+NEXT_DOING="nothing_special"
 cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
   MQTT_COUNTER=$(($MQTT_COUNTER + 1))
@@ -71,7 +73,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   parseMQTTfile
 
   echo "doing: $DOING"
-  echo -n "MQTT received topic: $MQTT_TOPIC"
+  echo -n "MQTT received topic: $MQTT_TOPIC, "
   echo "id: $ID, mqttId: $MQTT_ID"
 
   # always manage timeouts if in session:
@@ -137,13 +139,14 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
         DOING="no_session"
       fi
     fi
+  fi
 
   # a) in the chain only do something if the id matches the request:
   # b) some topics need to match the session id only (continue, end)
   # c) say should work always:
   #
   # a:
-  elif [[ $MQTT_ID == $ID ]] ; then
+  if [[ $MQTT_ID == $ID ]] ; then
     echo "with correct id: $MQTT_TOPIC"
     nextId
 
@@ -203,18 +206,25 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
         fi
         ;;
 
+      # playFinished is more, because a session may end afer play:
+      #
       $TOPIC_PLAY_FINISHED)
         if [[ $NEXT_DOING == "end_session" ]] ; then
           publishSessionEnded
           publishHotwordOn
           DOING="no_session"
+        elif [[ NEXT_DOING == "wait_for_asr " ]] ; then  # continue session
+          nextId
+          publishAsrStart # next: wait for audio recording
+          DOING="wait_for_asr"
         else
           DOING="session_ongoing"
         fi
+        NEXT_DOING="noting_special"
         ;;
-      esac
-    # end only if id matches - now sessionId:
-    # b:
+    esac
+  # end only if id matches - now sessionId:
+  # b:
   elif [[ $MQTT_SESSION_ID == $SESSION_ID ]] ; then
     echo "with correct sessionId: $MQTT_TOPIC"
 

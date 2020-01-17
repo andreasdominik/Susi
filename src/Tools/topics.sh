@@ -8,8 +8,6 @@ TOPIC_START_SESSION="hermes/dialogueManager/startSession"
 TOPIC_END_SESSION="hermes/dialogueManager/endSession"
 TOPIC_CONTINUE_SESSION="hermes/dialogueManager/continueSession"
 TOPIC_SESSION_ENDED="hermes/dialogueManager/sessionEnded"
-# TOPIC_COMMAND="qnd/dialogueManager/startCommand"
-# TOPIC_API="qnd/dialogueManager/startAPIcall"
 
 
 # Snips Hermes and QnD topics:
@@ -34,6 +32,7 @@ TOPIC_TTS_REQUEST="susi/tts/request"
 TOPIC_TTS_AUDIO="susi/tts/audio"
 TOPIC_PLAY_FINISHED="susi/play/playFinished"
 TOPIC_PLAY="susi/play/playAudio"
+TOPIC_PLAY_REQUEST="susi/play/request"
 
 TOPIC_INTENT="hermes/intent"
 

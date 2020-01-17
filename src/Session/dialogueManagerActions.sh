@@ -124,7 +124,7 @@ function publishPlay() {
     cat $AUDIO_B64              >> $PAYLOAD_FILE
     echo "\" }"                 >> $PAYLOAD_FILE
 
-  publishFile "$TOPIC_PLAY" "$PAYLOAD_FILE"
+  publishFile "$TOPIC_PLAY_REQUEST" "$PAYLOAD_FILE"
 }
 
 

@@ -28,7 +28,7 @@ cd $local_work_directory
 
 while true ; do
 
-  subscribeSiteOnce $local_siteId $TOPIC_PLAY
+  subscribeSiteOnce $local_siteId $TOPIC_PLAY_REQUEST
   SESSION_ID=$MQTT_SESSION_ID
   ID=$MQTT_ID
 
