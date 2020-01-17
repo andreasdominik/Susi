@@ -43,7 +43,7 @@ function watchSusi()
                 elseif occursin(TOPIC_INTENT, topic)
                     showIntentPublished(payload)
 
-                elseif topic == TOPIC_END
+                elseif topic == TOPIC_END_SESSION
                     showEndSession(payload)
                 elseif topic == TOPIC_CONTINUE_SESSION
                     showContSession(payload)
@@ -56,6 +56,8 @@ function watchSusi()
                     showTTSAudio(payload)
                 elseif topic == TOPIC_PLAY
                     showPlay(payload)
+                elseif topic == TOPIC_PLAY_REQUEST
+                    showPlayRequest(payload)
                 elseif topic == TOPIC_PLAY_FINISHED
                     showPlayFinished(payload)
                 elseif topic == TOPIC_NOTIFICATION_ON

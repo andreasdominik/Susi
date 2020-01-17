@@ -29,7 +29,7 @@ function showEndedSession(payload)
 end
 
 function showStartSession(payload)
-    println("\n\n")
+    println("\n")
     printTime()
     print("[User] ")
     printstyled("Request to start session of type $(payload[:init][:type])",
@@ -196,6 +196,13 @@ function showTTSAudio(payload)
 end
 
 function showPlay(payload)
+    printTime()
+    print("[User] User asked to play an audio file at site ")
+    printSiteId(payload)
+    println(".")
+end
+
+function showPlayRequest(payload)
     printTime()
     sessionIndent();
     print("[Session] Ask play daemon at site ")
