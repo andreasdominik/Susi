@@ -49,6 +49,7 @@ _TOPICS="-t $TOPIC_ASR_AUDIO \
         -t $TOPIC_PLAY_FINISHED \
         -t $TOPIC_TIMEOUT \
         -t $TOPIC_HOTWORD \
+        -t $TOPIC_CONTINUE_SESSION \
         -t $TOPIC_START_SESSION"
 TOPICS=$(echo $_TOPICS)
 
@@ -87,6 +88,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       if [[ $MQTT_ID == $TIMEOUT_ID ]] ; then
         publishSessionEnded "timeout"
         publishHotwordOn
+        SESSION_ID="no_session"
         DOING="no_session"
       fi
     else
@@ -255,7 +257,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       PLAY_SITE=$SESSION_SITE_ID
 
     elif [[ $MQTT_TOPIC == $TOPIC_CONTINUE_SESSION ]] ; then
-      TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
+      TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
       nextId
       if [[ -z $TEXT ]] ; then
         publishAsrStart # next: wait for audio recording
