@@ -155,7 +155,9 @@ end
 function showContSession(payload)
     printTime()
     sessionIndent();
-    println("[User] Request to continue session with message: ")
+    print("[User]  ")
+    printstyled("Request to continue session", bold=true, color=:green)
+    println()
     if haskey(payload, :text)
         dateIndent(); sessionIndent()
         printText(payload[:text])
@@ -233,6 +235,50 @@ function showNotification(payload, onoff)
     print(" at site "); printSiteId(payload)
     println()
 end
+
+
+function showNluIntentFilter(payload)
+    printTime()
+    print("[User] Request to globally ")
+    printstyled("filter intents", color = :red)
+    println(" to:")
+
+    dateIndent()
+    sessionIndent(); print("Site(s): ")
+    if haskey(payload, :siteId)
+        println(payload[:siteId])
+    else
+        println("all sites")
+    end
+
+    dateIndent()
+    sessionIndent(); println("Intent filter:")
+    if haskey(payload, :intents) && payload[:intents] isa AbstractArray
+        for oneIntent in payload[:intents]
+            if haskey(oneIntent, :intentId) && haskey(oneIntent, :enable)
+                dateIndent()
+                sessionIndent()
+                println("$(oneIntent[:intentId]) is now $(oneIntent[:enable] ? "enabled" : "disabled")")
+            end
+        end
+    else
+        dateIndent()
+        println("- no intents specified -")
+    end
+end
+
+function showNluIntentFilterReset(payload)
+    printTime()
+    print("[User] Request to ")
+    printstyled("reset intent filter", color = :red)
+
+    if haskey(payload, :siteId)
+        println(" for site $(payload[:siteId]).")
+    else
+        println(" for all sites.")
+    end
+end
+
 
 
 

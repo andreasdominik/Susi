@@ -64,6 +64,11 @@ function watchSusi()
                     showNotification(payload, :on)
                 elseif topic == TOPIC_NOTIFICATION_OFF
                     showNotification(payload, :off)
+
+                elseif topic == TOPIC_NLU_INTENT_FILTER
+                    showNluIntentFilter(payload)
+                elseif topic == TOPIC_NLU_RESET_INTENT_FILTER
+                    showNluIntentFilterReset(payload)
                 end
             end
             # sleep(10.0)
