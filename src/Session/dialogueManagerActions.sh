@@ -90,7 +90,7 @@ function publishNluQuery() {
 
 function publishIntent() {
 
-  _INTENT_NAME="${TOPIC_INTENT}/$(extractJSONfile .intent.intentName $MQTT_PAYLOAD)"
+  _INTENT_NAME="${TOPIC_INTENT}/$(extractJSONfile .init.intent.intent.intentName $MQTT_PAYLOAD)"
 
   MQTT_COUNTER=$(($MQTT_COUNTER + 1))
   PAYLOAD_FILE="${MQTT_BASE_NAME}-$(printf "%04d" $MQTT_COUNTER).payload"
@@ -98,9 +98,9 @@ function publishIntent() {
               \"sessionId\": \"$SESSION_ID\",
               \"siteId\": \"$SESSION_SITE_ID\",
               \"id\": \"$ID\",
-              \"input\": \"$(extractJSONfile .input $MQTT_PAYLOAD)\",
-              \"slots\": $(extractJSONfile .slots $MQTT_PAYLOAD),
-              \"intent\": $(extractJSONfile .intent $MQTT_PAYLOAD)
+              \"input\": \"$(extractJSONfile .init.intent.input $MQTT_PAYLOAD)\",
+              \"slots\": $(extractJSONfile .init.intent.slots $MQTT_PAYLOAD),
+              \"intent\": $(extractJSONfile .init.intent.intent $MQTT_PAYLOAD)
              }"
 
   publish "$_INTENT_NAME" "$_PAYLOAD"

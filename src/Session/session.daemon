@@ -140,8 +140,9 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
         PLAY_SITE=$SESSION_SITE_ID
 
       elif [[ $TYPE == "api" ]] ; then
-        INTENT="$(extractJSONfile .intent $RECEIVED_PAYLOAD)"
+        INTENT="$(extractJSONfile .init.intent $RECEIVED_PAYLOAD)"
         publishIntent
+        scheduleTimeOut # because no other timeout will be issued
         DOING="session_ongoing"
 
       elif [[ $TYPE == "command" ]] ; then
