@@ -3,8 +3,10 @@
 
 /usr/local/bin/:
     susi.watch
-    susi.sh
+    susi.start
+    susi.stop
     susi
+    runDebug.sh
     julia
 
 /etc/systemd/system/:
@@ -32,3 +34,6 @@ Duckling:
         insert the correct installation dir to susi.toml
         (/opt/Duckling/duckling) with the leading / to enforce
         absolute path.
+
+Sound:
+    Volume gain set with alsamixer or (x11) pavucontrol
