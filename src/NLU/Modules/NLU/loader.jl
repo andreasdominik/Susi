@@ -59,7 +59,7 @@ function extractPhrases(toml, slots, intentName, phrases)
         # add optional word with space behind
         # and w/o space behind:
         #
-        if type != "regex"
+        if type != "regex:"
             phrase = replace(phrase, " <<" => "  ?<<")
             phrase = replace(phrase, ">> " => ">>  ?")
             phrase = replace(phrase, "<<>>" => "\\S*")
@@ -82,19 +82,38 @@ function extractPhrases(toml, slots, intentName, phrases)
             phrase = replace(phrase, r"( \?){2,}" => " ?")
         end
 
-        # println("raw:     $raw")
-        # println("phrase:  $phrase")
-        # println("regex:  $(Regex(phrase))")
-
-        # make exact regex:
-        #
-        if type == "exact:"
-            re = Regex("^$phrase\$", "is")
-        else
+        if type == "regex:"
             re = Regex(phrase, "is")
+
+        elseif type == "exact:"
+            re = Regex("^$phrase\$", "is")
+
+        elseif type == "partial:"
+            re = Regex(phrase, "is")
+
+        elseif type == "ordered:"
+            # regex to match all whitespace ouside ():
+            #
+            ws = r"\s(?:(?=(?:(?![\)]).)*[\(])|(?!.*[\)]))"
+            phrase = replace(phrase, ws => ".* .*")
+            re = Regex(phrase, "is")
+
+        else
+            re = "unknwon type of expression"
         end
 
-        push!(MATCHES, MatchEx(skill, fullIntent, name, slots, raw, re))
+
+        println(name)
+        println("raw:     $raw")
+        println("phrase:  $phrase")
+        println("regex:  $(Regex(phrase))")
+        println()
+
+         if re == "unknwon type of expression"
+             println("NLU loader error: unable to process match expression $name")
+         else
+             push!(MATCHES, MatchEx(skill, fullIntent, name, slots, raw, re))
+         end
     end
 end
 
