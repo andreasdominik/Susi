@@ -48,7 +48,7 @@ binary = "src/Snowboy/bin/hotword.py"
 model_path = "src/Snowboy/bin/resources"
 model = "computer.pmdl"
 local_hotword = "Computer"
-sensitivity = 0.5
+sensitivity = 0.37
 
 
 [record]
@@ -68,8 +68,8 @@ binary = "src/Record/soxrec.sh"
 recording_file = "cmd.flac"
 recording_limit = 5
 notification = true
-notification_start = "src/Record/Sounds/bell.wav"
-notification_end = "src/Record/Sounds/bell.wav"
+notification_start = "src/Resources/Sounds/belldouble.wav"
+notification_end = "src/Resources/Sounds/belltriple.wav"
 play = "play -q"
 
 

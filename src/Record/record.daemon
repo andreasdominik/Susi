@@ -50,11 +50,11 @@ while true ; do
     fi
     rm -f $REC_FILE
     $REC_CMD $REC_FILE $REC_LIMIT
-    if [[ $NOTIFICATION == true ]] ; then
-      $record_play $END_SOUND &
-    fi
 
-    if [[ -s $REC_FILE ]] ; then
+    if [[ -s $REC_FILE && $(stat -c%s $REC_FILE) -gt 10000 ]] ; then
+      if [[ $NOTIFICATION == true ]] ; then
+        $record_play $END_SOUND &
+      fi
       base64 -w 0 $REC_FILE > ${REC_FILE}.b64
     else
       touch ${REC_FILE}.b64
