@@ -24,6 +24,8 @@ cd $local_work_directory
 
 DETECTOR="$(relDir $hotword_binary)"
 MODEL="$(relDir $hotword_model_path/$hotword_model)"
+NOTIFICATION="$record_notification"
+START_SOUND="$(relDir $record_notification_start)"
 
 
 # construct MQTT message for hotword detected
@@ -38,23 +40,33 @@ PAYLOAD="{
 
 while true ; do
 
-  # run Snowboy until hotword is detected
-  #
-  $DETECTOR $MODEL $hotword_sensitivity
-  STATUS=$?
-  STATUS=0  # cancel should work for debugging
-  echo "$STATUS"
+  if [[ $MQTT_TOPIC == $TOPIC_HOTWORD_ON ]] ; then
+      if [[ $NOTIFICATION == true ]] ; then
+        $record_play $START_SOUND
+      fi
+      # run Snowboy until hotword is detected
+      #
+      $DETECTOR $MODEL $hotword_sensitivity
+      STATUS=$?
+      STATUS=0  # cancel should work for debugging
+      echo "$STATUS"
 
-  # publish "hotword detected" if status == 0; otherwise just keep
-  # detector stopped:
-  #
-  if [[ $STATUS -eq 0 ]] ; then
-    publish $TOPIC_HOTWORD "$PAYLOAD"
+      # publish "hotword detected" if status == 0; otherwise just keep
+      # detector stopped:
+      #
+      if [[ $STATUS -eq 0 ]] ; then
+        publish $TOPIC_HOTWORD "$PAYLOAD"
+      fi
+
+  elif [[ $MQTT_TOPIC == $TOPIC_NOTIFICATION_ON && $MQTT_SITE_ID == $local_siteId ]] ; then
+    NOTIFICATION=true
+  elif [[ $MQTT_TOPIC == $TOPIC_NOTIFICATION_OFF && $MQTT_SITE_ID == $local_siteId ]] ; then
+    NOTIFICATION=false
   fi
 
   # wait until retsart is triggered via:
   #     mosquitto_pub -h <HOSTNAME> -t 'hermes/hotword/toggleOn' \
   #         -m '{"siteId": "default"}'
   #
-  subscribeSiteOnce $local_siteId $TOPIC_HOTWORD_ON
+  subscribeSiteOnce $local_siteId $TOPIC_HOTWORD_ON $TOPIC_NOTIFICATION_ON $TOPIC_NOTIFICATION_OFF
 done
