@@ -87,7 +87,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   #
   if [[ $SESSION_ID != "no_session" ]] ; then
     if [[ $MQTT_TOPIC == $TOPIC_TIMEOUT ]] ; then
-      if [[ $MQTT_ID == $TIMEOUT_ID ]] ; then
+      if [[ $MQTT_ID == $TIMEOUT_ID && $MQTT_SESSION_ID == $SESSION_ID ]] ; then
         makeSessionEnd "timeout"
       fi
     else
@@ -108,12 +108,14 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       publishLogSessionStarted
       publishAsrStart # next: wait for audio recording
       DOING="wait_for_asr"
+      scheduleTimeOut
 
     elif [[ $MQTT_TOPIC == $TOPIC_START_SESSION ]] ; then
 
       nextId
       nextSessionId
       SESSION_SITE_ID=$MQTT_SITE_ID
+      scheduleTimeOut
 
       # check if action or notification or api or command:
       #
