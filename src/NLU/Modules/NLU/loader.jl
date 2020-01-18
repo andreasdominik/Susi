@@ -96,6 +96,7 @@ function extractPhrases(toml, slots, intentName, phrases)
             #
             ws = r"\s(?:(?=(?:(?![\)]).)*[\(])|(?!.*[\)]))"
             phrase = replace(phrase, ws => ".* .*")
+            # phrase = ".*$phrase.*"
             re = Regex(phrase, "is")
 
         else
