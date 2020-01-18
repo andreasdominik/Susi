@@ -11,4 +11,4 @@ gnome-terminal --tab -t "Play" --working-directory=/tmp -- $SUSI_INSTALLATION/sr
 gnome-terminal --tab -t "Record" --working-directory=/tmp -- $SUSI_INSTALLATION/src/Record/record.daemon
 gnome-terminal --tab -t "STT" --working-directory=/tmp -- $SUSI_INSTALLATION/src/SpeechToText/stt.daemon
 gnome-terminal --tab -t "TTS" --working-directory=/tmp -- $SUSI_INSTALLATION/src/TextToSpeech/tts.daemon
-# gnome-terminal --tab -t "Skills" --working-directory=/tmp -- $SUSI_INSTALLATION/src/Skills/skills.daemon
+gnome-terminal --tab -t "Skills" --working-directory=/tmp -- $SUSI_INSTALLATION/src/Skills/skills.daemon

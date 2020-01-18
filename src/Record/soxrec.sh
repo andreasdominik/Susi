@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 #
 # Script to record a command; activated by
 #
@@ -17,6 +17,6 @@ rec --rate 16000 $AUDIO \
     trim 0 $TIME_MAX \
     silence 1 0:00.05 $NOISE 1 $END_TRIGGER $NOISE \
     remix 1-2
-    # gain -n
+    gain 10
 
 sleep 0.1
