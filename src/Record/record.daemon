@@ -45,10 +45,10 @@ while true ; do
 
   if [[ $MQTT_TOPIC == $TOPIC_ASR_START ]] ; then
 
+    rm -f $REC_FILE ${REC_FILE}.b64
     if [[ $NOTIFICATION == true ]] ; then
       $record_play $START_SOUND
     fi
-    rm -f $REC_FILE
     $REC_CMD $REC_FILE $REC_LIMIT
 
     if [[ -s $REC_FILE && $(stat -c%s $REC_FILE) -gt 10000 ]] ; then
