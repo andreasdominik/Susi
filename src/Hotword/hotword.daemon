@@ -25,7 +25,7 @@ cd $local_work_directory
 DETECTOR="$(relDir $hotword_binary)"
 MODEL="$(relDir $hotword_model_path/$hotword_model)"
 NOTIFICATION="$record_notification"
-START_SOUND="$(relDir $record_notification_start)"
+START_SOUND="$(relDir $hotword_notification_start)"
 
 
 # construct MQTT message for hotword detected
