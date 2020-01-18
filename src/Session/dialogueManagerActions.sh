@@ -198,4 +198,26 @@ function makeSessionEnd() {
   DOING="no_session"
   SESSION_ID="no_session"
   INTENT_FILTER="[]"
+
+  # re-publish queued start requests:
+  #
+  if [[ ${#START_QUEUE[@]} -gt 1 ]] ; then
+    QUEUED_TOPIC="${START_QUEUE[0]}"
+    QUEUED_JSON="${START_QUEUE[1]}"
+    START_QUEUE=("${START_QUEUE[@]:2}") # slice 2 to end
+
+    (sleep 1; publish $QUEUED_TOPIC "$QUEUED_JSON") &
+  else
+    START_QUEUE=()
+  fi
+}
+
+# add a start session or hotword to queue, because
+# another session is still running.
+# queued requests are re-submitted at session end
+#
+START_QUEUE=()
+function addToQueue() {
+  START_QUEUE+=("$MQTT_TOPIC")
+  START_QUEUE+=("$(cat $RECEIVED_PAYLOAD)")
 }

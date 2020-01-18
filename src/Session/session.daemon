@@ -82,6 +82,8 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   echo "doing: $DOING, session: $SESSION_ID"
   echo -n "MQTT received topic: $MQTT_TOPIC, "
   echo "id: $ID, mqttId: $MQTT_ID"
+  echo "next queued topic: ${START_QUEUE[0]}"
+  echo "next queued json: ${START_QUEUE[1]}"
 
   # always manage timeouts if in session:
   #
@@ -97,9 +99,11 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
   # start new session:
   #
-  if [[ $DOING == "no_session" ]] ; then
-    if [[ $MQTT_TOPIC == $TOPIC_HOTWORD ]] ; then
+  if [[ $MQTT_TOPIC == $TOPIC_HOTWORD ]] ; then
 
+    # start session or queue the request:
+    #
+    if [[ $DOING == "no_session" ]] ; then
       nextId
       nextSessionId
       SESSION_SITE_ID=$MQTT_SITE_ID
@@ -109,9 +113,17 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       publishAsrStart # next: wait for audio recording
       DOING="wait_for_asr"
       scheduleTimeOut
+    else
+      addToQueue
+    fi
+  fi
 
-    elif [[ $MQTT_TOPIC == $TOPIC_START_SESSION ]] ; then
 
+   if [[ $MQTT_TOPIC == $TOPIC_START_SESSION ]] ; then
+
+    # start session or queue the request:
+    #
+    if [[ $DOING == "no_session" ]] ; then
       nextId
       nextSessionId
       SESSION_SITE_ID=$MQTT_SITE_ID
@@ -159,6 +171,8 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       else  # wrong formatted payload:
         makeSessionEnd "payload wrong formatted"
       fi
+    else
+      addToQueue
     fi
   fi
 
