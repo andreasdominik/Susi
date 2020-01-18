@@ -38,6 +38,7 @@ PAYLOAD="{
   \"currentSensitivity\": $hotword_sensitivity
 }"
 
+MQTT_TOPIC=$TOPIC_HOTWORD_ON
 while true ; do
 
   if [[ $MQTT_TOPIC == $TOPIC_HOTWORD_ON ]] ; then
