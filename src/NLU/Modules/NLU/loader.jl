@@ -89,9 +89,9 @@ function extractPhrases(toml, slots, intentName, phrases)
         # make exact regex:
         #
         if type == "exact:"
-            re = Regex("^$phrase\$", "i")
+            re = Regex("^$phrase\$", "is")
         else
-            re = Regex(phrase, "i")
+            re = Regex(phrase, "is")
         end
 
         push!(MATCHES, MatchEx(skill, fullIntent, name, slots, raw, re))
