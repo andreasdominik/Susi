@@ -2,12 +2,10 @@
 #
 # Basic service for NoSnips replacement service.
 # Usage:
-#     susi.sh path/to/susi.toml
+#     susi.start
 #
-# https://github.com/dbohdan/remarshal is used for reading toml
-# jq is used for parsing JSON
+# (c) Jan 2020, Andreas Dominik
 #
-
 CONFIG="/etc/susi.toml"
 source $SUSI_INSTALLATION/bin/toml2env $CONFIG
 

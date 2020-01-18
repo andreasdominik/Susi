@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# Stops the NoSnips replacement service by killing all potentially
+# remaining processes.
+# Usage:
+#     susi.stop
+#
+# (c) Jan 2020, Andreas Dominik
+#
+
+THIS_PROC=$$
+echo "I am $THIS_PROC"
+
+PROCS=`ps -ef | grep "Susi" | awk '{print $2}'`
+for PID in $PROCS ; do
+  if [[ $PID -ne $THIS_PROC ]] ; then
+    echo "kill: $PID"
+    sudo kill -9 $PID
+  else
+    echo "do NOT kill myself: $PID"
+  fi
+done
+
+PROCS=`ps -ef | grep 'mosquitto_sub .* hermes/' | awk '{print $2}'`
+kill -9 $PROCS
+PROCS=`ps -ef | grep 'mosquitto_sub .* susi/' | awk '{print $2}'`
+kill -9 $PROCS
