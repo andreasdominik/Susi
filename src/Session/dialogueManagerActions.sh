@@ -155,7 +155,7 @@ function publishPlay() {
 }
 
 
-function publishPlayFinished() {
+function publishSayFinished() {
 
   _ID="$1"
 
@@ -164,7 +164,7 @@ function publishPlayFinished() {
             \"id\": \"$_ID\",
             \"siteId\": \"$MQTT_SITE_ID\"
            }"
-  publish "$TOPIC_PLAY_FINISHED" "$PAYLOAD"
+  publish "$TOPIC_SAY_FINISHED" "$PAYLOAD"
 }
 
 # schedule a mqtt timout trigger and define a

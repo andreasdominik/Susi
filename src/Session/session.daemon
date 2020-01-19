@@ -258,7 +258,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
         # publish an additional finished with the user's is:
         #
         if [[ $USER_DEFINED_ID != "undefined" ]] ; then
-          publishPlayFinished $USER_DEFINED_ID
+          publishSayFinished $USER_DEFINED_ID
           USER_DEFINED_ID="undefined"
         fi
         ;;
