@@ -44,6 +44,7 @@ password = ""
 #                                    timeout
 start = true
 daemon = "src/Hotword/hotword.daemon"
+trigger_file = "hotword.toggleOff"
 binary = "src/Snowboy/bin/hotword.py"
 model_path = "src/Snowboy/bin/resources"
 model = "computer.pmdl"

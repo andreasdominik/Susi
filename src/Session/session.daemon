@@ -113,6 +113,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       publishAsrStart # next: wait for audio recording
       DOING="wait_for_asr"
       scheduleTimeOut
+      publishHotwordOff
     else
       addToQueue
     fi
@@ -128,6 +129,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       nextSessionId
       SESSION_SITE_ID=$MQTT_SITE_ID
       scheduleTimeOut
+      publishHotwordOff
 
       # check if action or notification or api or command:
       #

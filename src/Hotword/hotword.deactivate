@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+# create a file with name "hotword.toggleOff" to
+# tell the detectot to stop.
+#
+
+CONFIG="/etc/susi.toml"
+source $SUSI_INSTALLATION/bin/toml2env $CONFIG
+
+# load tool funs:
+#
+source $SUSI_INSTALLATION/src/Tools/funs.sh
+source $SUSI_INSTALLATION/src/Tools/topics.sh
+
+# base names for recveived and subm. MQTT message files:
+#
+MQTT_BASE_NAME="hotwordDeactivate"
+MQTT_COUNTER=0
+
+cd $local_work_directory
+
+HOTWORD_TRIGGER=$hotword_trigger_file
+
+rm -f $HOTWORD_TRIGGER
+while true ; do
+  subscribeSiteOnce $local_siteId $TOPIC_HOTWORD_OFF $TOPIC_HOTWORD_ON
+
+  if [[ $MQTT_TOPIC == $TOPIC_HOTWORD_OFF ]] ; then
+    cat $RECEIVED_PAYLOAD > $HOTWORD_TRIGGER
+  else
+    rm -f $HOTWORD_TRIGGER
+  fi
+done
