@@ -26,6 +26,7 @@ DETECTOR="$(relDir $hotword_binary)"
 MODEL="$(relDir $hotword_model_path/$hotword_model)"
 NOTIFICATION="$record_notification"
 START_SOUND="$(relDir $hotword_notification_start)"
+HOTWORD_TRIGGER=$hotword_trigger_file
 
 
 # construct MQTT message for hotword detected
@@ -51,6 +52,8 @@ while true ; do
       fi
       # run Snowboy until hotword is detected
       #
+
+      cat $RECEIVED_PAYLOAD > $HOTWORD_TRIGGER
       $DETECTOR $MODEL $hotword_sensitivity $hotword_trigger_file
       STATUS=$?
       STATUS=0  # cancel should work for debugging
