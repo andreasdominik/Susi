@@ -1,0 +1,2 @@
+Place for tmp files that need to be persisent (not in /tmp);
+such as fifos.
