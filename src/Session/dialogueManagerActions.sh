@@ -125,7 +125,7 @@ function publishIntent() {
 
 function publishTTSrequest() {
 
-  _TEXT="$(echo $TEXT | tr '\n' ' ')
+  _TEXT="$(echo $TEXT | tr '\n' ' ')"
   _PAYLOAD="{
             \"sessionId\": \"$SESSION_ID\",
             \"siteId\": \"$SESSION_SITE_ID\",
