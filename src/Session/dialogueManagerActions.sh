@@ -125,8 +125,9 @@ function publishIntent() {
 
 function publishTTSrequest() {
 
-echo "ori:" $TEXT
-echo "nur echo" "$TEXT" | tr -d '\n' ' '
+echo "ori:" "$TEXT"
+echo "nur echo:" $TEXT
+echo "tr:" "$TEXT" | tr '\n' ' '
 echo "sed1:" "$TEXT" | sed 's/\n/ /g'
 echo "sed2:" "$TEXT" | sed 's/\\n/ /g'
 
