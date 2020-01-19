@@ -25,7 +25,7 @@ MQTT_BASE_NAME="sessionDaemon"
 MQTT_COUNTER=0
 
 MQTT_CLIENT_ID="sessionManager-$RANDOM"
-MQTT_MESSAGE_PIPE="$MQTT_CLIENT_ID.fifo"
+MQTT_MESSAGE_PIPE="$session_message_pipe"
 # mqtt_subscribe="$mqtt_subscribe --id $MQTT_CLIENT_ID -c"
 
 cd $local_work_directory

@@ -49,6 +49,7 @@ model_path = "src/Snowboy/bin/resources"
 model = "computer.pmdl"
 local_hotword = "Computer"
 sensitivity = 0.37
+notification_start = "rc/Resources/Sounds/bell.wav"
 
 
 [record]
@@ -68,8 +69,8 @@ binary = "src/Record/soxrec.sh"
 recording_file = "cmd.flac"
 recording_limit = 5
 notification = true
-notification_start = "src/Resources/Sounds/belldouble.wav"
-notification_end = "src/Resources/Sounds/belltriple.wav"
+notification_start = "src/Resources/Sounds/bellDongDing.wav"
+notification_end = "src/Resources/Sounds/bellDingDong.wav"
 play = "play -q"
 
 
@@ -118,6 +119,7 @@ port = "8017"
 start = true
 daemon = "src/Session/session.daemon"
 session_timeout = 15
+message_pipe = "Work/mqtt.fifo"
 
 [skills]
 start = false
