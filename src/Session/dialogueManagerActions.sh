@@ -125,7 +125,7 @@ function publishIntent() {
 
 function publishTTSrequest() {
 
-  _TEXT="$(echo $TEXT | tr '\n' ' ')"
+  _TEXT="$(echo $TEXT)"
   _PAYLOAD="{
             \"sessionId\": \"$SESSION_ID\",
             \"siteId\": \"$SESSION_SITE_ID\",
@@ -155,6 +155,17 @@ function publishPlay() {
 }
 
 
+function publishPlayFinished() {
+
+  _ID="$1"
+
+  PAYLOAD="{
+            \"sessionId\": \"$MQTT_SESSION_ID\",
+            \"id\": \"$_ID\",
+            \"siteId\": \"$MQTT_SITE_ID\"
+           }"
+  publish "$TOPIC_PLAY_FINISHED" "$PAYLOAD"
+}
 
 # schedule a mqtt timout trigger and define a
 # timoutId to be able to identify, if the trigger is still valid
