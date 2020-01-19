@@ -80,7 +80,6 @@ function parseMQTTfile() {
 
   MQTT_TOPIC=$(cat $RECEIVED_MQTT | grep -Po '^.*?(?= {)')
   cat $RECEIVED_MQTT | grep -Pzo '\{[\s\S]*\}' > $RECEIVED_PAYLOAD
-  cat "$RECEIVED_PAYLOAD"
   MQTT_SITE_ID=$(extractJSONfile .siteId $RECEIVED_PAYLOAD)
   MQTT_SESSION_ID=$(extractJSONfile .sessionId $RECEIVED_PAYLOAD)
   MQTT_ID=$(extractJSONfile .id $RECEIVED_PAYLOAD)
@@ -92,7 +91,6 @@ function parseMQTT() {
 
   MQTT_TOPIC=$(echo "$_MQTT" | grep -Po '^.*?(?= {)')
   RECEIVED_PAYLOAD=$(echo "$_MQTT" | grep -Pzo '\{[\s\S]*\}')
-  echo "$RECEIVED_PAYLOAD"
   MQTT_SITE_ID=$(extractJSON .siteId $MQTT_PAYLOAD)
   MQTT_SESSION_ID=$(extractJSON .sessionId $MQTT_PAYLOAD)
   MQTT_ID=$(extractJSON .id $MQTT_PAYLOAD)

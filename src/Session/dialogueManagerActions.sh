@@ -125,18 +125,14 @@ function publishIntent() {
 
 function publishTTSrequest() {
 
-echo "ori:" "$TEXT"
-echo "nur echo:" $TEXT
-echo "tr:" "$TEXT" | tr '\n' ' '
-echo "sed1:" "$TEXT" | sed 's/\n/ /g'
-echo "sed2:" "$TEXT" | sed 's/\\n/ /g'
+_TEXT="$(echo $TEXT)"
 
   _PAYLOAD="{
             \"sessionId\": \"$SESSION_ID\",
             \"siteId\": \"$SESSION_SITE_ID\",
             \"lang\": \"$LANG\",
             \"id\": \"$ID\",
-            \"input\": \"$TEXT\"
+            \"input\": \"$_TEXT\"
            }"
   publish "$TOPIC_TTS_REQUEST" "$_PAYLOAD"
   LANG=$assistant_language
