@@ -53,7 +53,7 @@ if [[ -e ${CACHE}/${CACHED_NAME} ]] ; then
 #
 else
     if [[ $LANCODE == de-DE ]] ; then
-      VOICE="de-DE-Wavenet-E"
+      VOICE="de-DE-Wavenet-B"
       LAN="de-DE"
       VOICE_SET="\"voice\":
                   {
