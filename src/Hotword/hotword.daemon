@@ -52,8 +52,6 @@ while true ; do
       fi
       # run Snowboy until hotword is detected
       #
-
-      cat $RECEIVED_PAYLOAD > $HOTWORD_TRIGGER
       $DETECTOR $MODEL $hotword_sensitivity $hotword_trigger_file
       STATUS=$?
       STATUS=0  # cancel should work for debugging
