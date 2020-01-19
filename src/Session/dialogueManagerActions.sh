@@ -220,6 +220,7 @@ function makeSessionEnd() {
 #
 START_QUEUE=()
 function addToQueue() {
+  
   START_QUEUE+=("$MQTT_TOPIC")
   START_QUEUE+=("$(cat $RECEIVED_PAYLOAD)")
 }

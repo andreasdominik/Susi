@@ -79,17 +79,15 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   parseMQTTfile
 
   echo ""
-  echo "doing: $DOING, session: $SESSION_ID"
   echo -n "MQTT received topic: $MQTT_TOPIC, "
-  echo "id: $ID, mqttId: $MQTT_ID"
-  echo "next queued topic: ${START_QUEUE[0]}"
-  echo "next queued json: ${START_QUEUE[1]}"
+  echo "doing: $DOING, session: $SESSION_ID"
 
   # always manage timeouts if in session:
   #
   if [[ $SESSION_ID != "no_session" ]] ; then
     if [[ $MQTT_TOPIC == $TOPIC_TIMEOUT ]] ; then
       if [[ $MQTT_ID == $TIMEOUT_ID && $MQTT_SESSION_ID == $SESSION_ID ]] ; then
+        echo "    timeout matched"
         makeSessionEnd "timeout"
       fi
     else
@@ -101,6 +99,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   #
   if [[ $MQTT_TOPIC == $TOPIC_HOTWORD ]] ; then
 
+    echo "    hotword matched"
     # start session or queue the request:
     #
     if [[ $DOING == "no_session" ]] ; then
@@ -122,6 +121,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
    if [[ $MQTT_TOPIC == $TOPIC_START_SESSION ]] ; then
 
+    echo "    start matched"
     # start session or queue the request:
     #
     if [[ $DOING == "no_session" ]] ; then
@@ -184,7 +184,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   #
   # a:
   if [[ $MQTT_ID == $ID ]] ; then
-    echo "with correct id: $MQTT_TOPIC"
+    echo "    ID matched: $MQTT_TOPIC"
     nextId
 
     # manage dialogue manager sequences:
@@ -241,7 +241,6 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       # playFinished is more, because a session may end afer play:
       #
       $TOPIC_PLAY_FINISHED)
-        echo "NEXT_DOING: $NEXT_DOING"
         if [[ $NEXT_DOING == "end_session" ]] ; then
           makeSessionEnd "regular session end"
         elif [[ $NEXT_DOING == "wait_for_asr" ]] ; then  # continue session
@@ -249,15 +248,18 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
           publishAsrStart # next: wait for audio recording
           DOING="wait_for_asr"
         else
-          DOING="session_ongoing"
+          if [[ $SESSION_ID == "no_session" ]] ; then
+            DOING="no_session"
+          else
+            DOING="session_ongoing"
+          fi
         fi
-        NEXT_DOING="noting_special"
         ;;
     esac
   # end only if id matches - now sessionId:
   # b:
   elif [[ $MQTT_SESSION_ID == $SESSION_ID ]] ; then
-    echo "with correct sessionId: $MQTT_TOPIC"
+    echo "    sessionId matched: $MQTT_TOPIC"
 
     if [[ $MQTT_TOPIC == $TOPIC_END_SESSION ]] ; then
       TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
@@ -286,6 +288,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   # say and play always possible:
   #
   if [[ $MQTT_TOPIC == $TOPIC_TTS_SAY ]] ; then
+    echo "    say matched: $MQTT_TOPIC"
     nextId
     TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
     LANG="$(extractJSONfile .lang $RECEIVED_PAYLOAD)"
@@ -299,6 +302,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   fi
 
   if [[ $MQTT_TOPIC == $TOPIC_PLAY ]] ; then
+    echo "    play matched: $MQTT_TOPIC"
     nextId
     extractJSONfile .audio $RECEIVED_PAYLOAD > $AUDIO_B64
     PLAY_SITE="$(extractJSONfile .siteId $RECEIVED_PAYLOAD)"
