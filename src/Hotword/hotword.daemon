@@ -38,6 +38,10 @@ PAYLOAD="{
   \"currentSensitivity\": $hotword_sensitivity
 }"
 
+# start process to create off-trigger-file:
+#
+$SUSI_INSTALLATION/src/Hotword/hotword.deactivate &
+
 MQTT_TOPIC=$TOPIC_HOTWORD_ON
 while true ; do
 
@@ -47,7 +51,7 @@ while true ; do
       fi
       # run Snowboy until hotword is detected
       #
-      $DETECTOR $MODEL $hotword_sensitivity
+      $DETECTOR $MODEL $hotword_sensitivity $hotword_trigger_file
       STATUS=$?
       STATUS=0  # cancel should work for debugging
       echo "$STATUS"

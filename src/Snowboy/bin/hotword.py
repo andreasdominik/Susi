@@ -44,7 +44,7 @@ while True:
 
     detector.terminate()
 
-    if not path.exists(offTrigger)
+    if not path.exists(offTrigger):
         if reason == "hotword":
             sys.exit(0)
         else:
