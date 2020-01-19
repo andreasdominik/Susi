@@ -80,7 +80,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
   echo ""
   echo -n "MQTT received topic: $MQTT_TOPIC, "
-  echo "doing: $DOING, session: $SESSION_ID"
+  echo "session: $SESSION_ID"
 
   # always manage timeouts if in session:
   #
@@ -311,4 +311,5 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
     DOING="playing"
   fi
 
+  echo "    now doing: $DOING"
 done  # loop read messages from pipe
