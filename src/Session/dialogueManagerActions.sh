@@ -125,12 +125,13 @@ function publishIntent() {
 
 function publishTTSrequest() {
 
+  _TEXT="$(echo $TEXT | tr '\n' ' ')
   _PAYLOAD="{
             \"sessionId\": \"$SESSION_ID\",
             \"siteId\": \"$SESSION_SITE_ID\",
             \"lang\": \"$LANG\",
             \"id\": \"$ID\",
-            \"input\": \"$TEXT\"
+            \"input\": \"$_TEXT\"
            }"
   publish "$TOPIC_TTS_REQUEST" "$_PAYLOAD"
   LANG=$assistant_language
@@ -220,7 +221,7 @@ function makeSessionEnd() {
 #
 START_QUEUE=()
 function addToQueue() {
-  
+
   START_QUEUE+=("$MQTT_TOPIC")
   START_QUEUE+=("$(cat $RECEIVED_PAYLOAD)")
 }
