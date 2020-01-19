@@ -125,7 +125,7 @@ function publishIntent() {
 
 function publishTTSrequest() {
 
-  _TEXT="$(echo $TEXT | sed 's/\n/ /g')"
+  _TEXT="$(echo $TEXT | sed 's/\n/ /g' | sed 's/\\n/ /g')"
   _PAYLOAD="{
             \"sessionId\": \"$SESSION_ID\",
             \"siteId\": \"$SESSION_SITE_ID\",
