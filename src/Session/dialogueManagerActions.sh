@@ -194,7 +194,6 @@ function makeSessionEnd() {
   _LOG_MESSAGE=$@
 
   publishSessionEnded "$_LOG_MESSAGE"
-  publishHotwordOn
   DOING="no_session"
   SESSION_ID="no_session"
   INTENT_FILTER="[]"
@@ -208,6 +207,9 @@ function makeSessionEnd() {
 
     (sleep 1; publish $QUEUED_TOPIC "$QUEUED_JSON") &
   else
+    # acivate hotword only if nothing in queue:
+    #
+    publishHotwordOn
     START_QUEUE=()
   fi
 }
