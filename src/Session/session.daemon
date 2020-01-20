@@ -63,10 +63,21 @@ set +xv
 # core loop that catches all MQTTs depending on
 # state:
 #
-DOING="no_session"
-NEXT_DOING="nothing_special"
-SESSION_ID="no_session"
-USER_DEFINED_ID="undefined"
+DOING="no_session"            # what the DM is currently doing
+NEXT_DOING="nothing_special"  # whar the DM shall do after teh current say/play task
+SESSION_ID="no_session"       # id of current session
+USER_DEFINED_ID="undefined"   # id given by the user with say/play to identify
+                              # a finished topic
+ERROR_ACTION="continue_session"   # what to do if an record/tts/asr/nlu error
+                              # happens: by default the sesison continues; new
+                              # sessions are terminated diretctly
+                              # values: "continue_session", "terminate_session"
+CUSTOM_DATA=""                # data provided by user in start/continue session
+                              # will be reported back by
+                              # "dialogueManager/intentNotRecognized" and
+                              # "sessionEnded"
+IGNORE_TIMEOUT="false"        # during play, timeouts are ignored and
+                              # republished.
 LANG=$assistant_language
 INTENT_FILTER="[]"
 
@@ -89,7 +100,13 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
     if [[ $MQTT_TOPIC == $TOPIC_TIMEOUT ]] ; then
       if [[ $MQTT_ID == $TIMEOUT_ID && $MQTT_SESSION_ID == $SESSION_ID ]] ; then
         echo "    timeout matched"
-        makeSessionEnd "timeout"
+        if [[ $IGNORE_TIMEOUT == "false" ]] ; then
+          ERROR_ACTION="terminate_session"
+          makeSessionEnd "timeout"
+        else
+          echo "    timeout ignored"
+          scheduleTimeOut
+        fi
       fi
     else
       scheduleTimeOut
@@ -129,6 +146,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       nextId
       nextSessionId
       SESSION_SITE_ID=$MQTT_SITE_ID
+      CUSTOM_DATA="$(extractJSONfile .customData $RECEIVED_PAYLOAD)"
       scheduleTimeOut
       publishHotwordOff
 
@@ -138,7 +156,8 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       publishLogSessionStarted
       if [[ $TYPE == "action" ]] ; then
         extractIntentFilter ".init.intentFilter" $RECEIVED_PAYLOAD
-        echo "intentfilter: $INTENT_FILTER"
+        echo "    intentfilter: $INTENT_FILTER"
+        ERROR_ACTION="terminate_session"
 
         TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
         if [[ -z $TEXT ]] ; then
@@ -168,10 +187,12 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       elif [[ $TYPE == "command" ]] ; then
         TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
         extractIntentFilter ".init.intentFilter" $RECEIVED_PAYLOAD
+        ERROR_ACTION="terminate_session"
         publishNluQuery
         DOING="wait_for_nlu"
 
       else  # wrong formatted payload:
+        ERROR_ACTION="terminate_session"
         makeSessionEnd "payload wrong formatted"
       fi
     else
@@ -220,6 +241,8 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       $TOPIC_NLU_PARSED)
         publishIntent ""
         INTENT_FILTER="[]"
+        ERROR_ACTION="continue_session"  # reset ERROR_ACTION because
+                                         # NLU was successful
         DOING="session_ongoing"
         ;;
 
@@ -233,6 +256,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
           if [[ -z $PLAY_SITE ]] ; then
             PLAY_SITE=$SESSION_SITE_ID
           fi
+          IGNORE_TIMEOUT="true"
           publishPlay $PLAY_SITE
           PLAY_SITE=$SESION_SITE_ID
           DOING="playing"
@@ -242,6 +266,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       # playFinished is more, because a session may end afer play:
       #
       $TOPIC_PLAY_FINISHED)
+        IGNORE_TIMEOUT="false"
         if [[ $NEXT_DOING == "end_session" ]] ; then
           makeSessionEnd "regular session end"
         elif [[ $NEXT_DOING == "wait_for_asr" ]] ; then  # continue session
@@ -279,6 +304,8 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
     elif [[ $MQTT_TOPIC == $TOPIC_CONTINUE_SESSION ]] ; then
       TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
       extractIntentFilter ".init.intentFilter" $RECEIVED_PAYLOAD
+      CUSTOM_DATA="$(extractJSONfile .customData $RECEIVED_PAYLOAD)"
+      ERROR_ACTION="continue_session"   # do not terminate, if NLU error
       nextId
       if [[ -z $TEXT ]] ; then
         publishAsrStart # next: wait for audio recording

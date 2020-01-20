@@ -26,6 +26,7 @@ function publishSessionEnded() {
   _PAYLOAD="{
             \"sessionId\": \"$SESSION_ID\",
             \"siteId\": \"$SESSION_SITE_ID\",
+            \"customData\": \"$CUSTOM_DATA\",
             \"termination\": { \"reason\":\"$@\" }
            }"
   publish "$TOPIC_SESSION_ENDED" "$_PAYLOAD"
@@ -168,6 +169,18 @@ function publishSayFinished() {
   publish "$TOPIC_SAY_FINISHED" "$PAYLOAD"
 }
 
+
+
+function publishIntentNotRecognized(){
+
+  PAYLOAD="{
+            \"sessionId\": \"$MQTT_SESSION_ID\",
+            \"customData\": \"$CUSTOM_DATA\",
+            \"siteId\": \"$SESSION_SITE_ID\"
+           }"
+  publish "$TOPIC_SAY_FINISHED" "$PAYLOAD"
+}
+
 # schedule a mqtt timout trigger and define a
 # timoutId to be able to identify, if the trigger is still valid
 #
@@ -202,29 +215,38 @@ function nextId() {
 }
 
 
+# performs all steps of ending a session, including:
+# look if NLU_ERROR_ACTION is "continue_session"
+# and strating the next queued session
+#
 function makeSessionEnd() {
 
   _LOG_MESSAGE=$@
 
-  publishSessionEnded "$_LOG_MESSAGE"
-  DOING="no_session"
-  SESSION_ID="no_session"
-  INTENT_FILTER="[]"
+  if [[ $ERROR_ACTION == "terminate_session" ]] ; then
+      publishSessionEnded "$_LOG_MESSAGE"
+      DOING="no_session"
+      SESSION_ID="no_session"
+      INTENT_FILTER="[]"
 
-  # re-publish queued start requests:
-  #
-  if [[ ${#START_QUEUE[@]} -gt 1 ]] ; then
-    QUEUED_TOPIC="${START_QUEUE[0]}"
-    QUEUED_JSON="${START_QUEUE[1]}"
-    START_QUEUE=("${START_QUEUE[@]:2}") # slice 2 to end
+      # re-publish queued start requests:
+      #
+      if [[ ${#START_QUEUE[@]} -gt 1 ]] ; then
+        QUEUED_TOPIC="${START_QUEUE[0]}"
+        QUEUED_JSON="${START_QUEUE[1]}"
+        START_QUEUE=("${START_QUEUE[@]:2}") # slice 2 to end
 
-    (sleep 1; publish $QUEUED_TOPIC "$QUEUED_JSON") &
-  else
-    # acivate hotword only if nothing in queue:
-    #
-    publishHotwordOn
-    START_QUEUE=()
-  fi
+        (sleep 1; publish $QUEUED_TOPIC "$QUEUED_JSON") &
+      else
+        # acivate hotword only if nothing in queue:
+        #
+        publishHotwordOn
+        START_QUEUE=()
+      fi
+      ERROR_ACTION="continue_session"
+    elif [[ $ERROR_ACTION == "continue_session" ]] ; then
+      publishIntentNotRecognized
+    fi
 }
 
 # add a start session or hotword to queue, because

@@ -26,6 +26,7 @@ TOPIC_NOTIFICATION_OFF="hermes/feedback/sound/toggleOff"
 TOPIC_NLU_QUERY="hermes/nlu/query"
 TOPIC_NLU_PARSED="hermes/nlu/intentParsed"
 TOPIC_NLU_NOT="hermes/nlu/intentNotRecognized"
+TOPIC_DIALOGUE_NLU_NOT="hermes/dialogueManager/intentNotRecognized"
 
 TOPIC_NLU_INTENT_FILTER="hermes/dialogueManager/configure"
 TOPIC_NLU_RESET_INTENT_FILTER="hermes/dialogueManager/configureReset"
