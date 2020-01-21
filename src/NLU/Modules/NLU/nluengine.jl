@@ -70,7 +70,6 @@ function listener()
                 printDict(result)
             end
         end
-        println("Intentfilter after edit: $intentFilter")
     end
 end
 
@@ -94,20 +93,18 @@ function findIntent(command, siteId, posFilter, negFilter)
 
     for oneMatch in MATCHES
 
-        println("""testing ... >$command< against $(oneMatch.match):
-                   $(oneMatch.matchExpression)""")
-
         # test if filtered:
         #
-        useit = true
-        if oneMatch.intent in negFilter
-            useit = false
-        end
-        if oneMatch.intent in posFilter
-            useit = true
+        if length(posFilter) > 0
+            useit = (oneMatch.intent in posFilter)
+        else
+            useit = ! (oneMatch.intent in negFilter)
         end
 
         if useit
+            println("""testing ... >$command< against $(oneMatch.match):
+            $(oneMatch.matchExpression)""")
+
             matched = matchOne(command, oneMatch)
             if matched[:matched]
                 return matched

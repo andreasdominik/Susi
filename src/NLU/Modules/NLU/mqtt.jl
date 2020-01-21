@@ -28,9 +28,7 @@ function readOneMQTT(topics; hostname = nothing, port = nothing,
     cmd = constructMQTTcmd(topics, hostname = hostname, port = port,
                                    user = user, password = password)
 
-    println("cmd: cmd")
     retrieved = runOneMQTT(cmd)
-    println("retrieved: $retrieved \n")
     topic, payload = parseMQTT(retrieved)
 
     return topic, payload
