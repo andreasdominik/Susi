@@ -225,7 +225,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
       $TOPIC_ASR_TEXT)
         TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
-        if [[ -z $TEXT || ${#TEXT} -lt 10 ]] ; then
+        if [[ -z $TEXT || ${#TEXT} -lt 2 ]] ; then
           makeSessionEnd "error: no transscript"
         else
           publishNluQuery
@@ -235,7 +235,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
       $TOPIC_NLU_NOT)
         makeSessionEnd "error: NLU failed"
-        # qndSay "failedNLU"
+        INTENT_FILTER="[]"
         ;;
 
       $TOPIC_NLU_PARSED)
@@ -303,7 +303,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
     elif [[ $MQTT_TOPIC == $TOPIC_CONTINUE_SESSION ]] ; then
       TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
-      extractIntentFilter ".init.intentFilter" $RECEIVED_PAYLOAD
+      extractIntentFilter ".intentFilter" $RECEIVED_PAYLOAD
       CUSTOM_DATA="$(extractJSONfile .customData $RECEIVED_PAYLOAD)"
       ERROR_ACTION="continue_session"   # do not terminate, if NLU error
       nextId
