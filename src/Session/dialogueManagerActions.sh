@@ -178,7 +178,7 @@ function publishIntentNotRecognized(){
             \"customData\": \"$CUSTOM_DATA\",
             \"siteId\": \"$SESSION_SITE_ID\"
            }"
-  publish "$TOPIC_SAY_FINISHED" "$PAYLOAD"
+  publish "$TOPIC_DIALOGUE_NLU_NOT" "$PAYLOAD"
 }
 
 # schedule a mqtt timout trigger and define a
