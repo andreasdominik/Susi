@@ -27,7 +27,9 @@ function loadIntents()
         end
     end
 
-    println("intentFilter: $intentFilter")
+    # sort match expressions by skill, intent and name:
+    #
+    global MATCHES = sort(MATCHES, by=x->x.skill*x.intent*x.match)
 end
 
 
