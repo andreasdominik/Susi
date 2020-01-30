@@ -138,26 +138,29 @@ function matchOne(command, oneMatch)
         for slotName in slotNames
             slot = oneMatch.slots[slotName]
             raw = m[Symbol(slotName)]
-            value = slot.postfun(raw)
-            if slot.type in ["InstantTime", "Currency", "Number", "Ordinal", "Duration"]
-                kind = slot.type
-                entity = slot.type
-            else
-                kind = "Custom"
-                entity = slot.type
-            end
-            # add dummy ranges:
-            #
-            range = Dict(:start => 1, :end => 2)
-            # slotName = slotName already there
+            raw = strip(raw)
+            if length(raw) > 0
+                value = slot.postfun(raw)
+                if slot.type in ["InstantTime", "Currency", "Number", "Ordinal", "Duration"]
+                    kind = slot.type
+                    entity = slot.type
+                else
+                    kind = "Custom"
+                    entity = slot.type
+                end
+                # add dummy ranges:
+                #
+                range = Dict(:start => 1, :end => 2)
+                # slotName = slotName already there
 
-            slot = Dict(:rawValue => raw,
-                        :value => Dict(:kind => kind,
-                                       :value => value),
-                        :range => range,
-                        :entity => entity,
-                        :slotName => slotName )
-            push!(slots, slot)
+                slot = Dict(:rawValue => raw,
+                            :value => Dict(:kind => kind,
+                                           :value => value),
+                            :range => range,
+                            :entity => entity,
+                            :slotName => slotName )
+                push!(slots, slot)
+            end
         end
 
         matched = Dict(:matched => true,

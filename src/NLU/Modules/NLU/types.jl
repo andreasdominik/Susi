@@ -1,6 +1,7 @@
 mutable struct Slot
     name
     type
+    allowEmpty
     synonyms    # depend on type and class
     regex
     postfun     # function to postprocess slot value

@@ -176,6 +176,12 @@ function extractSlots(toml)
             syns = Dict{AbstractString, AbstractArray}()
         end
 
+        if haskey(toml[s], "allow_empty")
+            allowEmpty = toml[s]["allow_empty"]
+        else
+            allowEmpty = false
+        end
+
         # add regex that matches the slot:
         #
         # for list, match only ANY of the words in one of the
@@ -198,6 +204,11 @@ function extractSlots(toml)
         end
 
         if matchSlot != nothing
+
+            if allowEmpty
+                matchSlot = matchSlot * "|"
+            end
+
             # re matches the single slot (with named capture group):
             #
             re = "(?P<$s>$matchSlot)"
@@ -226,6 +237,7 @@ function extractSlots(toml)
 
             slots[s] = Slot(deepcopy(s),
                             deepcopy(type),
+                            allowEmpty,
                             deepcopy(syns),
                             deepcopy(re),
                             fun)
