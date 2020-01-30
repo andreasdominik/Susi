@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 #
 # Duckling service for NoSnips replacement.
 # Usage:
@@ -28,6 +28,6 @@ DUCKLING_DIR="$(relDir $duckling_install_dir)"
 cd $DUCKLING_DIR
 while true ; do
 
-  stack exec -- duckling-example-exe --port $duckling_port
+  stack exec -- duckling-example-exe -- --port $duckling_port
   sleep 10
 done
