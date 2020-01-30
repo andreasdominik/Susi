@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -xv
 #
 # Duckling service for NoSnips replacement.
 # Usage:
@@ -16,10 +16,6 @@ source $SUSI_INSTALLATION/bin/toml2env $CONFIG
 source $SUSI_INSTALLATION/src/Tools/funs.sh
 source $SUSI_INSTALLATION/src/Tools/topics.sh
 
-# parse config from toml:
-#
-readToml $CONFIG
-
 DUCKLING_DIR="$(relDir $duckling_install_dir)"
 
 
@@ -28,6 +24,6 @@ DUCKLING_DIR="$(relDir $duckling_install_dir)"
 cd $DUCKLING_DIR
 while true ; do
 
-  stack exec -- duckling-example-exe -- --port $duckling_port
+  stack exec duckling-example-exe -- --port $duckling_port
   sleep 10
 done
