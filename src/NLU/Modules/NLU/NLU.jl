@@ -15,6 +15,7 @@ include("loader.jl")
 include("mqtt.jl")
 include("filter.jl")
 include("nluengine.jl")
+include("duckling.jl")
 
 CONFIG = Dict()
 SKILLS_DIR = AbstractString
