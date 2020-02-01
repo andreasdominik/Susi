@@ -102,6 +102,7 @@ function findIntent(command, siteId, posFilter, negFilter)
         end
 
         if useit
+            println()
             println("""testing ... >$command< against $(oneMatch.match):
             $(oneMatch.matchExpression)""")
 

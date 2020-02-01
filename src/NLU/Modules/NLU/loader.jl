@@ -82,6 +82,7 @@ function extractPhrases(toml, slots, intentName, phrases)
             phrase = strip(phrase)
             phrase = replace(phrase, r"\s{2,}" => " ")
             phrase = replace(phrase, r"( \?){2,}" => " ?")
+            phrase = replace(phrase, r"\) \(" => ") ?(")   # make space between two slots optional (in case slots are optinal)
         end
 
         if type == "regex:"
