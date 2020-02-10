@@ -201,7 +201,7 @@ function extractSlots(toml)
         elseif type in ["Number", "Ordinal"]
             matchSlot = "\\S+"
         elseif type in ["Any", "Time", "Duration", "Currency"]
-            matchSlot = ".+"
+            matchSlot = ".*\\S+.*"   # minimum one non-space
         else
             matchSlot = nothing
         end
