@@ -243,9 +243,11 @@ function makeSessionEnd() {
         publishHotwordOn
         START_QUEUE=()
       fi
-      ERROR_ACTION="continue_session"
+      # ERROR_ACTION="continue_session"
+      ERROR_ACTION="terminate_session"
     elif [[ $ERROR_ACTION == "continue_session" ]] ; then
       publishIntentNotRecognized
+      ERROR_ACTION="terminate_session"
     fi
 }
 
