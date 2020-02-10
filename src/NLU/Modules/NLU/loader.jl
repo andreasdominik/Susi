@@ -198,8 +198,9 @@ function extractSlots(toml)
 
         # for any just return all content as slot value:
         #
-        elseif type in ["Any",
-                        "Time", "Duration", "Currency", "Number", "Ordinal"]
+        elseif type in ["Number", "Ordinal"]
+            matchSlot = "\\S+"
+        elseif type in ["Any", "Time", "Duration", "Currency"]
             matchSlot = ".+"
         else
             matchSlot = nothing
