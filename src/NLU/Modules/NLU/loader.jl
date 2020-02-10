@@ -54,7 +54,7 @@ function extractPhrases(toml, slots, intentName, phrases)
         # add slots as named capture groups:
         #
         for (slotName,slot) in slots
-            phrase = replace(phrase, "<<$(slot.name)>>" => slot.regex )
+            phrase = replace(phrase, "<<$(slot.name)>>" => "$(slot.regex)\\b ?")
         end
 
         # not for Regex-type:
@@ -63,7 +63,7 @@ function extractPhrases(toml, slots, intentName, phrases)
         #
         if type != "regex:"
             phrase = replace(phrase, " <<" => "  ?<<")
-            phrase = replace(phrase, ">> " => ">>  ?")
+            phrase = replace(phrase, ">> " => ">>\\b ?")
             phrase = replace(phrase, "<<>>" => "\\S*")
 
             # word alternatives
@@ -82,6 +82,7 @@ function extractPhrases(toml, slots, intentName, phrases)
             phrase = strip(phrase)
             phrase = replace(phrase, r"\s{2,}" => " ")
             phrase = replace(phrase, r"( \?){2,}" => " ?")
+            phrase = replace(phrase, r"\? " => "?")
             phrase = replace(phrase, r"\) \(" => ") ?(")   # make space between two slots optional (in case slots are optinal)
         end
 
@@ -224,6 +225,7 @@ function extractSlots(toml)
                             return(synName)
                         end
                     end
+                    return slotParsed
                 end
             elseif type in ["Time", "Duration", "Number",
                             "Ordinal", "Currency"]
