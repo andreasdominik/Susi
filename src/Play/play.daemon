@@ -19,6 +19,7 @@ source $SUSI_INSTALLATION/src/Tools/topics.sh
 
 AUDIO_B64=playAudio.b64
 AUDIO=playAudio
+
 # base names for recveived and subm. MQTT message files:
 #
 MQTT_BASE_NAME="playDaemon"
