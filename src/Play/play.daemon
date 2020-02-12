@@ -44,6 +44,10 @@ while true ; do
   #
   LISTEN_HOTWORD="$(extractJSONfile .hotword $RECEIVED_PAYLOAD)"
   FADE_IN="$(extractJSONfile .fade_in $RECEIVED_PAYLOAD)"
+  if [[ ${#FADE_IN} -lt 1 ]] ; then
+    FADE_IN=0
+  fi
+  
   extractJSONfile .audio $RECEIVED_PAYLOAD > $AUDIO_B64
   base64 --decode $AUDIO_B64 > $AUDIO
 
@@ -60,7 +64,7 @@ while true ; do
 
     # play the sound in background with fade:
     #
-    play $AUDIO_NAME fade $FADE_IN &
+    play $AUDIO_NAME fade t $FADE_IN &
     PLAY_PID=$!
 
     # run Snowboy until hotword is detected
