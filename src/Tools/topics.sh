@@ -30,6 +30,8 @@ TOPIC_DIALOGUE_NLU_NOT="hermes/dialogueManager/intentNotRecognized"
 
 TOPIC_NLU_INTENT_FILTER="hermes/dialogueManager/configure"
 TOPIC_NLU_RESET_INTENT_FILTER="hermes/dialogueManager/configureReset"
+TOPIC_DIALOGUE_STOP_LISTEN="susi/dialogueManager/stopListen"
+TOPIC_DIALOGUE_START_LISTEN="susi/dialogueManager/startListen"
 
 TOPIC_TTS_SAY="hermes/tts/say"
 TOPIC_TTS_REQUEST="susi/tts/request"

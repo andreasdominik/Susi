@@ -39,19 +39,15 @@ mkfifo $MQTT_MESSAGE_PIPE
 
 # subscribe to all incoming topics:
 #
-_TOPICS="-t $TOPIC_ASR_AUDIO \
-        -t $TOPIC_ASR_TEXT \
-        -t $TOPIC_NLU_NOT \
-        -t $TOPIC_NLU_PARSED \
-        -t $TOPIC_TTS_AUDIO \
-        -t $TOPIC_TTS_SAY \
-        -t $TOPIC_PLAY \
-        -t $TOPIC_PLAY_FINISHED \
+_TOPICS="-t $TOPIC_ASR_AUDIO -t $TOPIC_ASR_TEXT \
+        -t $TOPIC_NLU_NOT -t $TOPIC_NLU_PARSED \
+        -t $TOPIC_TTS_AUDIO -t $TOPIC_TTS_SAY \
+        -t $TOPIC_PLAY -t $TOPIC_PLAY_FINISHED \
         -t $TOPIC_TIMEOUT \
         -t $TOPIC_HOTWORD \
-        -t $TOPIC_CONTINUE_SESSION \
-        -t $TOPIC_END_SESSION \
-        -t $TOPIC_START_SESSION"
+        -t $TOPIC_CONTINUE_SESSION -t $TOPIC_END_SESSION \
+        -t $TOPIC_START_SESSION \
+        -t $TOPIC_DIALOGUE_STOP_LISTEN -t $TOPIC_DIALOGUE_START_LISTEN"
 TOPICS=$(echo $_TOPICS)
 
 echo $TOPICS
@@ -78,6 +74,8 @@ CUSTOM_DATA=""                # data provided by user in start/continue session
                               # "sessionEnded"
 IGNORE_TIMEOUT="false"        # during play, timeouts are ignored and
                               # republished.
+LISTEN_TO_HOTWORDS="true"     # only if true, the manager will react to hotwords
+
 LANG=$assistant_language
 INTENT_FILTER="[]"
 
@@ -116,23 +114,26 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   # start new session:
   #
   if [[ $MQTT_TOPIC == $TOPIC_HOTWORD ]] ; then
-
-    echo "    hotword matched"
-    # start session or queue the request:
-    #
-    if [[ $DOING == "no_session" ]] ; then
-      nextId
-      nextSessionId
-      SESSION_SITE_ID=$MQTT_SITE_ID
-      TYPE=hotword
-      # sleep 1
-      publishLogSessionStarted
-      publishAsrStart # next: wait for audio recording
-      DOING="wait_for_asr"
-      scheduleTimeOut
-      publishHotwordOff
+    if [[ $LISTEN_TO_HOTWORDS == false ]] ; then
+      echo "    hotword matched, but ignored"
     else
-      addToQueue
+      echo "    hotword matched"
+      # start session or queue the request:
+      #
+      if [[ $DOING == "no_session" ]] ; then
+        nextId
+        nextSessionId
+        SESSION_SITE_ID=$MQTT_SITE_ID
+        TYPE=hotword
+        # sleep 1
+        publishLogSessionStarted
+        publishAsrStart # next: wait for audio recording
+        DOING="wait_for_asr"
+        scheduleTimeOut
+        publishHotwordOff
+      else
+        addToQueue
+      fi
     fi
   fi
 
@@ -349,6 +350,15 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
     NEXT_DOING=$DOING
     DOING="playing"
   fi
+
+  # switch on/off hotword listener:
+  #
+  if [[ $MQTT_TOPIC == $TOPIC_DIALOGUE_STOP_LISTEN ]] ; then
+    LISTEN_TO_HOTWORDS=false
+  elif [[ $MQTT_TOPIC == $TOPIC_DIALOGUE_START_LISTEN ]]; then
+    LISTEN_TO_HOTWORDS=true
+  fi
+
 
   echo "    now doing: $DOING"
 done  # loop read messages from pipe
