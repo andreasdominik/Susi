@@ -143,12 +143,25 @@ _TEXT="$(echo $TEXT)"
 function publishPlay() {
 
   _PLAY_SITE=$1
+  if [[ $# -ge 2 ]] ; then
+    _USE_HOTWORD="$2"
+  else
+    _USE_HOTWORD="ignore"
+  fi
+  if [[ $# -ge 3 ]] ; then
+    _FADE_IN=$3
+  else
+    _FADE_IN=0
+  fi
+
   MQTT_COUNTER=$(($MQTT_COUNTER + 1))
   PAYLOAD_FILE="${MQTT_BASE_NAME}-$(printf "%04d" $MQTT_COUNTER).payload"
   echo -n "{
     \"sessionId\": \"$SESSION_ID\",
-    \"siteId\": \"$PLAY_SITE\",
+    \"siteId\": \"$_PLAY_SITE\",
     \"id\": \"$ID\",
+    \"hotword\": \"$_USE_HOTWORD\",
+    \"fade_in\": \"$_FADE_IN\",
     \"audio\": \""              >  $PAYLOAD_FILE
     cat $AUDIO_B64              >> $PAYLOAD_FILE
     echo "\" }"                 >> $PAYLOAD_FILE

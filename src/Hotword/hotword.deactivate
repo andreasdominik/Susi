@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # create a file with name "hotword.toggleOff" to
-# tell the detectot to stop.
+# tell the detector to stop.
 #
 
 CONFIG="/etc/susi.toml"

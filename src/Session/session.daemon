@@ -340,10 +340,12 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   if [[ $MQTT_TOPIC == $TOPIC_PLAY ]] ; then
     echo "    play matched: $MQTT_TOPIC"
     nextId
+    USE_HOTWORD="$(extractJSONfile .hotword $RECEIVED_PAYLOAD)"
+    FADE_IN="$(extractJSONfile .fade_in $RECEIVED_PAYLOAD)"
     extractJSONfile .audio $RECEIVED_PAYLOAD > $AUDIO_B64
     USER_DEFINED_ID=$MQTT_ID
     PLAY_SITE="$(extractJSONfile .siteId $RECEIVED_PAYLOAD)"
-    publishPlay
+    publishPlay $PLAY_SITE $USE_HOTWORD $FADE_IN
     NEXT_DOING=$DOING
     DOING="playing"
   fi

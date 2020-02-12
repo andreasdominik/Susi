@@ -37,7 +37,7 @@ TOPIC_TTS_AUDIO="susi/tts/audio"
 TOPIC_SAY_FINISHED="hermes/tts/sayFinished"
 TOPIC_PLAY_FINISHED="susi/play/playFinished"
 TOPIC_PLAY="susi/play/playAudio"
-TOPIC_PLAY_REQUEST="susi/play/request"
+TOPIC_PLAY_REQUEST="susi/playserver/request"
 
 TOPIC_INTENT="hermes/intent"
 

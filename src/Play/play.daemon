@@ -32,16 +32,45 @@ while true ; do
   SESSION_ID=$MQTT_SESSION_ID
   ID=$MQTT_ID
 
+  # payload for hotword on/off:
+  #
+  HOTWORD_PAYLOAD="{
+    \"sessionId\": \"no_session\",
+    \"siteId\": \"$local_siteId\"
+  }"
+
   # extract base64 audio:
   #
+  LISTEN_HOTWORD="$(extractJSONfile .hotword $RECEIVED_PAYLOAD)"
+  FADE_IN="$(extractJSONfile .fade_in $RECEIVED_PAYLOAD)"
   extractJSONfile .audio $RECEIVED_PAYLOAD > $AUDIO_B64
   base64 --decode $AUDIO_B64 > $AUDIO
-  MEDIA_TYPE="$(soxi -t $AUDIO)"
+
+  # use ffmpg for formate detection rather then soxi:
+  # MEDIA_TYPE="$(soxi -t $AUDIO)"
+  #
+  MEDIA_TYPE="$(ffprobe -show_format playAudio 2>/dev/null | grep -Po '(?<=format_name=)[0-9a-zA-Z]+$')"
   AUDIO_NAME="${AUDIO}.${MEDIA_TYPE}"
   mv $AUDIO $AUDIO_NAME
 
-  $play_binary $AUDIO_NAME
+  # kill play if hotword is detected:
+  #
+  if [[ $LISTEN_HOTWORD == sensitive ]] ; then
 
+    # play the sound in background with fade:
+    #
+    play $AUDIO_NAME fade $FADE_IN &
+    PLAY_PID=$!
+
+    # run Snowboy until hotword is detected
+    #
+    publish "$TOPIC_HOTWORD_ON" "$HOTWORD_PAYLOAD"
+    subscribeSiteOnce $local_siteId $TOPIC_HOTWORD
+    kill $PLAY_PID
+    publish "$TOPIC_HOTWORD_OFF" "$HOTWORD_PAYLOAD"
+  else
+    $play_binary $AUDIO_NAME
+  fi
   # tell the session manager the status:
   #
   PAYLOAD="{

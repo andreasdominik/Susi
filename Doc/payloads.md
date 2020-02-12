@@ -131,3 +131,22 @@ All IDs match the IDs of the request:
             LDvGJlbiwgSm9naHVydCB1bmQgUXVhcms="
 }
 ```
+
+### Topic: susi/play/request
+
+Play an audio at the given siteId.
+If `hotword` == "sensitive", the audio playing is stopped if a hotword is
+detected at the site (useful for notifications).
+`fade_in` defines the fade-in-time in sec.
+
+```
+{
+  "sessionId": "session:d15eb1a0-67ba-4a3b-a378-a5b06e370719",
+  "siteId": "default",
+  "id": "ff64e565-8398-4ca5-9742-a4f1712153e3",
+  "hotword": "ignore",
+  "fade_in": "0",
+  "audio": "UG9seWZvbiB6d2l0c2NoZXJuZCBhw59lbiBNw6R4Y2hlbnMgVsO2Z2VsIF
+            LDvGJlbiwgSm9naHVydCB1bmQgUXVhcms="
+}
+```  
