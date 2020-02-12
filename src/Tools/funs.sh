@@ -123,7 +123,13 @@ function extractJSON() {
     _JSON=$TOML
   fi
 
-  echo "$(echo $_JSON | jq -r $_FIELD)"
+  # echo "$(echo $_JSON | jq -r $_FIELD)"
+  _VAL="$(echo $_JSON | jq -r $_FIELD)"
+  if [[ $_VAL == null ]] ; then
+    echo ""
+  else
+    echo $_VAL
+  fi
 }
 
 function extractJSONdir() {
