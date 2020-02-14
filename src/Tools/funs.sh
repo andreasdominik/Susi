@@ -168,3 +168,21 @@ function publishFile() {
 
   $mqtt_publish  -t "$_TOPIC" -s <"$_PAYLOAD"
 }
+
+
+# play a notification sound (arg1).
+# if arg1 is a directory, play a randomly selected file
+#
+function playNotification() {
+
+  _MEDIA=$1
+  if [[ -d $_MEDIA ]] ; then
+    _FILE="$(shuf -n1 -e $_MEDIA/*)"
+  else
+    _FILE="$_MEDIA"
+  fi
+
+  cp $_FILE ./
+  _PLAY_FILE="$(basename $_FILE)"
+  play $_FILE
+}
