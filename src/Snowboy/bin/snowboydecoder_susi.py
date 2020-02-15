@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+#
+# modified demo program for hotword detection for Susi.
+# Based on snowboydecoder.py as distributed with Snowboy.
+#
 
 import collections
 import pyaudio

@@ -1,7 +1,11 @@
 #!/usr/bin/python
 #
+# modified demo program for hotword detection for Susi.
+# Based on demo.py as distributed with Snowboy.
+#
 # usage: hotword.py model senistivity trigger_file
-import snowboydecoder
+#
+import snowboydecoder_susi as snowboydecoder
 import sys
 import signal
 import os.path
