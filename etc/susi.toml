@@ -42,7 +42,8 @@ password = "ag543jo9ikngr56hs3mg"
 #
 start = true
 daemon = "src/Hotword/hotword.daemon"
-binary = "/opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/hotword_susi.py"
+# binary = "/opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/hotword_susi.py"
+binary = "/opt/Snowboy/ubuntu1404-x86_64-1.3.0/hotword_susi.py"
 model_path = "src/Snowboy/bin/resources"
 model = "computer.pmdl"
 sensitivity = 0.37
@@ -69,7 +70,8 @@ binary = "src/Record/soxrec.sh"
 recording_file = "cmd.flac"
 recording_limit = 15
 notification = true
-notification_start = "src/Resources/Sounds/bellDongDing.wav"
+# notification_start = "src/Resources/Sounds/bellDongDing.wav"
+notification_start = "src/Resources/Welcome/de"
 # notification_end = "src/Resources/Sounds/bellDingDong.wav"
 play = "play -q"
 
@@ -92,16 +94,32 @@ cache = "/home/andreas/Documents/Projekte/2019-Susi/ApplicationData/TTScache"
 start = true
 daemon = "src/SpeechToText/stt.daemon"
 binary = "src/GoogleCloud/stt/stt-google.sh"
-
-[google_cloud]
-credentials = "/home/andreas/Documents/Projekte/2019-Susi/ApplicationData/Google/Credentials/google-credentials.json"
-refresh_token_cmd = "src/GoogleCloud/refreshToken.sh"
+# binary = "src/MozillaDeepSpeech/stt-deepspeech.sh"
 
 [nlu]
 # start = true     start the natural language understanding service
 #                  to identify intents and extract slot values
 start = true
 daemon = "src/NLU/nlu.daemon.jl"
+
+[session]
+# The session manager ...
+start = true
+daemon = "src/Session/session.daemon"
+session_timeout = 10
+message_pipe = "Work/mqtt.fifo"
+
+[google_cloud]
+credentials = "/home/andreas/Documents/Projekte/2019-Susi/ApplicationData/Google/Credentials/google-credentials.json"
+refresh_token_cmd = "src/GoogleCloud/refreshToken.sh"
+
+[deep_speech]
+binary = "deepspeech"
+installation = "/opt/MozillaDeepSpeech"
+model_dir = "deepspeech-0.6.1-models"
+model = "output_graph.pbmm"
+language_model = "lm.binary"
+trie = "trie"
 
 [duckling]
 # duckling is used to extract time and ordinal information from raw slot values.
@@ -114,12 +132,6 @@ daemon = "src/Duckling/duckling.daemon"
 host = "localhost"
 port = "8017"
 
-[session]
-# The session manager ...
-start = true
-daemon = "src/Session/session.daemon"
-session_timeout = 10
-message_pipe = "Work/mqtt.fifo"
 
 [skills]
 start = false

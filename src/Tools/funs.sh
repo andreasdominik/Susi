@@ -184,5 +184,5 @@ function playNotification() {
 
   cp $_FILE ./
   _PLAY_FILE="$(basename $_FILE)"
-  $record_play $_FILE
+  $record_play $_PLAY_FILE
 }
