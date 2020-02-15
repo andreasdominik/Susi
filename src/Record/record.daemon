@@ -29,7 +29,7 @@ REC_FILE="$record_recording_file"
 REC_LIMIT="$record_recording_limit"
 NOTIFICATION="$record_notification"
 START_SOUND="$(relDir $record_notification_start)"
-END_SOUND="$(relDir $record_notification_end)"
+# END_SOUND="$(relDir $record_notification_end)"
 
 # main loop:
 #  - wait for request
