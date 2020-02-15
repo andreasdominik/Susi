@@ -51,6 +51,43 @@ sudo apt-get install git-core curl coreutils
 gcloud auth application-default print-access-token
 ```
 
+* **Mozilla DeepSpeech:**
+  as an alternative to the Google Cloud services Mozilla DeepSpeech can be used.
+  However,
+  - trained models and language models are only available for English langage
+  - the quality of transcription seems not to be sufficient for an assistant
+    (at least in my tests - this may differ for other speakers and different
+    hardware).
+
+  Installation is simple and follows the instruction on the website
+  (https://github.com/mozilla/DeepSpeech). The installation can be tested
+  by running deepspeech on the commandline.
+
+```
+# prepare:
+mkdir /opt/DeepSpeech
+cd /opt/DeepSpeech
+virtualenv -p python3 ./deepspeech-venv/
+source $HOME/tmp/deepspeech-venv/bin/activate
+
+# Install DeepSpeech
+pip3 install deepspeech
+
+# Download pre-trained English model and extract
+curl -LO https://github.com/mozilla/DeepSpeech/releases/download/v0.6.1/deepspeech-0.6.1-models.tar.gz
+tar xvf deepspeech-0.6.1-models.tar.gz
+
+# Download example audio files
+curl -LO https://github.com/mozilla/DeepSpeech/releases/download/v0.6.1/audio-0.6.1.tar.gz
+tar xvf audio-0.6.1.tar.gz
+
+# Transcribe an audio file
+rec -r 16000 lighton.wav
+
+deepspeech --model deepspeech-0.6.1-models/output_graph.pbmm --lm deepspeech-0.6.1-models/lm.binary --trie deepspeech-0.6.1-models/trie --audio lighton.wav
+```
+
+
 * **mosquitto, jq, base64:**
   mosquitto server and client are nedded to
   send publish and subscribe to MQTT messages. The package mosquitto
@@ -119,6 +156,7 @@ cd /opt/Snowboy
 # binaries for the required platform:
 cp ~/Downloads/<rpi-arm-raspbian-8.0-1.3.0.tar.bz2> /opt/Snowboy
 tar xvf <rpi-arm-raspbian-8.0-1.3.0.tar.bz2>
+sudo apt-get install python-pyaudio python3-pyaudio sox
 ```
 
 * **Duckling:**
@@ -185,6 +223,7 @@ cp Susi/src/Snowboy/bin/snowboydecoder_susi.py /opt/Snowboy/<rpi-arm-raspbian-8.
 cd /usr/local/bin/:
 sudo ln -s /opt/Susi/Susi/bin/susi.watch
 sudo ln -s /opt/Susi/Susi/bin/susi
+sudo ln -s /opt/Susi/Susi/bin/susi.say
 sudo ln -s /opt/Susi/Susi/src/Service/susi.start
 sudo ln -s /opt/Susi/Susi/src/Service/susi.stop
 
@@ -292,7 +331,19 @@ is necessary after some time of operation.
 Configuration of the STT daemon.
 By default Google STT is used because of its very high accuracy and common
 knowledge. However, it's no longer local and private.    
+Mozilla DeepSpeech can be used for English language if installed by
+uncommenting the respective line.
 Other services may be included by exchange the `binary`.
+
+#### [nlu]
+Configuration of the NLU (natural language unserstaanding) daemon.
+The default daemon is implemented in Julia and uses Regular Expressions
+for intent matching and capturing of slots values.
+
+For more details see the NLU section of the docu.
+The NLU also reads the skill directory from the [skills] section to find
+skills.
+
 
 #### [tts]
     insert the correct installation dir to susi.toml
