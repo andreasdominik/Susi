@@ -24,8 +24,8 @@ cd $local_work_directory
 
 DETECTOR="$(relDir $hotword_binary)"
 MODEL="$(relDir $hotword_model_path/$hotword_model)"
-NOTIFICATION="$record_notification"
-START_SOUND="$(relDir $hotword_notification_start)"
+NOTIFICATION="$hotword_notification"
+START_SOUND="$(relDir $hotword_notification_sound)"
 HOTWORD_TRIGGER=$hotword_trigger_file
 
 
