@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# Commandline interface to Susi.
+# Makes susi say a sentence.
+# usage:
+#     Just tell susi what to say, such as:
+#     $ susi.say hello, I am your assistant
+#
+# (c) 2020, Andreas Dominik, Gießen, Germany
+#
+
+TEXT="$@"
+
+CONFIG="/etc/susi.toml"
+source $SUSI_INSTALLATION/bin/toml2env $CONFIG
+
+# load tool funs:
+#
+source $SUSI_INSTALLATION/src/Tools/funs.sh
+source $SUSI_INSTALLATION/src/Tools/topics.sh
+
+PAYLOAD="{
+          \"siteId\": \"$local_siteId\",
+          \"init\": {\"type\": \"notification\",
+                     \"text\": \"$TEXT\"}
+         }"
+
+  PAYLOAD="$(echo $PAYLOAD)"
+
+  $mqtt_publish -t "$TOPIC_START_SESSION" -m "$PAYLOAD"
