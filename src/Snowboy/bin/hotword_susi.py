@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 #
 # modified demo program for hotword detection for Susi.
 # Based on demo.py as distributed with Snowboy.
