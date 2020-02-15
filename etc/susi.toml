@@ -2,7 +2,7 @@
 #
 # Dec. 2019, A. Dominik
 #
-title = "NoSnips services config"
+title = "Susi/NoSnips services config"
 
 [assistant]
 language = "de"
@@ -11,17 +11,13 @@ name = "Susi"
 [local]
 # satellite = false    false for the main system; if true, only hotword
 #                      detectiion and auidio I/O will be started
-# name = "default"     name of satellite/room
-# base_directory = ""  installation directory (/..../ADoNoSnips)
+# siteId = "default"     name of satellite/room
 satellite = false
 siteId = "default"
-# base_directory = "/home/andreas/Documents/Projekte/2019-Susi/Susi"
 work_directory = "/tmp"
 
 
 [mqtt]
-# host = "localhost"
-# port = 8883
 host = ""
 port = ""
 subscribe = "mosquitto_sub --qos 2"
@@ -29,28 +25,31 @@ publish = "mosquitto_pub --qos 2"
 
 # set user/password to use authetication:
 #
-user = ""
-password = ""
+user = "susi"
+password = "ag543jo9ikngr56hs3mg"
 
 
 [hotword]
-# start = true          start hotword service
-# binary = "Snowboy/bin/hotword"     path to the hotword detector
-# model_path = "Snowboy/resources"   path to the hotword models
-# model = "computer.pmdl"            name of hotword model
+# start = true                        start hotword service
+# binary = "Snowboy/bin/hotword"      path to the hotword detector
+# model_path = "Snowboy/resources"    path to the hotword models
+# model = "computer.pmdl"             name of hotword model
 # sensitivity = 0.5
-# session_timeout = 60               60 secs after hotword recognition
-#                                    hotword detector is restarted because of
-#                                    timeout
+# local_hotword = "Computer"          name of the hotword
+# notification = true                 play a sound when toggle on
+# notification_sound = "src/Resources/Sounds/bell.wav"
+# trigger_file = "hotword.toggleOff"  if this file exists, no hotwords will be detected
+#
 start = true
 daemon = "src/Hotword/hotword.daemon"
-trigger_file = "hotword.toggleOff"
-binary = "src/Snowboy/bin/hotword.py"
+binary = "/opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/hotword_susi.py"
 model_path = "src/Snowboy/bin/resources"
 model = "computer.pmdl"
-local_hotword = "Computer"
 sensitivity = 0.37
-notification_start = "rc/Resources/Sounds/bell.wav"
+local_hotword = "Computer"
+notification = true
+notification_sound = "src/Resources/Sounds/bell.wav"
+trigger_file = "hotword.toggleOff"
 
 
 [record]
@@ -68,10 +67,10 @@ start = true
 daemon = "src/Record/record.daemon"
 binary = "src/Record/soxrec.sh"
 recording_file = "cmd.flac"
-recording_limit = 5
+recording_limit = 15
 notification = true
 notification_start = "src/Resources/Sounds/bellDongDing.wav"
-notification_end = "src/Resources/Sounds/bellDingDong.wav"
+# notification_end = "src/Resources/Sounds/bellDingDong.wav"
 play = "play -q"
 
 
@@ -119,7 +118,7 @@ port = "8017"
 # The session manager ...
 start = true
 daemon = "src/Session/session.daemon"
-session_timeout = 15
+session_timeout = 10
 message_pipe = "Work/mqtt.fifo"
 
 [skills]
