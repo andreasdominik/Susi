@@ -83,11 +83,12 @@ daemon = "src/Play/play.daemon"
 binary = "play"
 
 [tts]
-# start = true     start the central text-to-speech service
+# start = true                  start the central text-to-speech service
+# cache = "/opt/.../TTScache"  cache for audio snippets with speech to utter
 start = true
 daemon = "src/TextToSpeach/tts.daemon"
 binary = "src/GoogleCloud/tts/ttsWcache.sh"
-cache = "/home/andreas/Documents/Projekte/2019-Susi/ApplicationData/TTScache"
+cache = "/opt/Susi/ApplicationData/TTScache"
 
 [stt]
 # start = true     start the central speech-to-text (aka ASR) service
@@ -103,14 +104,16 @@ start = true
 daemon = "src/NLU/nlu.daemon.jl"
 
 [session]
-# The session manager ...
+# start = true                      start the session manager
+# session_timeout = 15              timout after x seconds of inactivity
+# message_pipe = "Work/mqtt.fifo"   the fifo though wich all MQTT messages go
 start = true
 daemon = "src/Session/session.daemon"
 session_timeout = 10
 message_pipe = "Work/mqtt.fifo"
 
 [google_cloud]
-credentials = "/home/andreas/Documents/Projekte/2019-Susi/ApplicationData/Google/Credentials/google-credentials.json"
+credentials = "/opt/Susi/ApplicationData/Google/Credentials/google-credentials.json"
 refresh_token_cmd = "src/GoogleCloud/refreshToken.sh"
 
 [deep_speech]
@@ -122,9 +125,6 @@ language_model = "lm.binary"
 trie = "trie"
 
 [duckling]
-# duckling is used to extract time and ordinal information from raw slot values.
-# a locally inststalled server can be used.
-#
 start = true
 install_dir = "/opt/Duckling/duckling"
 daemon = "src/Duckling/duckling.daemon"
@@ -136,5 +136,4 @@ port = "8017"
 [skills]
 start = false
 daemon = "src/Skillserver/skills.daemon"
-
-skills_dir = "/home/andreas/Documents/Projekte/2019-Susi/Skills"
+skills_dir = "/opt/Susi/Skills"

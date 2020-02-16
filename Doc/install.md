@@ -1,12 +1,17 @@
 # Installation
 
+This tutorial shows a brief installation of Susi.
+More configuration and customisation is possible - please read the
+sections "Configuration file susi.toml" and "demons" for details
+about alternative configurations.
 
 Susi may be installed on any linux/unix-like operating system.    
 Because Susi is build with a minimum of specific implementation major parts
 of its functionality are taken from existing projects.
-Therefor bunch of software must be installed before using Susi.
+Therefore bunch of software must be installed before using Susi.
+
 The tutorial assumes that all indivdual software is installed at
-`/opt/`. So the firts step is to login as the user which will run
+`/opt/`. So the first step is to login as the user which will run
 the assistant later (such as `susi`),
 and create the directory `/opt/Susi`.
 
@@ -51,7 +56,7 @@ sudo apt-get install git-core curl coreutils
 gcloud auth application-default print-access-token
 ```
 
-* **Mozilla DeepSpeech:**
+* **Mozilla DeepSpeech:** nach hinten! TODO
   as an alternative to the Google Cloud services Mozilla DeepSpeech can be used.
   However,
   - trained models and language models are only available for English langage
@@ -258,6 +263,20 @@ Susi installation (default: "/opt/Susi/Susi").
 
 More information about all entries is given in the file.
 
+
+#### Standard configuration
+
+Most parameters in the configuration file are by default set to resonable
+values and are self-explaining.
+* specify a language in 2-letter-code
+* select a name for the assistant
+* go through the file and double-check or
+  adapt paths if necessary.
+
+
+
+
+
 #### Configuration for all daemons
 
 All daemons share some config entries:
@@ -336,12 +355,12 @@ uncommenting the respective line.
 Other services may be included by exchange the `binary`.
 
 #### [nlu]
-Configuration of the NLU (natural language unserstaanding) daemon.
+Configuration of the NLU (natural language understanding) daemon.
 The default daemon is implemented in Julia and uses Regular Expressions
 for intent matching and capturing of slots values.
-
+sh sus
 For more details see the NLU section of the docu.
-The NLU also reads the skill directory from the [skills] section to find
+The NLU also reads the skill directory from the `[skills]` section to find
 skills.
 
 
