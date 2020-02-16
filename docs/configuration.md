@@ -26,6 +26,17 @@ name of the local siteId. Each satellite needs an unique name.
 If satellite is set to "true", only hotword, record and play daemon will be started
 on this site.
 
+All variants of installation are possible, such as
+* running all daemons
+  on one system with mic and speaker
+* running one main system (e.g. in the living room) with all daemons
+  started and satellites.
+* running parts of the software on separate systems without mic
+  or speaker, such as the skills daemon on a server only for this
+  purpose or running a headless server with GPU only for STT with
+  DeepSpeech. To setup such a server, just do a normal susi install 
+  and set all daemon start-values to false, except the one that should run.
+
 #### [mqtt]
 Host and port definitions for the MQTT broker. If empty, the default
 "localhost" and port "8883" will be used. For installations with satellites
