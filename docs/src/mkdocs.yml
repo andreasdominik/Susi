@@ -1,0 +1,31 @@
+site_name:           Susi
+repo_url:            https://github.com/andreasdominik/Susi.git
+site_description:    Susi is no Snips
+site_author:         Andreas Dominik
+theme:               readthedocs
+
+markdown_extensions:
+    - codehilite
+    - extra
+    - tables
+    - fenced_code
+#    - mdx_math # For LaTeX
+
+extra_css:
+    - assets/Documenter.css
+
+extra_javascript:
+    - https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML
+    - assets/mathjaxhelper.js
+
+docs_dir: 'build'
+
+pages:
+  - Introduction: pages/index.md
+  - Installation: pages/install.md
+  - NLU: pages/nlu.md
+  - Configuration: pages/configuration.md
+  - Components: pages/components.md
+  - Payloads: pages/payloads.md
+  - Topics: pages/topics.md
+  - License: LICENSE.md
