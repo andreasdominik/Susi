@@ -20,10 +20,10 @@ makedocs(#modules=[SOM],
                   ],
                   # Use clean URLs, unless built as a "local" build
           format = Documenter.HTML(prettyurls = !("local" in ARGS),
-                   canonical = "https://andreasdominik.github.io/ADoSnipsQnD/dev/"),
+                   canonical = "https://andreasdominik.github.io/Susi/dev/"),
          )
 
-deploydocs(repo   = "github.com/andreasdominik/ADoSnipsQnD.git",
+deploydocs(repo   = "github.com/andreasdominik/Susi.git",
            target = "build",
            branch = "gh-pages",
            deps = nothing,
