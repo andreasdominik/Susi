@@ -1,3 +1,3 @@
 # Susi (noSnips)
 
-read the docs!
+read the [docs](https://andreasdominik.github.io/Susi/)
