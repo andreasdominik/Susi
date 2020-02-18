@@ -2,7 +2,7 @@
 
 This tutorial shows a brief installation of Susi.
 More configuration and customisation is possible - please read the
-sections "Configuration file susi.toml" and "demons" for details
+sections "Configuration file susi.toml" and "daemons" for details
 about alternative configurations.
 
 Susi may be installed on any linux/unix-like operating system.    
@@ -23,97 +23,61 @@ chgrp susi /opt/Susi
 
 ## Dependencies
 
-* **git:**
-  Most of the software nusr be obtained from git repos; therefore
-  git must be installed first:
+#### git:
+Most of the software must be obtained from git repos; therefore
+git must be installed first:
 
 ```
 sudo apt-get install git-core curl coreutils
 ```
 
-* **Google cloud services:**
-  if google services are used for text-to-speech (TTS)
-  or speech-to-text (STT) the required softwate must be set up:
-  Go through Google's tutorial
-  [Quickstart: Using the command line](https://cloud.google.com/text-to-speech/docs/quickstart-protocol).
+#### Google cloud services:
+if google services are used for text-to-speech (TTS)
+or speech-to-text (STT) the required softwate must be set up:
+Go through Google's tutorial
+[Quickstart: Using the command line](https://cloud.google.com/text-to-speech/docs/quickstart-protocol).
 
-    In summary ...
-    * a Google Cloud Platform Project is needed,
-    * the Cloud Text-to-Speech API must be enabled and
-    * the JSON-file with the credentials must be downloaded to
-      `/opt/Susi/ApplicationData/Google/Credentials/google-credentials.json`    
-      Path and filename may differ - they are later specified in the
-      susi configuration file.
-    * the path to the credentials file must be made available by an variable.
-      Edit the file `.bashrc` in the home directory of the user who will later
-      run the assistent (e.g. `susi`) and add the line:    
+  In summary ...
+  * a Google Cloud Platform Project is needed,
+  * the Cloud Text-to-Speech API must be enabled and
+  * the JSON-file with the credentials must be downloaded to
+    `/opt/Susi/ApplicationData/Google/Credentials/google-credentials.json`    
+    Path and filename may differ - they are later specified in the
+    susi configuration file.
+  * the path to the credentials file must be made available by an variable.
+    Edit the file `.bashrc` in the home directory of the user who will later
+    run the assistent (e.g. `susi`) and add the line:    
 `export GOOGLE_APPLICATION_CREDENTIALS="/opt/Susi/ApplicationData/Google/Credentials/google-credentials.json"`    
-      To check the installation run the following command.
-      It should print an access token, which can be uses to access the Cloud
-      Text-to-Speech API:
+    To check the installation run the following command.
+    It should print an access token, which can be uses to access the Cloud
+    Text-to-Speech API:
 
 ```
 gcloud auth application-default print-access-token
 ```
 
-* **Mozilla DeepSpeech:** nach hinten! TODO
-  as an alternative to the Google Cloud services Mozilla DeepSpeech can be used.
-  However,
-  - trained models and language models are only available for English langage
-  - the quality of transcription seems not to be sufficient for an assistant
-    (at least in my tests - this may differ for other speakers and different
-    hardware).
 
-  Installation is simple and follows the instruction on the website
-  (https://github.com/mozilla/DeepSpeech). The installation can be tested
-  by running deepspeech on the commandline.
+#### mosquitto, jq:
+mosquitto server and client are nedded to
+send publish and subscribe to MQTT messages. The package mosquitto
+provides the MQTT broker and is only necessary for the main installation and
+not for satellites.
+MQTT messages are sent as JSON strings. susi uses `jq` to parse JSON.
+In order to avoid sending binary files via MQTT, they are base64 encoded.
+The base64 utility is part of the coreutils:
 
 ```
-# prepare:
-mkdir /opt/DeepSpeech
-cd /opt/DeepSpeech
-virtualenv -p python3 ./deepspeech-venv/
-source $HOME/tmp/deepspeech-venv/bin/activate
-
-# Install DeepSpeech
-pip3 install deepspeech
-
-# Download pre-trained English model and extract
-curl -LO https://github.com/mozilla/DeepSpeech/releases/download/v0.6.1/deepspeech-0.6.1-models.tar.gz
-tar xvf deepspeech-0.6.1-models.tar.gz
-
-# Download example audio files
-curl -LO https://github.com/mozilla/DeepSpeech/releases/download/v0.6.1/audio-0.6.1.tar.gz
-tar xvf audio-0.6.1.tar.gz
-
-# Transcribe an audio file
-rec -r 16000 lighton.wav
-
-deepspeech --model deepspeech-0.6.1-models/output_graph.pbmm --lm deepspeech-0.6.1-models/lm.binary --trie deepspeech-0.6.1-models/trie --audio lighton.wav
+sudo apt-get install mosquitto mosquitto-clients coreutils jq
 ```
 
+#### Julia:
+some components of the system are written in the nice and
+fast programming laguage Julia. Install the current version from
+https://www.julialang.org (a good location is `/opt/Susi/Julia`) by downloading
+the version for your platform to `/opt/Susi/Julia`, unpacking and creating a
+link to `/usr/local/bin` to make it available (example for 64-bit linux).
 
-* **mosquitto, jq, base64:**
-  mosquitto server and client are nedded to
-  send publish and subscribe to MQTT messages. The package mosquitto
-  provides the MQTT broker and is only necessary for the main installation and
-  not for satellites.
-  MQTT messages are sent as JSON strings. susi uses `jq` to parse JSON.
-  In order to avoid sending binary files via MQTT, they are base64 encoded.
-  The base64 utility is part of the coreutils:
-
-```
-sudo apt-get install jq mosquitto mosquitto-clients coreutils
-```
-
-* **Julia:**
-  some components of the system are written in the nice and
-  fast programming laguage Julia. Install the current version from
-  https://www.julialang.org (a good location is `/opt/Susi/Julia`) by downloading
-  the version for your platform to `/opt/Susi/Julia`, unpacking and creating a
-  link to `/usr/local/bin` to make it available (example for 64-bit linux).
-
-  Some Julia packages are needed and can be installed right now:
+Some Julia packages are needed and can be installed right now:
 
 ```
 tar xvzf <julia-1.3.1-linux-x86_64.tar.gz>
@@ -122,36 +86,36 @@ sudo ln -s /opt/Julia/<julia-1.3.1>/bin/julia
 julia -e 'using Pkg; Pkg.add(["ArgParse", "JSON", "StatsBase"]; Pkg.update()'
 ```
 
-* **sox:**
-  the Swiss Army knife of sound processing programs (SoX - Sound eXchange)
-  is used for recording and playing sound. It must be installed on the main
-  installaion and on all satellites. In addition ffmpeg and and libsox-fmt-mp3
-  might be necessary in order to be able to play all types of audio files.
+#### sox:
+the Swiss Army knife of sound processing programs (SoX - Sound eXchange)
+is used for recording and playing sound. It must be installed on the main
+installaion and on all satellites. In addition ffmpeg and and libsox-fmt-mp3
+might be necessary in order to be able to play all types of audio files.
 
-  After installation sox can be tested with `rec firstaudio.wav` and
-  `play firstaudio.wav`:
+After installation sox can be tested with `rec firstaudio.wav` and
+`play firstaudio.wav`:
 
-  Volume gain may be adapted with alsamixer or (x11) pavucontrol.
+Volume gain may be adapted with alsamixer or (x11) pavucontrol.
 
 ```
 sudo apt-get install sox libsox-fmt-mp3
 sudo apt-get install ffmpeg
 ```
 
-* **Snowboy:**
-  the Snowboy hotword detector is used by default for hotword
-  recognition. Snowboy is completely local and allows to create and train own
-  hotwords via a web-interface.    
-  - download the binaries for the required platform from https://github.com/kitt-ai/snowboy.
-  - unpack the tar ball to `/opt/Snowboy`
-  - install the dependencies for the required platform as described in
-    https://github.com/kitt-ai/snowboy/README.md
+#### Snowboy:
+the Snowboy hotword detector is used by default for hotword
+recognition. Snowboy is completely local and allows to create and train own
+hotwords via a web-interface.    
+- download the binaries for the required platform from https://github.com/kitt-ai/snowboy.
+- unpack the tar ball to `/opt/Snowboy`
+- install the dependencies for the required platform as described in
+  https://github.com/kitt-ai/snowboy/README.md
 
-  After the installation (with the default hotword `snowboy`) individual
-  hotwords can be created and downloaded into  the directory
-  `/opt/Susi/Susi/src/Snowboy/bin/resources`.
+After the installation (with the default hotword `snowboy`) individual
+hotwords can be created and downloaded into  the directory
+`/opt/Susi/Susi/src/Snowboy/bin/resources`.
 
-  Snowboy can be tested like described in the Snowboy docu.
+Snowboy can be tested like described in the Snowboy docu.
 
 ```
 mkdir /opt/Snowboy
@@ -164,20 +128,20 @@ tar xvf <rpi-arm-raspbian-8.0-1.3.0.tar.bz2>
 sudo apt-get install python-pyaudio python3-pyaudio sox
 ```
 
-* **Duckling:**
-  Duckling is used to parse transcribed voice input into
-  time or numbers. There is a web-service available, but it is also possible to
-  install it locally - the demo-program, which is shipped with the installation,
-  already provides a local webserver, sufficcient for our neends.
-  Duckling is written in Haskell, so a  Haskell stack is required.
-  - install `stack` as described here: https://tech.fpcomplete.com/haskell/get-started.
-  - io install Duckling create `/opt/Duckling/`, clone the GitHub repo
-    https://github.com/facebook/duckling into `/opt/Duckling` and
-    build the executable (be sure to have a good cup of coffee while it's compiling).
+#### Duckling:
+Duckling is used to parse transcribed voice input into
+time or numbers. There is a web-service available, but it is also possible to
+install it locally - the demo-program, which is shipped with the installation,
+already provides a local webserver, sufficcient for our neends.
+Duckling is written in Haskell, so a  Haskell stack is required.
+- install `stack` as described here: https://tech.fpcomplete.com/haskell/get-started.
+- io install Duckling create `/opt/Duckling/`, clone the GitHub repo
+  https://github.com/facebook/duckling into `/opt/Duckling` and
+  build the executable (be sure to have a good cup of coffee while it's compiling).
 
-    It might be necessary to install libpcre before building (the build will fail without).
-    After compilation, run the example-exe. It starts a web-server that can be tested
-    by sending simple requests via cURL:
+  It might be necessary to install libpcre before building (the build will fail without).
+  After compilation, run the example-exe. It starts a web-server that can be tested
+  by sending simple requests via cURL:
 
 ```
 git clone https://github.com/facebook/duckling
@@ -194,9 +158,8 @@ curl -XPOST http://0.0.0.0:8000/parse --data 'locale=en_GB&text=tomorrow at eigh
 
 
 
-## Susi
 
-### Get and install Susi
+## Get and install Susi
 
 * Clone Susi from the GitHub repo
 * make the installation directory available in the environment
@@ -238,7 +201,7 @@ sudo cp /opt/Susi/Susi/src/Service/susi.service /etc/systemd/system/
 sudo cp /opt/Susi/Susi/etc/susi.toml /etc/susi.toml
 ```
 
-### Configure Susi
+## Configure Susi
 
 Susi is configured with the file `/etc/susi.toml`.
 Susi consists of several daemons that runs at the main system or
@@ -283,7 +246,7 @@ All daemons share some config entries:
 
 * `start = "true"` defines if the daemon
   is started with the susi service or not.
-* `daemoon = "xyz"` is the path to the executable that runs the daemon.
+* `daemon = "xyz"` is the path to the executable that runs the daemon.
 * `binary = "xyz"` is the path to the executable that does the job when
   the daemon is gets a trigger.
 
@@ -319,7 +282,7 @@ hotword detection.
   `/opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/hotword_susi.py`)
 * `model_path` and `model` define the hotword model to be used.
 * `notification` is useful for debugging: if "true", the specified
-  sound file will be played every time the detector is toggeled on.
+  sound file will be played every time the detector is toggled on.
 
 #### [record]
 Configuration of the record daemon.
@@ -349,7 +312,7 @@ is necessary after some time of operation.
 #### [stt]
 Configuration of the STT daemon.
 By default Google STT is used because of its very high accuracy and common
-knowledge. However, it's no longer local and private.    
+knowledge. However, it's not local and private.    
 Mozilla DeepSpeech can be used for English language if installed by
 uncommenting the respective line.
 Other services may be included by exchange the `binary`.
@@ -358,13 +321,6 @@ Other services may be included by exchange the `binary`.
 Configuration of the NLU (natural language understanding) daemon.
 The default daemon is implemented in Julia and uses Regular Expressions
 for intent matching and capturing of slots values.
-sh sus
 For more details see the NLU section of the docu.
 The NLU also reads the skill directory from the `[skills]` section to find
 skills.
-
-
-#### [tts]
-    insert the correct installation dir to susi.toml
-    (/opt/Duckling/duckling) with the leading / to enforce
-    absolute path.
