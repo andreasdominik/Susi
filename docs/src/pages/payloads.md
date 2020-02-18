@@ -1,9 +1,11 @@
 
 # Definition of NoSnips MQTT-payloads
 
-## Snips payloads
-
 ### Example intent
+
+The intent is constructed by the NLU component and sent to the session manager
+as part of the payload of the topic `hermes/nlu/intentParsed`.
+The session manager publishes the intent.
 
 ```
 {
@@ -45,8 +47,6 @@
 }
 ```
 
-
-## NoNsips payloads
 
 ### Hotword manager
 
@@ -102,9 +102,10 @@ listening (normally to a command):
 
 ### Topic: qnd/asr/audioCaptured
 
-Answer of a satellite to a topic hermes/asr/startListening request, with
-the base64-encoded audio. `id` is the request ID and matches the
-ID of the according asr/startListening topic:
+Answer of a satellite to a topic hermes/asr/startListening request.
+Sent by the NoSnips `Record` component of a satellite
+to deliver a base64-encoded audio recording of a command.
+All IDs match the IDs of the request:
 
 ```
 {
@@ -116,21 +117,9 @@ ID of the according asr/startListening topic:
 }
 ```
 
-TOPIC_ASR_TRANSSCRIBE="qnd/asr/transsribe"
-TOPIC_ASR_TEXT="hermes/asr/textCaptured"
-Sent by the NoSnips `Record` component of a satellite
-to deliver a base64-encoded audio recording of a command.
-All IDs match the IDs of the request:
+### Topic: qnd/asr/transsribe
 
-```
-{
-  "sessionId": "d15eb1a0-67ba-4a3b-a378-a5b06e370719",
-  "siteId": "default",
-  "requestId": "ff64e565-8398-4ca5-9742-a4f1712153e3",
-  "audio": "UG9seWZvbiB6d2l0c2NoZXJuZCBhw59lbiBNw6R4Y2hlbnMgVsO2Z2VsIF
-            LDvGJlbiwgSm9naHVydCB1bmQgUXVhcms="
-}
-```
+### Topic: hermes/asr/textCaptured
 
 ### Topic: susi/play/request
 

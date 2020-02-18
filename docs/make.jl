@@ -16,6 +16,7 @@ makedocs(#modules=[SOM],
                   "Components" => "pages/components.md",
                   "Payloads" => "pages/payloads.md",
                   "Topics" => "pages/topics.md",
+                  "Tools" => "pages/tools.md",
                   "License" => "LICENSE.md"
                   ],
                   # Use clean URLs, unless built as a "local" build

@@ -28,4 +28,5 @@ pages:
   - Components: pages/components.md
   - Payloads: pages/payloads.md
   - Topics: pages/topics.md
+  - Tools: pages/tools.md
   - License: LICENSE.md
