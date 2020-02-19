@@ -87,9 +87,9 @@ julia -e 'using Pkg; Pkg.add(["ArgParse", "JSON", "StatsBase"]; Pkg.update()'
 ```
 
 #### sox:
-the Swiss Army knife of sound processing programs (SoX - Sound eXchange)
+sox
 is used for recording and playing sound. It must be installed on the main
-installaion and on all satellites. In addition ffmpeg and and libsox-fmt-mp3
+installation and on all satellites. In addition ffmpeg and and libsox-fmt-mp3
 might be necessary in order to be able to play all types of audio files.
 
 After installation sox can be tested with `rec firstaudio.wav` and

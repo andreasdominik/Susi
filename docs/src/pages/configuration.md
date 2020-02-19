@@ -34,7 +34,7 @@ All variants of installation are possible, such as
 * running parts of the software on separate systems without mic
   or speaker, such as the skills daemon on a server only for this
   purpose or running a headless server with GPU only for STT with
-  DeepSpeech. To setup such a server, just do a normal susi install 
+  DeepSpeech. To setup such a server, just do a normal susi install
   and set all daemon start-values to false, except the one that should run.
 
 #### [mqtt]
@@ -101,7 +101,7 @@ skills.
 
 
 #### [session]
-Configuartionj of the session manager which runs ste sequences of
+Configuartionj of the session manager which runs sequences of
 actions, such as `hotword -> record -> stt -> nlu -> publish intent`.
 
 
