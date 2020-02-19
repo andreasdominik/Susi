@@ -308,6 +308,14 @@ after or inbetween.
 
 
 #### Example file nlu-xx.toml for the rollershutter skill:
+
+A complete (but very simple and not yet sufficent) example nlu configuration
+file is shown in a version vor 3 different languages.
+It must be pointet out, that the slot values extracted to the intent
+are exactly the same for all languages, which makes it easy to
+write language-intependant skill code.
+
+
 ##### nlu-en.toml
 ```
 # nlu definition for RollerShutter skill
@@ -352,6 +360,47 @@ roller_c = "partial: make the <<rollershutter|roller>> <<>> <<action>>"
 
 
 
+##### nlu-fr.toml
+```
+# nlu definition for RollerShutter skill
+#
+# head:
+#
+skill = "RollerShutter"
+developer = "andreasdominik"
+
+[inventory]
+intents = ["RollerUpDown"]
+slots = ["room", "Action"]
+
+
+# slot definitions:
+#
+[room]
+slot_type = "ListOfValues"
+allow_empty = true
+
+        [room.synonyms]
+        "house" = ["partout dans la maison", "dans toute la maison", "maison"]
+        "dining" = "salle à manger"
+        "stairs" = ["cage d'escalier"]
+        "kitchen" = "cuisine"
+        "bedroom" = ["chambre"]
+
+[action]
+slot_type = "ListOfValues"
+
+        [action.synonyms]
+        "open" = ["ouvrir", "ouvrez"]
+        "close" = ["fermez"]
+
+# match phrases for intent recognion:
+#
+[RollerUpDown]
+roller_a = "<<veuillez|>> <<action>> <<le volet roulant|les volets|le volet>> <<de la|dans la|>> <<room>> <<s'il vous plaît|>>"
+```
+
+
 ##### nlu-de.toml
 ```
 # nlu definition for RollerShutter skill
@@ -374,7 +423,7 @@ allow_empty = true
 
         [room.synonyms]
         "house" = ["überall", "im ganzen Haus", "Haus"]
-        "dining" = Esszimmer"
+        "dining" = "Esszimmer"
         "stairs" = ["Treppenhaus", "Treppe"]
         "kitchen" = "Küche"
         "bedroom" = ["schlafzimmer"]
