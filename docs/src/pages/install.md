@@ -58,8 +58,8 @@ gcloud auth application-default print-access-token
 
 
 #### mosquitto, jq:
-mosquitto server and client are nedded to
-send publish and subscribe to MQTT messages. The package mosquitto
+mosquitto server and client are needed to
+publish and subscribe to MQTT messages. The package mosquitto
 provides the MQTT broker and is only necessary for the main installation and
 not for satellites.
 MQTT messages are sent as JSON strings. susi uses `jq` to parse JSON.
@@ -75,14 +75,19 @@ some components of the system are written in the nice and
 fast programming laguage Julia. Install the current version from
 https://www.julialang.org (a good location is `/opt/Susi/Julia`) by downloading
 the version for your platform to `/opt/Susi/Julia`, unpacking and creating a
-link to `/usr/local/bin` to make it available (example for 64-bit linux).
+link to `/usr/local/bin` to make it available (example for 64-bit linux
+version 1.3.1).
 
 Some Julia packages are needed and can be installed right now:
 
 ```
-tar xvzf <julia-1.3.1-linux-x86_64.tar.gz>
+mkdir /opt/Julia
+cd /opt/Julia
+cp ~/Downloads/julia-1.3.1-linux-x86_64.tar.gz .
+tar xvzf julia-1.3.1-linux-x86_64.tar.gz
+
 cd /usr/local/bin
-sudo ln -s /opt/Julia/<julia-1.3.1>/bin/julia
+sudo ln -s /opt/Julia/julia-1.3.1/bin/julia
 julia -e 'using Pkg; Pkg.add(["ArgParse", "JSON", "StatsBase"]; Pkg.update()'
 ```
 
@@ -93,8 +98,7 @@ installation and on all satellites. In addition ffmpeg and and libsox-fmt-mp3
 might be necessary in order to be able to play all types of audio files.
 
 After installation sox can be tested with `rec firstaudio.wav` and
-`play firstaudio.wav`:
-
+`play firstaudio.wav`.
 Volume gain may be adapted with alsamixer or (x11) pavucontrol.
 
 ```
@@ -123,8 +127,8 @@ cd /opt/Snowboy
 #
 # replace rpi-arm-raspbian-8.0-1.3.0.tar.bz2 with the precompiled
 # binaries for the required platform:
-cp ~/Downloads/<rpi-arm-raspbian-8.0-1.3.0.tar.bz2> /opt/Snowboy
-tar xvf <rpi-arm-raspbian-8.0-1.3.0.tar.bz2>
+cp ~/Downloads/rpi-arm-raspbian-8.0-1.3.0.tar.bz2 /opt/Snowboy
+tar xvf rpi-arm-raspbian-8.0-1.3.0.tar.bz2
 sudo apt-get install python-pyaudio python3-pyaudio sox
 ```
 
@@ -144,6 +148,9 @@ Duckling is written in Haskell, so a  Haskell stack is required.
   by sending simple requests via cURL:
 
 ```
+mkdir /opt/Duckling
+cd /opt/Duckling
+
 git clone https://github.com/facebook/duckling
 sudo apt–get install libpcre3 libpcre3–dev
 cd ./duckling
@@ -184,8 +191,8 @@ echo "export SUSI_INSTALLATION="/opt/Susi/Susi" >> ~/.bashrc
 # Snowboy:
 # replace rpi-arm-raspbian-8.0-1.3.0.tar.bz2 with the precompiled
 # binaries for the required platform:
-cp Susi/src/Snowboy/bin/hotword_susi.py /opt/Snowboy/<rpi-arm-raspbian-8.0-1.3.0/>
-cp Susi/src/Snowboy/bin/snowboydecoder_susi.py /opt/Snowboy/<rpi-arm-raspbian-8.0-1.3.0/>
+cp Susi/src/Snowboy/bin/hotword_susi.py /opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/
+cp Susi/src/Snowboy/bin/snowboydecoder_susi.py /opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/
 
 # Susi service and execs:
 cd /usr/local/bin/:
@@ -196,6 +203,7 @@ sudo ln -s /opt/Susi/Susi/src/Service/susi.start
 sudo ln -s /opt/Susi/Susi/src/Service/susi.stop
 
 sudo cp /opt/Susi/Susi/src/Service/susi.service /etc/systemd/system/
+sudo chmod 644 /etc/systemd/system/susi.service
 
 # configuration:
 sudo cp /opt/Susi/Susi/etc/susi.toml /etc/susi.toml
@@ -324,3 +332,21 @@ for intent matching and capturing of slots values.
 For more details see the NLU section of the docu.
 The NLU also reads the skill directory from the `[skills]` section to find
 skills.
+
+
+
+## Start Susi service
+
+
+The last step is to enable the service it to make sure
+Susi is started at reboot:
+```
+sudo systemctl enable susi.service
+```
+
+The service can be started manually with systemctl:
+```
+sudo systemctl start susi.service
+sudo systemctl restart susi.service
+sudo systemctl stop susi.service
+```

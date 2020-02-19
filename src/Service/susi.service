@@ -10,7 +10,7 @@ RestartSec=1
 User=andreas
 ExecStart=/usr/local/bin/susi.start
 ExecStop=/usr/local/bin/susi.stop
-Environment="SUSI_INSTALLATION=/home/andreas/Documents/Projekte/2019-Susi/Susi"
+Environment="SUSI_INSTALLATION=/opt/Susi/Susi"
 
 [Install]
 WantedBy=multi-user.target
