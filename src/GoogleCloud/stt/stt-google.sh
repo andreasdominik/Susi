@@ -7,7 +7,21 @@
 STT_INPUT=$1
 LANGUAGE=$2
 STT_OUTPUT=$3
+
+CONFIG="/etc/susi.toml"
+source $SUSI_INSTALLATION/bin/toml2env $CONFIG
+
+# load tool funs:
+#
+source $SUSI_INSTALLATION/src/Tools/funs.sh
+
+# get google token:
+#
+REFRESH_TOKEN_CMD="$(relDir $google_cloud_refresh_token_cmd)"
+CREDS="$(relDir $google_cloud_credentials)"
 TMP_TOKEN="google_cloud.tmptoken"
+$REFRESH_TOKEN_CMD $CREDS
+
 REQUEST="sttrequest.json"
 JSON="curl.result"
 

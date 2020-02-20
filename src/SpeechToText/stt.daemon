@@ -25,8 +25,8 @@ MQTT_COUNTER=0
 cd $local_work_directory
 
 BINARY="$(relDir $stt_binary)"
-REFRESH_TOKEN_CMD="$(relDir $google_cloud_refresh_token_cmd)"
-CREDS="$(relDir $google_cloud_credentials)"
+# REFRESH_TOKEN_CMD="$(relDir $google_cloud_refresh_token_cmd)"
+# CREDS="$(relDir $google_cloud_credentials)"
 STT_INPUT="audio.base64"
 STT_OUTPUT="stt_retrieved.json"
 TS_NAME="stt.transscript"
@@ -46,7 +46,7 @@ while true ; do
 
   # check if a new access token is necessary
   #
-  $REFRESH_TOKEN_CMD $CREDS
+  # $REFRESH_TOKEN_CMD $CREDS
 
   $BINARY $STT_INPUT $assistant_language $STT_OUTPUT > /dev/null 2>&1
 
