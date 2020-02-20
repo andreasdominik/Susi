@@ -50,7 +50,7 @@ In contrast, commercial web-services with almost perferct quality are availble
 Wit.ai (https://wit.ai),
 Google Dialogue Flow (https://dialogflow.com/),
 Microsoft Cognitive Services (https://azure.microsoft.com/en-us/services/cognitive-services),
-Watson Speech to Text (https://www.ibm.com/cloud/watson-speech-to-text),
+Watson Speech to Text (omm,
 Speechmatics (https://www.speechmatics.com/),
 etc.), but all of them require sending
 the recorded audio to the server somewhere in the internet,

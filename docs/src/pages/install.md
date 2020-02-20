@@ -32,7 +32,7 @@ sudo apt-get install git-core curl coreutils
 ```
 
 #### Google cloud services:
-if google services are used for text-to-speech (TTS)
+If google services are used for text-to-speech (TTS)
 or speech-to-text (STT) the required softwate must be set up:
 Go through Google's tutorial
 [Quickstart: Using the command line](https://cloud.google.com/text-to-speech/docs/quickstart-protocol).
@@ -56,6 +56,26 @@ Go through Google's tutorial
 gcloud auth application-default print-access-token
 ```
 
+#### IBM Cloud services
+
+If IBM Watson Text to Speech is used for TTS, it must be configured as
+described on IBM's website: https://cloud.ibm.com/.
+
+Is is as simple as:
+* create an account
+* descide for a pricing plan (the "Free Lite Plan" may be sufficient
+  as it offers up to 500 minutes of audio transcription and
+  10000 characters for TTS per month)
+* create a Speech to Text Service (and a Text to Sppech Service)
+* download the credential file `ibm-cedentials.env` and save it at
+  `/opt/Susi/ApplicationData/IBMCloud/` (the download link is in the
+    'Manage' section)
+* work through the "Getting started with Sppech to Text" tutorial
+  (https://cloud.ibm.com/docs/services/speech-to-text?topic=speech-to-text-gettingStarted#getting-started-tutorial).
+
+Now IBM Cloud STT and TTS can be activated by uncommenting the
+respective line for the 'binary' setting in the '[stt]'
+and '[tts]' section of the configuration file.
 
 #### mosquitto, jq:
 mosquitto server and client are needed to
