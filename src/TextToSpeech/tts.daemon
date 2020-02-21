@@ -27,7 +27,31 @@ cd $local_work_directory
 BINARY="$(relDir $tts_binary)"
 REFRESH_TOKEN_CMD="$(relDir $google_cloud_refresh_token_cmd)"
 CREDS="$(relDir $google_cloud_credentials)"
+
+# Language code and cache:
+#
 CACHE="$(relDir $tts_cache)"
+case $LANGUAGE in
+    de)
+        COUNTRY="DE"
+        ;;
+    en)
+        COUNTRY="GB"
+        ;;
+    *)
+        LANGUAGE="$(echo ${LANGUAGE:0:2} | tr A-Z a-z)"
+        COUNTRY="$(echo $LANGUAGE | tr a-z A-Z)"
+        ;;
+esac
+LANCODE="${LANGUAGE}-${COUNTRY}"
+
+# language-specfic cache:
+#
+CACHE="${CACHE}/${LANCODE}"
+if [[ ! -d $CACHE ]] ; then
+    mkdir -p ${CACHE}
+fi
+
 
 while true ; do
 
@@ -38,19 +62,26 @@ while true ; do
   TEXT="$(extractJSONfile .input $RECEIVED_PAYLOAD)"
   LANG="$(extractJSONfile .lang $RECEIVED_PAYLOAD)"
   if [[ -z $LANG ]] ; then
-    LANG="de"
+    LANG="en"
   fi
 
-  # check if a new access token is necessary
-  #
-  $REFRESH_TOKEN_CMD $CREDS
+  CACHED_NAME=$(echo $TEXT | tr '/' '_' | sed 's/[^(0-9a-zA-Z)]/_/g').b64
+  # LEN=$(echo $CACHED_NAME | wc -c)
 
-  # name of audio file, base64-encoded:
+  # name of audio file, base64-encoded and result payload:
   #
-  AUDIO_NAME="audio.base64"
+  MQTT_COUNTER=$(($MQTT_COUNTER + 1))
+  PAYLOAD_FILE="${MQTT_BASE_NAME}-$(printf "%04d" $MQTT_COUNTER).payload"
+  AUDIO_NAME="audio${MQTT_COUNTER}.base64"
   rm -f $AUDIO_NAME
 
-  $BINARY $AUDIO_NAME $LANG $CACHE $TEXT > /dev/null 2>&1
+  # use caching
+  #
+  if [[ -e ${CACHE}/${CACHED_NAME} ]] ; then
+    cp ${CACHE}/${CACHED_NAME} $AUDIO_NAME
+  else
+    $BINARY $AUDIO_NAME $LANCODE $CACHE $TEXT > /dev/null 2>&1
+  fi
 
   # generate standardised JSON for Susi
   # and fix if ts is corrupted:
@@ -59,8 +90,6 @@ while true ; do
     touch $AUDIO_NAME
   fi
 
-  MQTT_COUNTER=$(($MQTT_COUNTER + 1))
-  PAYLOAD_FILE="${MQTT_BASE_NAME}-$(printf "%04d" $MQTT_COUNTER).payload"
 
   echo -n "{
             \"sessionId\": \"$MQTT_SESSION_ID\",

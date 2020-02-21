@@ -15,7 +15,21 @@ LANGUAGE=$2
 CACHE=$3
 shift 3
 TEXT="$@"
+
+# load tool funs:
+#
+CONFIG="/etc/susi.toml"
+source $SUSI_INSTALLATION/bin/toml2env $CONFIG
+source $SUSI_INSTALLATION/src/Tools/funs.sh
+
+# get google token:
+#
+REFRESH_TOKEN_CMD="$(relDir $google_cloud_refresh_token_cmd)"
+CREDS="$(relDir $google_cloud_credentials)"
 TMP_TOKEN="google_cloud.tmptoken"
+$REFRESH_TOKEN_CMD $CREDS
+
+REQUEST="sttrequest.json"
 
 # umask 000
 case $LANGUAGE in
