@@ -57,7 +57,7 @@ the recorded audio to the server somewhere in the internet,
 which breaks the privacy we are used to with Snips.ai.
 
 
-#### Google STT
+#### Google Cloud STT
 The Google Cloud connector is configured by default in Susi, because of the
 very high quality of the transcriptions.
 The service ist sensitive, accurate available for many
@@ -130,11 +130,37 @@ and '[tts]' section of the configuration file.
 
 
 ## Text to speech (TTS)
-
+#### Google Cloud TTS
 Google's text to speech service is used as default service, because it
 provides the most realistic voices.
 In order to reduce calls to the Google Cloud, all retrieved audio will be cached
 and reused if the same sentence is needed again.
+
+Available voices can be tested here: https://cloud.google.com/text-to-speech.
+
+#### Mozilla
+
+#### IBM Cloud TTS
+The connectot to the IBM Clouds text-to-speech service is alrady
+included in the distribution. It canbe selected by uncommenting the
+respective line for the binary in the `[tts]`-section of the
+configuration file 'susi.toml'.
+
+Steps necessary to get access to the Service:
+* acticate the text-to-speech in the IBM cloud
+* download the credentials file for text to speech
+* save the credentials file (e.g. as
+  `/opt/Susi/ApplicationData/IBMcloud/ibm-tts-credentials.env`)
+* configure the full path to the file in the ibm_cloud section of
+  'susi.toml'.
+* configure the name of the preferred voice in the ibm_cloud section of
+  'susi.toml'.
+
+Please notice, that there are different credentials for STT and TTS.
+
+Example voices can be listened to at:
+https://www.ibm.com/de-de/cloud/watson-text-to-speech and
+https://cloud.ibm.com/docs/text-to-speech?topic=text-to-speech-voices.
 
 ## Play
 
