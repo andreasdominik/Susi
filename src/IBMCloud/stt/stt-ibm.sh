@@ -13,11 +13,11 @@ source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
 # load IBM cloud env and clean end-of-line:
 #
-source $(relDir $ibm_cloud_credentials)
-SPEECH_TO_TEXT_APIKEY="${SPEECH_TO_TEXT_APIKEY//$'\r'/}"
-SPEECH_TO_TEXT_IAM_APIKEY="${SPEECH_TO_TEXT_IAM_APIKEY//$'\r'/}"
-SPEECH_TO_TEXT_URL="${SPEECH_TO_TEXT_URL//$'\r'/}"
-SPEECH_TO_TEXT_ATUH_TYPE="${SPEECH_TO_TEXT_AUTH_TYPE//$'\r'/}"
+source $(relDir $ibm_cloud_stt_credentials)
+APIKEY="${SPEECH_TO_TEXT_APIKEY//$'\r'/}"
+IAM_APIKEY="${SPEECH_TO_TEXT_IAM_APIKEY//$'\r'/}"
+URL="${SPEECH_TO_TEXT_URL//$'\r'/}"
+ATUH_TYPE="${SPEECH_TO_TEXT_AUTH_TYPE//$'\r'/}"
 
 # make audio for IBM:
 #
@@ -31,10 +31,10 @@ JSON="curl.result"
 if [[ -s $STT_INPUT ]] ; then
   STT_MODEL="${LANGUAGE_CODE}_BroadbandModel"
 
-  curl -v -X POST -u "apikey:$SPEECH_TO_TEXT_APIKEY" \
+  curl -v -X POST -u "apikey:$APIKEY" \
       --header "Content-Type: audio/flac" \
       --data-binary @$AUDIO_NAME  \
-      "$SPEECH_TO_TEXT_URL/v1/recognize?model=$STT_MODEL" \
+      "$URL/v1/recognize?model=$STT_MODEL" \
       -o $JSON
 
   # extract transcript if it is there:

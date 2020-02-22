@@ -12,7 +12,7 @@ language = "de-DE"
 name = "Susi"
 
 [debug]
-show_all_stdout = false
+show_all_stdout = true
 
 [local]
 # satellite = false    false for the main system; if true, only hotword
@@ -93,7 +93,8 @@ binary = "play"
 # cache = "/opt/.../TTScache"  cache for audio snippets with speech to utter
 start = true
 daemon = "src/TextToSpeach/tts.daemon"
-binary = "src/GoogleCloud/tts/tts-google2.sh"
+# binary = "src/GoogleCloud/tts/tts-google2.sh"
+binary = "src/IBMCloud/tts/tts-ibm.sh"
 cache = "/opt/Susi/ApplicationData/TTScache"
 
 [stt]
@@ -128,7 +129,12 @@ refresh_token_cmd = "src/GoogleCloud/refreshToken.sh"
 voice = "de-DE-Wavenet-B"
 
 [ibm_cloud]
-credentials = "/opt/Susi/ApplicationData/IBMCloud/ibm-credentials.env"
+stt_credentials = "/opt/Susi/ApplicationData/IBMCloud/ibm-stt-credentials.env"
+tts_credentials = "/opt/Susi/ApplicationData/IBMCloud/ibm-tts-credentials.env"
+# voice = "en-GB_KateV3Voice"
+# voice = "en-US_LisaV3Voice"
+# voice = "fr-FR_ReneeV3Voice"
+voice = "de-DE_DieterV3Voice"
 
 [deep_speech]
 binary = "deepspeech"
