@@ -9,24 +9,14 @@
 
 # set config path:
 #
-CONFIG="/etc/susi.toml"
-source $SUSI_INSTALLATION/bin/toml2env $CONFIG
-
-# load tool funs:
-#
-source $SUSI_INSTALLATION/src/Tools/funs.sh
-source $SUSI_INSTALLATION/src/Tools/topics.sh
+source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
 # base names for recveived and subm. MQTT message files:
 #
 MQTT_BASE_NAME="sttDaemon"
-MQTT_COUNTER=0
-
 cd $local_work_directory
 
 BINARY="$(relDir $stt_binary)"
-# REFRESH_TOKEN_CMD="$(relDir $google_cloud_refresh_token_cmd)"
-# CREDS="$(relDir $google_cloud_credentials)"
 STT_INPUT="audio.base64"
 STT_OUTPUT="stt_retrieved.json"
 TS_NAME="stt.transscript"
@@ -48,7 +38,7 @@ while true ; do
   #
   # $REFRESH_TOKEN_CMD $CREDS
 
-  $BINARY $STT_INPUT $assistant_language $STT_OUTPUT > /dev/null 2>&1
+  $BINARY $STT_INPUT $STT_OUTPUT > /dev/null 2>&1
 
   # generate standardised JSON for Susi
   # and fix if ts is corrupted:

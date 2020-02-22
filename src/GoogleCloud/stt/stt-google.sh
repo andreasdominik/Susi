@@ -1,20 +1,17 @@
-#!/bin/bash -xv
+#!/bin/bash
 #
 # Get STT from Google.
 #   Input: $1 : file with base64-encoded audio
 #   Output: $2 file with transscript only
 
 STT_INPUT=$1
-LANGUAGE=$2
-STT_OUTPUT=$3
-
-CONFIG="/etc/susi.toml"
-source $SUSI_INSTALLATION/bin/toml2env $CONFIG
+STT_OUTPUT=$2
 
 # load tool funs:
 #
-source $SUSI_INSTALLATION/src/Tools/funs.sh
+source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
+set -xv
 # get google token:
 #
 REFRESH_TOKEN_CMD="$(relDir $google_cloud_refresh_token_cmd)"
@@ -27,27 +24,13 @@ JSON="curl.result"
 
 if [[ -s $STT_INPUT ]] ; then
 
-  case $LANGUAGE in
-      de)
-          COUNTRY="DE"
-          ;;
-      en)
-          COUNTRY="GB"
-          ;;
-      *)
-          LANGUAGE="$(echo ${LANGUAGE:0:2} | tr A-Z a-z)"
-          COUNTRY="$(echo $LANGUAGE | tr a-z A-Z)"
-          ;;
-  esac
-  LANCODE="${LANGUAGE}-${COUNTRY}"
-
   ACCESS_TOKEN="$( cat $TMP_TOKEN )"
 
   echo -n "{
             \"config\": {
                 \"encoding\" : \"FLAC\",
                 \"sampleRateHertz\" : 16000,
-                \"languageCode\" : \"$LANCODE\",
+                \"languageCode\" : \"$LANGUAGE_CODE\",
                 \"alternativeLanguageCodes\" : [\"en-US\"],
                 \"maxAlternatives\" : 1,
                 \"model\" : \"command_and_search\",
