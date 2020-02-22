@@ -10,19 +10,12 @@
 
 # set config file:
 #
-CONFIG="/etc/susi.toml"
-source $SUSI_INSTALLATION/bin/toml2env $CONFIG
-
-# load tool funs:
-#
-source $SUSI_INSTALLATION/src/Tools/funs.sh
+source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 source $SUSI_INSTALLATION/src/Session/dialogueManagerActions.sh
-source $SUSI_INSTALLATION/src/Tools/topics.sh
 
 # base names for recveived and subm. MQTT message files:
 #
 MQTT_BASE_NAME="sessionDaemon"
-MQTT_COUNTER=0
 
 MQTT_CLIENT_ID="sessionManager-$RANDOM"
 MQTT_MESSAGE_PIPE="$(relDir $session_message_pipe)"

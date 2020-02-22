@@ -1,4 +1,4 @@
-#!/bin/bash -xv
+#!/bin/bash
 #
 # STT service for NoSnips replacement.
 # Usage:
@@ -11,6 +11,7 @@
 #
 source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
+set -xv
 # base names for recveived and subm. MQTT message files:
 #
 MQTT_BASE_NAME="ttsDaemon"
