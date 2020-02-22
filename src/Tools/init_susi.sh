@@ -5,7 +5,7 @@ source $SUSI_INSTALLATION/bin/toml2env $CONFIG
 
 # get 2-digit language code:
 #
-LANGUAGE_CODE="${assistant_language/_/-}"
+LANGUAGE_CODE="${assistant_language}"
 LANGUAGE=${assistant_language:0:2}
 
 # load tool funs:
