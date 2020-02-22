@@ -107,6 +107,27 @@ rec -r 16000 lighton.wav
 deepspeech --model deepspeech-0.6.1-models/output_graph.pbmm --lm deepspeech-0.6.1-models/lm.binary --trie deepspeech-0.6.1-models/trie --audio lighton.wav
 ```
 
+#### IBM Cloud services
+
+If IBM Watson Text to Speech is used for TTS, it must be configured as
+described on IBM's website: https://cloud.ibm.com/.
+
+Is is as simple as:
+* create an account
+* descide for a pricing plan (the "Free Lite Plan" may be sufficient
+  as it offers up to 500 minutes of audio transcription and
+  10000 characters for TTS per month)
+* create a Speech to Text Service (and a Text to Sppech Service)
+* download the credential file `ibm-cedentials.env` and save it at
+  `/opt/Susi/ApplicationData/IBMCloud/` (the download link is in the
+    'Manage' section)
+* work through the "Getting started with Sppech to Text" tutorial
+  (https://cloud.ibm.com/docs/services/speech-to-text?topic=speech-to-text-gettingStarted#getting-started-tutorial).
+
+Now IBM Cloud STT and TTS can be activated by uncommenting the
+respective line for the 'binary' setting in the '[stt]'
+and '[tts]' section of the configuration file.
+
 
 ## Text to speech (TTS)
 

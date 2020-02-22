@@ -56,26 +56,6 @@ Go through Google's tutorial
 gcloud auth application-default print-access-token
 ```
 
-#### IBM Cloud services
-
-If IBM Watson Text to Speech is used for TTS, it must be configured as
-described on IBM's website: https://cloud.ibm.com/.
-
-Is is as simple as:
-* create an account
-* descide for a pricing plan (the "Free Lite Plan" may be sufficient
-  as it offers up to 500 minutes of audio transcription and
-  10000 characters for TTS per month)
-* create a Speech to Text Service (and a Text to Sppech Service)
-* download the credential file `ibm-cedentials.env` and save it at
-  `/opt/Susi/ApplicationData/IBMCloud/` (the download link is in the
-    'Manage' section)
-* work through the "Getting started with Sppech to Text" tutorial
-  (https://cloud.ibm.com/docs/services/speech-to-text?topic=speech-to-text-gettingStarted#getting-started-tutorial).
-
-Now IBM Cloud STT and TTS can be activated by uncommenting the
-respective line for the 'binary' setting in the '[stt]'
-and '[tts]' section of the configuration file.
 
 #### mosquitto, jq:
 mosquitto server and client are needed to
@@ -259,7 +239,7 @@ More information about all entries is given in the file.
 
 Most parameters in the configuration file are by default set to resonable
 values and are self-explaining.
-* specify a language in 2-letter-code
+* specify a language code
 * select a name for the assistant
 * go through the file and double-check or
   adapt paths if necessary.
@@ -272,7 +252,7 @@ values and are self-explaining.
 
 All daemons share some config entries:
 
-* `start = "true"` defines if the daemon
+* `start = true` defines if the daemon
   is started with the susi service or not.
 * `daemon = "xyz"` is the path to the executable that runs the daemon.
 * `binary = "xyz"` is the path to the executable that does the job when
@@ -352,6 +332,15 @@ for intent matching and capturing of slots values.
 For more details see the NLU section of the docu.
 The NLU also reads the skill directory from the `[skills]` section to find
 skills.
+
+#### voices
+Depending on the text-to speech service used, a voice must be configured.
+* if GoogleTTS is used the voice parameter in the section `[google-cloud]`
+  must be set by uncommenting the correct line or changing the
+  name of the wanted voice.   
+  Available voices can be tested here: https://cloud.google.com/text-to-speech.
+
+
 
 
 
