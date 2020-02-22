@@ -5,6 +5,9 @@
 title = "Susi/NoSnips services config"
 
 [assistant]
+# language = "en-US"
+# language = "en-GB"
+# language = "fr-FR"
 language = "de-DE"
 name = "Susi"
 
