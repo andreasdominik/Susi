@@ -1,14 +1,14 @@
-function setSkillDir()
-    setSkillDir(CONFIG["skills"]["skills_dir"])
+function setSkillsDir()
+    setSkillsDir(CONFIG["skills"]["skills_dir"])
 end
 
-function setSkillDir(d)
+function setSkillsDir(d)
 
     global SKILLS_DIR = d
 end
 
 
-function getSkillDir()
+function getSkillsDir()
     return SKILLS_DIR
 end
 
@@ -21,7 +21,8 @@ end
 function readConfig(configName)
 
     global CONFIG = TOML.parsefile(configName)
-    global LANG = CONFIG["assistant"]["language"]
+    global LANGCODE = CONFIG["assistant"]["language"]
+    global LANG = lowercase(LANGCODE[1:2])
     global DUCKLING_HOST = CONFIG["duckling"]["host"]
     global DUCKLING_PORT = CONFIG["duckling"]["port"]
 

@@ -30,7 +30,7 @@ DUCKLING_PORT = "8000"
 #
 include("../../../Tools/topics.sh")
 
-export setSkillDir, getSkillDir,
+export setSkillsDir, getSkillsDir,
        loadIntents
 
 end

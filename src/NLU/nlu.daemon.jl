@@ -19,7 +19,7 @@ import Main.NLU
 # load config:
 #
 NLU.readConfig(CONFIG_FILE)
-NLU.setSkillDir()
+NLU.setSkillsDir()
 
 # for each skill:
 #

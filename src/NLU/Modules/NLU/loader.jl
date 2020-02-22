@@ -10,7 +10,7 @@ function loadIntents()
         append!(skills, paths)
     end
 
-    println("[NLU loader]: $(length(skills)) skills found to recognise.")
+    println("[NLU loader]: $(length(skills)) skills found to recognise in $SKILLS_DIR.")
 
     for skill in skills
         println("[NLU loader]: loading $skill.")
