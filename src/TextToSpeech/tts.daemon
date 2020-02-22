@@ -7,20 +7,13 @@
 #
 #
 
-# set config path:
+# set config:
 #
-CONFIG="/etc/susi.toml"
-source $SUSI_INSTALLATION/bin/toml2env $CONFIG
-
-# load tool funs:
-#
-source $SUSI_INSTALLATION/src/Tools/funs.sh
-source $SUSI_INSTALLATION/src/Tools/topics.sh
+source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
 # base names for recveived and subm. MQTT message files:
 #
 MQTT_BASE_NAME="ttsDaemon"
-MQTT_COUNTER=0
 
 cd $local_work_directory
 
@@ -31,23 +24,10 @@ CREDS="$(relDir $google_cloud_credentials)"
 # Language code and cache:
 #
 CACHE="$(relDir $tts_cache)"
-case $LANGUAGE in
-    de)
-        COUNTRY="DE"
-        ;;
-    en)
-        COUNTRY="GB"
-        ;;
-    *)
-        LANGUAGE="$(echo ${LANGUAGE:0:2} | tr A-Z a-z)"
-        COUNTRY="$(echo $LANGUAGE | tr a-z A-Z)"
-        ;;
-esac
-LANCODE="${LANGUAGE}-${COUNTRY}"
 
 # language-specfic cache:
 #
-CACHE="${CACHE}/${LANCODE}"
+CACHE="${CACHE}/${LANGUAGE_CODE}"
 if [[ ! -d $CACHE ]] ; then
     mkdir -p ${CACHE}
 fi
@@ -60,13 +40,24 @@ while true ; do
   # extract text to be spoken:
   #
   TEXT="$(extractJSONfile .input $RECEIVED_PAYLOAD)"
-  LANG="$(extractJSONfile .lang $RECEIVED_PAYLOAD)"
-  if [[ -z $LANG ]] ; then
-    LANG="en"
-  fi
+
+  # TTS daemon only speaks "his" language!
+  #
+  # # select language code:
+  # #
+  # LANG="$(extractJSONfile .lang $RECEIVED_PAYLOAD)"
+  #
+  # if [[ $LANG =~ "[a-z][a-z]-[A-Z][A-Z]" ]] ; then
+  #   _LANGUAGE_CODE=$LANG
+  # elif [[ $LANG =~ "en" ]] ; then
+  #   _LANGUAGE_CODE="en-GB"
+  # elif [[ $LANG =~ "[a-zA-Z][a-zA-Z]" ]] ; then
+  #   _LANGUAGE_CODE="${$LANG,,}-${LANG^^}"
+  # else
+  #   _LANGUAGE_CODE="en-GB"
+  # fi
 
   CACHED_NAME=$(echo $TEXT | tr '/' '_' | sed 's/[^(0-9a-zA-Z)]/_/g').b64
-  # LEN=$(echo $CACHED_NAME | wc -c)
 
   # name of audio file, base64-encoded and result payload:
   #
@@ -80,7 +71,13 @@ while true ; do
   if [[ -e ${CACHE}/${CACHED_NAME} ]] ; then
     cp ${CACHE}/${CACHED_NAME} $AUDIO_NAME
   else
-    $BINARY $AUDIO_NAME $LANCODE $CACHE $TEXT > /dev/null 2>&1
+    $BINARY $AUDIO_NAME $TEXT > /dev/null 2>&1
+
+    if [[ -s ${AUDIO_NAME} ]]; then
+        if [[ $LEN -lt 256 ]] ; then
+            cp ${AUDIO_NAME} ${CACHE}/${CACHED_NAME}
+        fi
+    fi
   fi
 
   # generate standardised JSON for Susi

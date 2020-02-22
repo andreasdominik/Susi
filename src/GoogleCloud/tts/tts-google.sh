@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 #
 # retrieve a sound file from Google TTS
 # and write it to a cache in order to be re-used
@@ -10,6 +10,7 @@
 # License: GPL3
 #
 
+set -xv
 AUDIO_NAME=$1
 LANGUAGE=$2
 CACHE=$3
@@ -72,7 +73,7 @@ else
       VOICE_SET="\"voice\":
                   {
                     \"languageCode\": \"$LAN\",
-                    \"name\": \"$VOICE\",
+                    \"name\": \"$VOICE\"
                   },"
       # VOICE="de-DE-Wavenet-C"
       # LAN="de-DE"
@@ -112,7 +113,7 @@ else
         \"audioEncoding\": \"LINEAR16\",
         \"speakingRate\": \"1.0\",
         \"pitch\": \"0\",
-        \"volumeGainDb\": \"0.0\",
+        \"volumeGainDb\": \"0.0\"
       }
     }"
     echo $JSON > request.json

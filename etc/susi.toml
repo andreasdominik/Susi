@@ -5,7 +5,7 @@
 title = "Susi/NoSnips services config"
 
 [assistant]
-language = "de"
+language = "de-DE"
 name = "Susi"
 
 [local]
@@ -87,7 +87,7 @@ binary = "play"
 # cache = "/opt/.../TTScache"  cache for audio snippets with speech to utter
 start = true
 daemon = "src/TextToSpeach/tts.daemon"
-binary = "src/GoogleCloud/tts/ttsWcache.sh"
+binary = "src/GoogleCloud/tts/tts-google2.sh"
 cache = "/opt/Susi/ApplicationData/TTScache"
 
 [stt]
@@ -115,6 +115,10 @@ message_pipe = "Work/mqtt.fifo"
 [google_cloud]
 credentials = "/opt/Susi/ApplicationData/Google/Credentials/google-credentials.json"
 refresh_token_cmd = "src/GoogleCloud/refreshToken.sh"
+# voice = "en-GB-Wavenet-A"
+# voice = "en-US-Wavenet-A"
+# voice = "fr-FR-Wavenet-A"
+voice = "de-DE-Wavenet-B"
 
 [ibm_cloud]
 credentials = "/opt/Susi/ApplicationData/IBMCloud/ibm-credentials.env"
@@ -139,4 +143,5 @@ port = "8017"
 [skills]
 start = false
 daemon = "src/Skillserver/skills.daemon"
-skills_dir = "/opt/Susi/Skills"
+skills_dir = "/home/andreas/Documents/Projekte/2019-Susi/Skills"
+# skills_dir = "/opt/Susi/Skills"
