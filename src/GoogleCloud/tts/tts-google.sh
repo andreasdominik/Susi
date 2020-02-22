@@ -1,4 +1,4 @@
-#!/bin/bash -xv
+#!/bin/bash 
 #
 # retrieve a sound file from Google TTS
 # and write it to a cache in order to be re-used

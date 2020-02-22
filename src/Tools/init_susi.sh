@@ -16,3 +16,9 @@ source $SUSI_INSTALLATION/src/Tools/topics.sh
 # counter for recveived and subm. MQTT message files:
 #
 MQTT_COUNTER=0
+
+# show stdout if debug is on:
+#
+if [[ $debug_show_all_stdout == true ]] ; then
+  set -xv
+fi

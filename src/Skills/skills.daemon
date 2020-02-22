@@ -13,9 +13,7 @@ source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 # base names for recveived and subm. MQTT message files:
 #
 MQTT_BASE_NAME="skillsDaemon"
-MQTT_COUNTER=0
 
-# set -xv
 cd $local_work_directory
 
 SKILLS="$(find $skills_skills_dir -name 'action-*' -print)"

@@ -11,7 +11,6 @@ STT_OUTPUT=$2
 #
 source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
-set -xv
 # get google token:
 #
 REFRESH_TOKEN_CMD="$(relDir $google_cloud_refresh_token_cmd)"

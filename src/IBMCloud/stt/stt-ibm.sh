@@ -1,20 +1,15 @@
-#!/bin/bash -xv
+#!/bin/bash
 #
 # Get STT from IBM
 #   Input: $1 : file with base64-encoded audio
-#
-#   Output: $3 file with transscript only
+#   Output: $2 file with transscript only
 
 STT_INPUT=$1
-LANGUAGE=$2
-STT_OUTPUT=$3
-
-CONFIG="/etc/susi.toml"
-source $SUSI_INSTALLATION/bin/toml2env $CONFIG
+STT_OUTPUT=$2
 
 # load tool funs:
 #
-source $SUSI_INSTALLATION/src/Tools/funs.sh
+source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
 # load IBM cloud env and clean end-of-line:
 #
@@ -34,36 +29,22 @@ JSON="curl.result"
 # find language model
 #
 if [[ -s $STT_INPUT ]] ; then
-
-  case $LANGUAGE in
-      de)
-          COUNTRY="DE"
-          ;;
-      en)
-          COUNTRY="GB"
-          ;;
-      *)
-          LANGUAGE="$(echo ${LANGUAGE:0:2} | tr A-Z a-z)"
-          COUNTRY="$(echo $LANGUAGE | tr a-z A-Z)"
-          ;;
-  esac
-  STT_MODEL="${LANGUAGE}-${COUNTRY}_BroadbandModel"
-
+  STT_MODEL="${LANGUAGE_CODE}_BroadbandModel"
 
   curl -v -X POST -u "apikey:$SPEECH_TO_TEXT_APIKEY" \
-      --header "Content-Type: audio/b64" \
-      --data-binary @wie.base64  \
-      "$SPEECH_TO_TEXT_URL/v1/recognize?model=$STT_MODEL"
+      --header "Content-Type: audio/flac" \
+      --data-binary @$AUDIO_NAME  \
+      "$SPEECH_TO_TEXT_URL/v1/recognize?model=$STT_MODEL" \
+      -o $JSON
 
-
-
-      TODO_______________
+  # extract transcript if it is there:
+  #
   grep 'transcript' $JSON
   TS_OK=$?
 
   if [[ $TS_OK -eq 0 ]] ; then
     TS="$( cat $JSON | jq '.results[].alternatives[].transcript' | sed 's/[^0-9a-zA-Z]/ /g')"
-    echo "$TS" > $STT_OUTPUT
+    echo $TS > $STT_OUTPUT
   else
     echo "" > $STT_OUTPUT
   fi
@@ -71,5 +52,5 @@ else
   echo "" > $STT_OUTPUT
 fi
 
-echo "transscript is:"
-cat $STT_OUTPUT
+#
+# eof.

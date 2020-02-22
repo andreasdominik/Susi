@@ -11,6 +11,9 @@ title = "Susi/NoSnips services config"
 language = "de-DE"
 name = "Susi"
 
+[debug]
+show_all_stdout = false
+
 [local]
 # satellite = false    false for the main system; if true, only hotword
 #                      detectiion and auidio I/O will be started
@@ -97,8 +100,9 @@ cache = "/opt/Susi/ApplicationData/TTScache"
 # start = true     start the central speech-to-text (aka ASR) service
 start = true
 daemon = "src/SpeechToText/stt.daemon"
-binary = "src/GoogleCloud/stt/stt-google.sh"
+# binary = "src/GoogleCloud/stt/stt-google.sh"
 # binary = "src/MozillaDeepSpeech/stt-deepspeech.sh"
+binary = "src/IBMCloud/stt/stt-ibm.sh"
 
 [nlu]
 # start = true     start the natural language understanding service

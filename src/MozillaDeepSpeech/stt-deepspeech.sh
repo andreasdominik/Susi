@@ -16,7 +16,6 @@ source $SUSI_INSTALLATION/bin/toml2env $CONFIG
 source $SUSI_INSTALLATION/src/Tools/funs.sh
 
 
-set -xv
 # only english:
 #
 if [[ $LANGUAGE != "en" ]] ; then

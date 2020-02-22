@@ -14,7 +14,6 @@ source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 #
 MQTT_BASE_NAME="recordDaemon"
 
-set -xv
 cd $local_work_directory
 
 REC_CMD="$(relDir $record_binary)"
