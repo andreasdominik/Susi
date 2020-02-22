@@ -14,11 +14,9 @@ source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 # base names for recveived and subm. MQTT message files:
 #
 MQTT_BASE_NAME="ttsDaemon"
-
 cd $local_work_directory
 
 BINARY="$(relDir $tts_binary)"
-REFRESH_TOKEN_CMD="$(relDir $google_cloud_refresh_token_cmd)"
 CREDS="$(relDir $google_cloud_credentials)"
 
 # Language code and cache:
