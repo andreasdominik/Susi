@@ -186,7 +186,8 @@ mkdir /opt/Susi/Skills
 git clone git@github.com:andreasdominik/Susi.git
 
 # add variable to environment:
-echo "export SUSI_INSTALLATION="/opt/Susi/Susi" >> ~/.bashrc
+grep "^export SUSI_INSTALLATION=" ~/.bashrc || echo "export SUSI_INSTALLATION=/opt/Susi/Susi" >> ~/.bashrc
+source ~/.bashrc
 
 # Snowboy:
 # replace rpi-arm-raspbian-8.0-1.3.0.tar.bz2 with the precompiled
@@ -195,13 +196,14 @@ cp Susi/src/Snowboy/bin/hotword_susi.py /opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/
 cp Susi/src/Snowboy/bin/snowboydecoder_susi.py /opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/
 
 # Susi service and execs:
-cd /usr/local/bin/:
+cd /usr/local/bin/
 sudo ln -s /opt/Susi/Susi/bin/susi.watch
 sudo ln -s /opt/Susi/Susi/bin/susi
 sudo ln -s /opt/Susi/Susi/bin/susi.say
 sudo ln -s /opt/Susi/Susi/src/Service/susi.start
 sudo ln -s /opt/Susi/Susi/src/Service/susi.stop
 
+cd $SUSI_INSTALLATION
 sudo cp /opt/Susi/Susi/src/Service/susi.service /etc/systemd/system/
 sudo chmod 644 /etc/systemd/system/susi.service
 
@@ -266,6 +268,12 @@ The sections of the susi.toml file are:
 #### [assistant]
 Name and language of the assistant.
 
+#### [debug]
+if 'show_all_stdout' is set to 'true', all daemons will echo commands to
+stdout (i.e. 'set -xv').
+
+
+
 #### [local]
 Work directory to store temporary files and
 name of the local siteId. Each satellite needs an unique name.
@@ -317,13 +325,22 @@ uttered sentence will be stored in the cache. As assistants tend to say the same
 things again and again ("hello", "OK", "I copy"), only a small number calls to the webservice
 is necessary after some time of operation.
 
+Susi is prepared to use IBM Cloud services, too.
+Please refer to the "Components/Text to Speech"
+section of the documentation for details of installation and cofiguration.
+
+
 #### [stt]
 Configuration of the STT daemon.
 By default Google STT is used because of its very high accuracy and common
 knowledge. However, it's not local and private.    
-Mozilla DeepSpeech can be used for English language if installed by
-uncommenting the respective line.
-Other services may be included by exchange the `binary`.
+
+Mozilla DeepSpeech can be used for English language.
+Susi is prepared to use IBM Cloud services, too.
+
+Please refer to the "Components/Text to Speech"
+section of the documentation for details of installation and cofiguration
+of other services.
 
 #### [nlu]
 Configuration of the NLU (natural language understanding) daemon.
@@ -332,6 +349,44 @@ for intent matching and capturing of slots values.
 For more details see the NLU section of the docu.
 The NLU also reads the skill directory from the `[skills]` section to find
 skills.
+
+#### [session]
+The session timeout controls after how many seconds of inactivity a session
+is ended by the session manager.
+During skill development shorter timeouts are used (such as 5 sec) to
+avoid waiting if a component crashes.
+
+#### [skills]
+Here the path to the directory of installed skills is configured.
+
+
+### External services Configuration
+In the following sections external software is configured:
+
+#### [google_cloud]
+Path to the JSON file with the credentials for the Google Cloud Services.
+The same credentials are used for all services (such as STT and TTS).
+
+#### [ibm_cloud]
+Path to the JSON files with the credentials for the IBM Cloud Services.
+Separate credentials are necessary for each service (such as STT and TTS).
+Make sure to rename the files after downloading (and match the names
+in susi.toml).
+
+#### [deep_speech]
+Mozilla DeepSpeech must be installed locally and the path to
+the installation must be configured here.
+
+To call DeepSpeech, Susi needs to know
+* the executable ('binary')
+* the trained neural network ('model')
+* the language model ('language_model')
+* the prefix tree toi query the language model ('trie')
+
+#### [duckling]
+Installation dir, executable and hostame/port ofthe webserver
+must be configured.
+
 
 #### voices
 Depending on the text-to speech service used, a voice must be configured.
@@ -345,7 +400,6 @@ Depending on the text-to speech service used, a voice must be configured.
 
 
 ## Start Susi service
-
 
 The last step is to enable the service it to make sure
 Susi is started at reboot:

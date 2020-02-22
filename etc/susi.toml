@@ -16,7 +16,7 @@ show_all_stdout = true
 
 [local]
 # satellite = false    false for the main system; if true, only hotword
-#                      detectiion and auidio I/O will be started
+#                      detectiion and audio I/O will be started
 # siteId = "default"     name of satellite/room
 satellite = false
 siteId = "default"
@@ -29,7 +29,7 @@ port = ""
 subscribe = "mosquitto_sub --qos 2"
 publish = "mosquitto_pub --qos 2"
 
-# set user/password to use authetication:
+# set user/password for security:
 #
 user = "susi"
 password = "ag543jo9ikngr56hs3mg"
@@ -39,9 +39,8 @@ password = "ag543jo9ikngr56hs3mg"
 # start = true                        start hotword service
 # binary = "Snowboy/bin/hotword"      path to the hotword detector
 # model_path = "Snowboy/resources"    path to the hotword models
-# model = "computer.pmdl"             name of hotword model
-# sensitivity = 0.5
-# local_hotword = "Computer"          name of the hotword
+# model = "snowboy.pmdl"              name of hotword model
+# local_hotword = "default"           name of the hotword
 # notification = true                 play a sound when toggle on
 # notification_sound = "src/Resources/Sounds/bell.wav"
 # trigger_file = "hotword.toggleOff"  if this file exists, no hotwords will be detected
@@ -51,6 +50,8 @@ daemon = "src/Hotword/hotword.daemon"
 # binary = "/opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/hotword_susi.py"
 binary = "/opt/Snowboy/ubuntu1404-x86_64-1.3.0/hotword_susi.py"
 model_path = "src/Snowboy/bin/resources"
+# model = "Snowboy.umdl"
+# model = "Susi.pmdl"
 model = "computer.pmdl"
 sensitivity = 0.37
 local_hotword = "Computer"
@@ -60,15 +61,11 @@ trigger_file = "hotword.toggleOff"
 
 
 [record]
-# start = true     start the local service to record commands
-# daemon = "Record/record.daemon"     daemon binary
-# binary = "Record/Sox/recCmd.sh"     command to perform recording
 # recording_file = "cmd.flac"         file with recording (defines the format, too)
 # recording_limit = 15                stop recording after 15 sec
 # notification = true                 play sounds when starting/stopping rec
-# notification_start = "Record/Sounds/startlisten.wav"
-# notification_end = "Record/Sounds/stoplisten.wav"
 # play = "play"                       command to play an audio file
+#                                     for notification
 #
 start = true
 daemon = "src/Record/record.daemon"
@@ -76,29 +73,25 @@ binary = "src/Record/soxrec.sh"
 recording_file = "cmd.flac"
 recording_limit = 15
 notification = true
-# notification_start = "src/Resources/Sounds/bellDongDing.wav"
 notification_start = "src/Resources/Welcome/de"
-# notification_end = "src/Resources/Sounds/bellDingDong.wav"
+# notification_start = "src/Resources/Sounds/bellDingDong.wav"
 play = "play -q"
 
 
 [play]
-# start = true     start the local service to utter text
 start = true
 daemon = "src/Play/play.daemon"
-binary = "play"
+binary = "play -q"
 
 [tts]
-# start = true                  start the central text-to-speech service
-# cache = "/opt/.../TTScache"  cache for audio snippets with speech to utter
+# cache = "/opt/.../TTScache"          cache for audio snippets with speech to utter
 start = true
 daemon = "src/TextToSpeach/tts.daemon"
-# binary = "src/GoogleCloud/tts/tts-google2.sh"
-binary = "src/IBMCloud/tts/tts-ibm.sh"
+binary = "src/GoogleCloud/tts/tts-google2.sh"
+# binary = "src/IBMCloud/tts/tts-ibm.sh"
 cache = "/opt/Susi/ApplicationData/TTScache"
 
 [stt]
-# start = true     start the central speech-to-text (aka ASR) service
 start = true
 daemon = "src/SpeechToText/stt.daemon"
 # binary = "src/GoogleCloud/stt/stt-google.sh"
@@ -112,14 +105,23 @@ start = true
 daemon = "src/NLU/nlu.daemon.jl"
 
 [session]
-# start = true                      start the session manager
 # session_timeout = 15              timout after x seconds of inactivity
 # message_pipe = "Work/mqtt.fifo"   the fifo though wich all MQTT messages go
 start = true
 daemon = "src/Session/session.daemon"
-session_timeout = 10
+session_timeout = 15
 message_pipe = "Work/mqtt.fifo"
 
+
+[skills]
+start = false
+daemon = "src/Skillserver/skills.daemon"
+skills_dir = "/home/andreas/Documents/Projekte/2019-Susi/Skills"
+# skills_dir = "/opt/Susi/Skills"
+
+
+# configuration of external services:
+#
 [google_cloud]
 credentials = "/opt/Susi/ApplicationData/Google/Credentials/google-credentials.json"
 refresh_token_cmd = "src/GoogleCloud/refreshToken.sh"
@@ -148,13 +150,5 @@ trie = "trie"
 start = true
 install_dir = "/opt/Duckling/duckling"
 daemon = "src/Duckling/duckling.daemon"
-# binary = "stack exec duckling-example-exe"
 host = "localhost"
 port = "8017"
-
-
-[skills]
-start = false
-daemon = "src/Skillserver/skills.daemon"
-skills_dir = "/home/andreas/Documents/Projekte/2019-Susi/Skills"
-# skills_dir = "/opt/Susi/Skills"
