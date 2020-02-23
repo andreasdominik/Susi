@@ -45,16 +45,24 @@ However, there is only a small number of potentially usable open software
 available.
 Best chances may provide Mozilla DeepSpeech.
 
-In contrast, commercial web-services with almost perferct quality are availble
-(e.g. Google Cloud Speech-to-Text (https://cloud.google.com/speech-to-text/),
-Wit.ai (https://wit.ai),
-Google Dialogue Flow (https://dialogflow.com/),
-Microsoft Cognitive Services (https://azure.microsoft.com/en-us/services/cognitive-services),
-Watson Speech to Text (omm,
-Speechmatics (https://www.speechmatics.com/),
-etc.), but all of them require sending
+In contrast, commercial web-services with almost perfect quality are availble,
+such as:
+* Google Cloud Speech-to-Text (https://cloud.google.com/speech-to-text/),
+* Wit.ai (https://wit.ai),
+* Google Dialogue Flow (https://dialogflow.com/),
+* Microsoft Cognitive Services (https://azure.microsoft.com/en-us/services/cognitive-services),
+* Watson Speech to Text (https://www.ibm.com/cloud/watson-speech-to-text),
+* Speechmatics (https://www.speechmatics.com/),
+* Amazon (https://aws.amazon.com/transcribe/)
+* etc.
+
+All of them require sending
 the recorded audio to the server somewhere in the internet,
 which breaks the privacy we are used to with Snips.ai.
+
+However, speech recognition technology develops very fast and using a
+cloud service may be necessary for a period of transition, until
+locally installed and *open* software is available.
 
 
 #### Google Cloud STT
@@ -74,60 +82,15 @@ However,
   hardware)
 - a transcription needs 2-5 seconds.
 
-Installation is simple and follows the instruction on the website
-(https://github.com/mozilla/DeepSpeech). The installation can be tested
-by running deepspeech on the commandline.
+However, it is easily possible to set up a separate STT-server with
+sufficient CPU power (and maybe a GPU) and integrate it to Susi.
 
-DeepSpeech integration to Susi is already included in the distribution and
-can be activated by uncommenting the line in the configuration file.
-
-```
-# installation of Mozilla DeepSpeech:
-#
-# prepare:
-mkdir /opt/DeepSpeech
-cd /opt/DeepSpeech
-virtualenv -p python3 ./deepspeech-venv/
-source $HOME/tmp/deepspeech-venv/bin/activate
-
-# Install DeepSpeech
-pip3 install deepspeech
-
-# Download pre-trained English model and extract
-curl -LO https://github.com/mozilla/DeepSpeech/releases/download/v0.6.1/deepspeech-0.6.1-models.tar.gz
-tar xvf deepspeech-0.6.1-models.tar.gz
-
-# Download example audio files
-curl -LO https://github.com/mozilla/DeepSpeech/releases/download/v0.6.1/audio-0.6.1.tar.gz
-tar xvf audio-0.6.1.tar.gz
-
-# Transcribe an audio file
-rec -r 16000 lighton.wav
-
-deepspeech --model deepspeech-0.6.1-models/output_graph.pbmm --lm deepspeech-0.6.1-models/lm.binary --trie deepspeech-0.6.1-models/trie --audio lighton.wav
-```
 
 #### IBM Cloud services
 
-If IBM Watson Text to Speech is used for TTS, it must be configured as
-described on IBM's website: https://cloud.ibm.com/.
-
-Is is as simple as:
-* create an account
-* descide for a pricing plan (the "Free Lite Plan" may be sufficient
-  as it offers up to 500 minutes of audio transcription and
-  10000 characters for TTS per month)
-* create a Speech to Text Service (and a Text to Sppech Service)
-* download the credential file `ibm-cedentials.env` and save it at
-  `/opt/Susi/ApplicationData/IBMCloud/` (the download link is in the
-    'Manage' section)
-* work through the "Getting started with Sppech to Text" tutorial
-  (https://cloud.ibm.com/docs/services/speech-to-text?topic=speech-to-text-gettingStarted#getting-started-tutorial).
-
-Now IBM Cloud STT and TTS can be activated by uncommenting the
-respective line for the 'binary' setting in the '[stt]'
-and '[tts]' section of the configuration file.
-
+Transcription quality  of IBM Cloud STT is sufficent for an assistant.
+(At least) in Europe the latency is smaller compared to the Google service
+(approx. half).
 
 ## Text to speech (TTS)
 #### Google Cloud TTS
@@ -139,22 +102,13 @@ and reused if the same sentence is needed again.
 Available voices can be tested here: https://cloud.google.com/text-to-speech.
 
 #### Mozilla
+Mozilla's Deep Voice is not yet implemented.
 
 #### IBM Cloud TTS
-The connectot to the IBM Clouds text-to-speech service is alrady
-included in the distribution. It canbe selected by uncommenting the
+The connector to the IBM Clouds text-to-speech service is alrady
+included in the distribution. It can be selected by uncommenting the
 respective line for the binary in the `[tts]`-section of the
 configuration file 'susi.toml'.
-
-Steps necessary to get access to the Service:
-* acticate the text-to-speech in the IBM cloud
-* download the credentials file for text to speech
-* save the credentials file (e.g. as
-  `/opt/Susi/ApplicationData/IBMcloud/ibm-tts-credentials.env`)
-* configure the full path to the file in the ibm_cloud section of
-  'susi.toml'.
-* configure the name of the preferred voice in the ibm_cloud section of
-  'susi.toml'.
 
 Please notice, that there are different credentials for STT and TTS.
 

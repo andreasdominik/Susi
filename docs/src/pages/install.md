@@ -23,13 +23,33 @@ chgrp susi /opt/Susi
 
 ## Dependencies
 
-#### git:
+### git
 Most of the software must be obtained from git repos; therefore
 git must be installed first:
 
 ```
 sudo apt-get install git-core curl coreutils
 ```
+
+### Sppech to text and text to sppech
+
+Susi does not come with an own AI for STT and TTS and needs external
+services to transcribe audio to text as well as for speech synthesis.
+The modular design of Susi makes it easy to integrate any service.
+Currently 3 alternatives are implemented:
+* **Google Cloud:** best quality for both STT and TTS, but
+  cloud-based not local, and not for free - expect cost in the
+  range of 0.5-1$ per month.
+* **IBM Cloud:** the free "Light Plan" will be sufficient for most cases.
+  However, this is also not local.
+* **Mozilla Deep Speech** can be installed locally and hence will
+  preserve privacy. However the quality of STT is limited.
+
+Only **one** of the alternatives must be installed. STT and TTS
+services are selected by specifying the respective binary in the
+`[stt]` and `[tts]` sections of the configuration file.
+
+
 
 #### Google cloud services:
 If google services are used for text-to-speech (TTS)
@@ -56,8 +76,65 @@ Go through Google's tutorial
 gcloud auth application-default print-access-token
 ```
 
+#### IBM Cloud services
 
-#### mosquitto, jq:
+To use IBM Watson Text to Speech STT or TTS, it must be configured as
+described on IBM's website: https://cloud.ibm.com/.
+
+Is is as simple as:
+* create an account
+* descide for a pricing plan (the "Free Lite Plan" may be sufficient
+  as it offers up to 500 minutes of audio transcription and
+  10000 characters for TTS per month)
+* create a Speech to Text Service (and a Text to Sppech Service)
+* download the credential file `ibm-cedentials.env`, rename and save it at
+  `/opt/Susi/ApplicationData/IBMCloud/ibm-tts-cedentials.env` (the download link is in the
+    'Manage' section)
+* work through the "Getting started with Sppech to Text" tutorial
+  (https://cloud.ibm.com/docs/services/speech-to-text?topic=speech-to-text-gettingStarted#getting-started-tutorial).
+
+Similar steps are necessary for text to speech.
+Please notice, that there are different credentials necessary for STT and TTS.
+Both need to be downloaded and saved to `/opt/Susi/ApplicationData/IBMCloud/`
+with different names (such as 'ibm-tts-cedentials.env' and 'ibm-stt-cedentials.env').
+Names can be configured in the 'susi.toml' file.
+
+
+#### Mozilla DeepSpeech
+Installation is simple and follows the instruction on the website
+(https://github.com/mozilla/DeepSpeech). The installation can be tested
+by running deepspeech on the commandline.
+
+DeepSpeech integration to Susi is already included in the distribution and
+can be activated by uncommenting the line in the configuration file.
+
+```
+# installation of Mozilla DeepSpeech:
+#
+# prepare:
+mkdir /opt/DeepSpeech
+cd /opt/DeepSpeech
+virtualenv -p python3 ./deepspeech-venv/
+source $HOME/tmp/deepspeech-venv/bin/activate
+
+# Install DeepSpeech
+pip3 install deepspeech
+
+# Download pre-trained English model and extract
+curl -LO https://github.com/mozilla/DeepSpeech/releases/download/v0.6.1/deepspeech-0.6.1-models.tar.gz
+tar xvf deepspeech-0.6.1-models.tar.gz
+
+# Download example audio files
+curl -LO https://github.com/mozilla/DeepSpeech/releases/download/v0.6.1/audio-0.6.1.tar.gz
+tar xvf audio-0.6.1.tar.gz
+
+# Transcribe an audio file
+rec -r 16000 lighton.wav
+
+deepspeech --model deepspeech-0.6.1-models/output_graph.pbmm --lm deepspeech-0.6.1-models/lm.binary --trie deepspeech-0.6.1-models/trie --audio lighton.wav
+```
+
+### mosquitto, jq
 mosquitto server and client are needed to
 publish and subscribe to MQTT messages. The package mosquitto
 provides the MQTT broker and is only necessary for the main installation and
@@ -70,7 +147,7 @@ The base64 utility is part of the coreutils:
 sudo apt-get install mosquitto mosquitto-clients coreutils jq
 ```
 
-#### Julia:
+### Julia
 some components of the system are written in the nice and
 fast programming laguage Julia. Install the current version from
 https://www.julialang.org (a good location is `/opt/Susi/Julia`) by downloading
@@ -91,7 +168,7 @@ sudo ln -s /opt/Julia/julia-1.3.1/bin/julia
 julia -e 'using Pkg; Pkg.add(["ArgParse", "JSON", "StatsBase"]; Pkg.update()'
 ```
 
-#### sox:
+### sox
 sox
 is used for recording and playing sound. It must be installed on the main
 installation and on all satellites. In addition ffmpeg and and libsox-fmt-mp3
@@ -106,7 +183,7 @@ sudo apt-get install sox libsox-fmt-mp3
 sudo apt-get install ffmpeg
 ```
 
-#### Snowboy:
+### Snowboy
 the Snowboy hotword detector is used by default for hotword
 recognition. Snowboy is completely local and allows to create and train own
 hotwords via a web-interface.    
@@ -115,9 +192,21 @@ hotwords via a web-interface.
 - install the dependencies for the required platform as described in
   https://github.com/kitt-ai/snowboy/README.md
 
-After the installation (with the default hotword `snowboy`) individual
+#### Hotwords
+After the installation the latest version of the default hotword
+(i.e. *Snowboy*) and individual
 hotwords can be created and downloaded into  the directory
-`/opt/Susi/Susi/src/Snowboy/bin/resources`.
+`/opt/Susi/Susi/src/Snowboy/resources`.
+
+To improve hotword detection it is recommended to train
+the hotword with the voices of all speakers before
+downloading.
+Many hotwords are alredy trained and new hotwords can be created easily
+via the Snowboy website. Examples include:
+
+* **snowboy.umdl:**
+* **computer.umdl:** https://snowboy.kitt.ai/hotword/46
+* **susi.pmdl:**
 
 Snowboy can be tested like described in the Snowboy docu.
 
@@ -132,7 +221,7 @@ tar xvf rpi-arm-raspbian-8.0-1.3.0.tar.bz2
 sudo apt-get install python-pyaudio python3-pyaudio sox
 ```
 
-#### Duckling:
+### Duckling
 Duckling is used to parse transcribed voice input into
 time or numbers. There is a web-service available, but it is also possible to
 install it locally - the demo-program, which is shipped with the installation,
@@ -319,28 +408,32 @@ Configuration of the play daemon.
 #### [tts]
 Configuration of the tts daemon.
 
-By default, Google TTS is used with caching because the quality of Google's
-voices is very good. Caching means that an audio file of every
+By default, Google TTS is configured.
+The daemin uses caching: an audio file of every
 uttered sentence will be stored in the cache. As assistants tend to say the same
 things again and again ("hello", "OK", "I copy"), only a small number calls to the webservice
 is necessary after some time of operation.
 
 Susi is prepared to use IBM Cloud services, too.
-Please refer to the "Components/Text to Speech"
+Please refer to the "Installation/Text to Speech"
 section of the documentation for details of installation and cofiguration.
+
+To change the TTS service, the `binary` parameter in the section `tts`
+must be changed.
 
 
 #### [stt]
 Configuration of the STT daemon.
-By default Google STT is used because of its very high accuracy and common
-knowledge. However, it's not local and private.    
 
 Mozilla DeepSpeech can be used for English language.
-Susi is prepared to use IBM Cloud services, too.
+Susi is prepared to use IBM Cloud services or Mozilla DeepSpeech, too.
 
 Please refer to the "Components/Text to Speech"
 section of the documentation for details of installation and cofiguration
 of other services.
+
+To change the STT service, the `binary` parameter in the section `stt`
+must be changed.
 
 #### [nlu]
 Configuration of the NLU (natural language understanding) daemon.
