@@ -1,7 +1,7 @@
 # read the toml file and init env for Susi
 #
 CONFIG="/etc/susi.toml"
-source $SUSI_INSTALLATION/bin/toml2env $CONFIG
+source $SUSI_INSTALLATION/src/Tools/toml2env $CONFIG
 
 # get 2-digit language code:
 #
