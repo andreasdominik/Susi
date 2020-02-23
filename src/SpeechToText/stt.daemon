@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 #
 # STT service for NoSnips replacement.
 # Usage:
@@ -31,13 +31,6 @@ while true ; do
   #
   extractJSONfile .audio $RECEIVED_PAYLOAD > $STT_INPUT
 
-  # check if offline:
-  # ${SUSI_DIR}/src/Hardware/Internet/checkservices.sh
-
-  # check if a new access token is necessary
-  #
-  # $REFRESH_TOKEN_CMD $CREDS
-
   $BINARY $STT_INPUT $STT_OUTPUT > /dev/null 2>&1
 
   # generate standardised JSON for Susi
@@ -48,14 +41,6 @@ while true ; do
   else
     TRANSSCRIPT=""
   fi
-  # grep 'transcript' $STT_OUTPUT
-  # TS_OK=$?
-  #
-  # if [[ $TS_OK -eq 0 ]] ; then
-  #   TS="$( cat $STT_OUTPUT | jq '.results[].alternatives[].transcript' | sed 's/[^0-9a-zA-Z]/ /g')"
-  # else
-  #   TS=""
-  # fi
 
   PAYLOAD="{
             \"sessionId\": \"$SESSION_ID\",

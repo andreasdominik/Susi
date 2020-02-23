@@ -5,23 +5,12 @@
 #   Output: $2 file with transscript only
 
 STT_INPUT=$1
-LANGUAGE=$2
 STT_OUTPUT=$3
-
-CONFIG="/etc/susi.toml"
-source $SUSI_INSTALLATION/bin/toml2env $CONFIG
 
 # load tool funs:
 #
-source $SUSI_INSTALLATION/src/Tools/funs.sh
+source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
-
-# only english:
-#
-if [[ $LANGUAGE != "en" ]] ; then
-  echo "" > $STT_OUTPUT
-  exit 1
-fi
 
 if [[ ! -s $STT_INPUT ]] ; then
   echo "" > $STT_OUTPUT
@@ -48,7 +37,6 @@ MODEL="$deep_speech_model"
 LANGUAGE_MODEL="$deep_speech_language_model"
 TRIE="$deep_speech_trie"
 
-# virtualenv -p python3 $HOME/tmp/deepspeech-venv/
 cd $INSTALLATION_DIR
 source ./deepspeech-venv/bin/activate
 
