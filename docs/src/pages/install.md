@@ -2,7 +2,7 @@
 
 This tutorial shows a brief installation of Susi.
 More configuration and customisation is possible - please read the
-sections "Configuration file susi.toml" and "daemons" for details
+sections "Configuration file susi.toml" and "Daemons" for details
 about alternative configurations.
 
 Susi may be installed on any linux/unix-like operating system.    
@@ -10,28 +10,15 @@ Because Susi is build with a minimum of specific implementation major parts
 of its functionality are taken from existing projects.
 Therefore bunch of software must be installed before using Susi.
 
-The tutorial assumes that all indivdual software is installed at
-`/opt/`. So the first step is to login as the user which will run
-the assistant later (such as `susi`),
-and create the directory `/opt/Susi`.
+For Raspberry Pis an installation script is available, but
+manual installation is simple, and Susi can be installed on
+every device that have a bash available (because major parts of Susi
+are implemented as simple bash-scripts).
 
-```
-sudo mkdir /opt/Susi
-chown susi /opt/Susi
-chgrp susi /opt/Susi
-```
+For both methods you must descide for TTS and STT services to be used. These must
+be installed and configured seperately:
 
-## Dependencies
-
-### git
-Most of the software must be obtained from git repos; therefore
-git must be installed first:
-
-```
-sudo apt-get install git-core curl coreutils
-```
-
-### Sppech to text and text to sppech
+## *Speech to text* and *text to speech*
 
 Susi does not come with an own AI for STT and TTS and needs external
 services to transcribe audio to text as well as for speech synthesis.
@@ -134,7 +121,31 @@ rec -r 16000 lighton.wav
 deepspeech --model deepspeech-0.6.1-models/output_graph.pbmm --lm deepspeech-0.6.1-models/lm.binary --trie deepspeech-0.6.1-models/trie --audio lighton.wav
 ```
 
-### mosquitto, jq
+## Installation with the installation script (Raspberry Pi only)
+
+## Manual installation
+
+The tutorial assumes that all indivdual software is installed at
+`/opt/`. So the first step is to login as the user which will run
+the assistant later (such as `susi`),
+and create the directory `/opt/Susi`.
+
+```
+sudo mkdir /opt/Susi
+chown susi /opt/Susi
+chgrp susi /opt/Susi
+```
+### Dependencies
+
+#### git
+Most of the software must be obtained from git repos; therefore
+git must be installed first:
+
+```
+sudo apt-get install git-core curl coreutils
+```
+
+#### mosquitto, jq
 mosquitto server and client are needed to
 publish and subscribe to MQTT messages. The package mosquitto
 provides the MQTT broker and is only necessary for the main installation and
@@ -147,7 +158,7 @@ The base64 utility is part of the coreutils:
 sudo apt-get install mosquitto mosquitto-clients coreutils jq
 ```
 
-### Julia
+#### Julia
 some components of the system are written in the nice and
 fast programming laguage Julia. Install the current version from
 https://www.julialang.org (a good location is `/opt/Susi/Julia`) by downloading
@@ -168,7 +179,7 @@ sudo ln -s /opt/Julia/julia-1.3.1/bin/julia
 julia -e 'using Pkg; Pkg.add(["ArgParse", "JSON", "StatsBase"]; Pkg.update()'
 ```
 
-### sox
+#### sox
 sox
 is used for recording and playing sound. It must be installed on the main
 installation and on all satellites. In addition ffmpeg and and libsox-fmt-mp3
@@ -183,7 +194,7 @@ sudo apt-get install sox libsox-fmt-mp3
 sudo apt-get install ffmpeg
 ```
 
-### Snowboy
+#### Snowboy
 the Snowboy hotword detector is used by default for hotword
 recognition. Snowboy is completely local and allows to create and train own
 hotwords via a web-interface.    
@@ -192,7 +203,7 @@ hotwords via a web-interface.
 - install the dependencies for the required platform as described in
   https://github.com/kitt-ai/snowboy/README.md
 
-#### Hotwords
+##### Hotwords
 After the installation the latest version of the default hotword
 (i.e. *Snowboy*) and individual
 hotwords can be created and downloaded into  the directory
@@ -202,11 +213,16 @@ To improve hotword detection it is recommended to train
 the hotword with the voices of all speakers before
 downloading.
 Many hotwords are alredy trained and new hotwords can be created easily
-via the Snowboy website. Examples include:
+via the Snowboy website. It is always a good idea to improve training of a
+hotword with your own voice before downloading:
 
-* **snowboy.umdl:**
+* **snowboy.umdl:** https://snowboy.kitt.ai/hotword/5 (the best hotword,
+  recommended for testing)
+* **smart_mirror.umdl:** https://snowboy.kitt.ai/hotword/47
 * **computer.umdl:** https://snowboy.kitt.ai/hotword/46
-* **susi.pmdl:**
+* **susi.pmdl:** https://snowboy.kitt.ai/hotword/7915 (however a hotword with
+  only 2 syllables may show high false activation rate; better try
+  something like "hey Susi").
 
 Snowboy can be tested like described in the Snowboy docu.
 
@@ -221,7 +237,7 @@ tar xvf rpi-arm-raspbian-8.0-1.3.0.tar.bz2
 sudo apt-get install python-pyaudio python3-pyaudio sox
 ```
 
-### Duckling
+#### Duckling
 Duckling is used to parse transcribed voice input into
 time or numbers. There is a web-service available, but it is also possible to
 install it locally - the demo-program, which is shipped with the installation,
@@ -255,7 +271,7 @@ curl -XPOST http://0.0.0.0:8000/parse --data 'locale=en_GB&text=tomorrow at eigh
 
 
 
-## Get and install Susi
+### Get and install Susi
 
 * Clone Susi from the GitHub repo
 * make the installation directory available in the environment
@@ -281,8 +297,8 @@ source ~/.bashrc
 # Snowboy:
 # replace rpi-arm-raspbian-8.0-1.3.0.tar.bz2 with the precompiled
 # binaries for the required platform:
-cp Susi/src/Snowboy/bin/hotword_susi.py /opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/
-cp Susi/src/Snowboy/bin/snowboydecoder_susi.py /opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/
+cp /opt/Susi/Susi/src/Snowboy/bin/hotword_susi.py /opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/
+cp /opt/Susi/Susi/src/Snowboy/bin/snowboydecoder_susi.py /opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/
 
 # Susi service and execs:
 cd /usr/local/bin/
