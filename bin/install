@@ -1,17 +1,325 @@
-#!/bin/bash
+#!/bin/bash -xv
 #
-# fresh susi install
+# fresh susi install on a Raspberry Pi
 #
-
-# 1. create user susi and /opt/Susi/
-# 2. copy susi sources
-#
-
-
-# 1. create user susi and /opt/Susi/
+# install must be run as sudo, it will install software as
+# user root and Susi as user susi.
 #
 
-
-
-# 2. copy susi sources
+# install satellite inly if arg:
 #
+SATELLITE=false
+if [[ $# -gt 0 ]] ; then
+  if [[ $1 == satellite ]] ; then
+    SATELLITE=true
+  fi
+fi
+
+# packages and names:
+# detect architecture:
+#
+ARCH="$(uname -m)"
+if [[ $ARCH =~ arm ]] ; then
+  # Snowboy RPi:
+  #
+  SNOWBOY_VERSION="rpi-arm-raspbian-8.0-1.3.0"
+  SNOWBOY_TAR="${SNOWBOY_VERSION}.tar.bz2"
+  SNOWBOY_URL="https://s3-us-west-2.amazonaws.com/snowboy/snowboy-releases/${SNOWBOY_TAR}"
+
+  # Julia RPi:
+  #
+  JULIA_VERSION="julia-1.3.1"
+  JULIA_TAR="${JULIA_VERSION}-linux-armv7l.tar.gz"
+  JULIA_URL="https://julialang-s3.julialang.org/bin/linux/armv7l/1.3/${JULIA_TAR}"
+  # https://julialang-s3.julialang.org/bin/linux/armv7l/1.3/julia-1.3.1-linux-armv7l.tar.gz
+
+elif [[ $ARCH =~ x86_64 ]] ; then
+  # Snowboy x86:
+  #
+  SNOWBOY_VERSION="ubuntu1404-x86_64-8.0-1.3.0"
+  SNOWBOY_TAR="${SNOWBOY_VERSION}.tar.bz2"
+  SNOWBOY_URL="https://s3-us-west-2.amazonaws.com/snowboy/snowboy-releases/${SNOWBOY_TAR}"
+
+  # Julia x86:
+  #
+  JULIA_VERSION="julia-1.3.1"
+  JULIA_TAR="${JULIA_VERSION}-linux-x86_64.tar.gz"
+  JULIA_URL="https://julialang-s3.julialang.org/bin/linux/aarch64/1.3/${JULIA_TAR}"
+
+else
+  echo " "
+  echo "ERROR: architecture is not supported by the install script."
+  echo "Please use the manual installation method."
+  exit
+fi
+
+
+# Duckling RPi:
+#
+HASKELL_URL="https://get.haskellstack.org/"
+DUCKLING_GIT="https://github.com/facebook/duckling"
+
+# helper funs:
+#
+function installif(){
+  PKGS=$@
+  for PKG in $PKGS ; do
+    echo " "
+    if dpkg -s $PKG >/dev/null 2>&1; then
+      echo "package $PKG is already installed."
+    else
+      echo "installing package $PKG ..."
+      apt-get install --assume-yes $PKG
+    fi
+  done
+}
+
+function createsusidirs(){
+  DIRS=$@
+  for DIR in $DIRS ; do
+    mkdir -p $DIR
+    chown -R susi:susi $DIR
+  done
+}
+
+
+# create user susi and /opt/Susi/:
+#
+echo " "
+if id -u susi ; then
+  echo "user susi alredy exists - using existing user"
+else
+  echo "creating user susi ..."
+  useradd -m susi
+  passwd susi
+fi
+
+
+# get dependency packages:
+#
+installif git curl coreutils wget
+installif sox libsox-fmt-mp3
+installif ffmpeg
+
+# mosquitto must not be started as a service before Susi:
+#
+installif mosquitto mosquitto-clients jq
+systemctl stop mosquitto
+systemctl disable mosquitto
+
+# install Susi itself from release:
+#
+echo " "
+echo "installing Susi to /opt/Susi/ ..."
+
+createsusidirs /opt/Susi
+createsusidirs /opt/Susi/ApplicationData /opt/Susi/Skills
+
+sudo -u susi bash <<EOFCMD
+cp susi.tar.gz /opt/Susi/susi.tar.gz
+cd /opt/Susi
+tar -xvzf susi.tar.gz
+#
+# add variable to environment:
+grep "^export SUSI_INSTALLATION=" ~/.bashrc || echo "export SUSI_INSTALLATION=/opt/Susi/Susi" >> ~/.bashrc
+source ~/.bashrc
+EOFCMD
+
+# Susi service and execs:
+#
+echo "copying Susi executables to /usr/local/bin/ ..."
+
+cd /usr/local/bin/
+ln -sf /opt/Susi/Susi/bin/susi.watch
+ln -sf /opt/Susi/Susi/bin/susi
+ln -sf /opt/Susi/Susi/bin/susi.say
+ln -sf /opt/Susi/Susi/src/Service/susi.start
+ln -sf /opt/Susi/Susi/src/Service/susi.stop
+
+cd /opt/Susi/Susi
+
+echo "copying Susi service to /etc/systemd/system/ ..."
+cp /opt/Susi/Susi/src/Service/susi.service /etc/systemd/system/
+chmod 644 /etc/systemd/system/susi.service
+
+# configuration:
+#
+echo "copying Susi configuration file to /etc/susi.toml ..."
+if test -e /etc/susi.toml ; then
+  mv /etc/susi.toml /etc/susi.toml.saved
+fi
+cp /opt/Susi/Susi/etc/susi.toml /etc/susi.toml
+
+
+# snowboy:
+#
+echo " "
+echo "installing prerequisites for Snowboy ..."
+installif python-pyaudio python3-pyaudio sox
+
+if test -e "/opt/Snowboy/${SNOWBOY_VERSION}/snowboydecoder_susi.py" &&
+   test -e "/opt/Snowboy/${SNOWBOY_VERSION}/hotword_susi.py" &&
+   test -e "/opt/Snowboy/Resources/snowboy.umdl" ; then
+  echo "Snowboy is already installed."
+else
+  echo "installing Snowboy to /opt/Snowboy/ ..."
+  createsusidirs /opt/Snowboy /opt/Snowboy/Resources
+  cd /opt/Snowboy
+
+  sudo -u susi -s <<EOFCMD
+  wget $SNOWBOY_URL
+  tar xvf ${SNOWBOY_TAR}
+  cp /opt/Snowboy/${SNOWBOY_VERSION}/resources/snowboy.umdl /opt/Snowboy/Resources/
+  cp /opt/Susi/Susi/src/Snowboy/bin/hotword_susi.py /opt/Snowboy/${SNOWBOY_VERSION}/
+  cp /opt/Susi/Susi/src/Snowboy/bin/snowboydecoder_susi.py /opt/Snowboy/${SNOWBOY_VERSION}/
+EOFCMD
+fi
+
+
+# end if satellite:
+#
+if [[ SATELLITE == true ]] ; then
+
+  # susi.toml for satellite:
+  #
+  cat /etc/susi.toml | sed 's/satellite = false/satellite = true/' > /tmp/susi.toml
+  cp /tmp/susi.toml /etc/susi.toml
+
+  # end installation:
+  #
+  echo " "
+  echo "Satellite installation complete!"
+  echo " "
+  echo "Please make sure to configure the MQTT broker settings"
+  echo "  [mqtt]"
+  echo "  host = "
+  echo "  port = "
+  echo "  user = "
+  echo "  password = "
+  echo 'in the configuration file "susi.toml".'
+
+  exit
+fi
+
+# complete full installation:
+#
+# Julia:
+#
+echo " "
+if command -v julia >/dev/null 2>&1 ; then
+  echo "Julia is already installed as $(command -v julia)"
+
+  if ! test -e /usr/local/bin/julia ; then
+    cd /usr/local/bin
+    JULIA="$(command -v julia)"
+    ln -s $JULIA
+  fi
+else
+  echo "installing Julia $JULIA_ARM to /opt/Julia/ ..."
+  createsusidirs /opt/Julia
+  sudo -u susi -s <<EOFCMD
+  cd /opt/Julia
+  wget $JULIA_URL
+  tar xvf $JULIA_TAR
+EOFCMD
+
+  cd /usr/local/bin
+  ln -s /opt/Julia/${JULIA_VERSION}/bin/julia
+
+  # julia packages:
+  #
+  sudo -u susi -s <<EOFCMD
+  julia -e 'using Pkg; Pkg.add(["ArgParse", "JSON", "StatsBase"]); Pkg.update()'
+EOFCMD
+fi
+
+
+
+# Duckling:
+#
+sudo -u susi -s <<EOFCMD
+  mkdir -p /opt/Rustling/bin
+
+  if test -e /opt/Susi/Susi/src/Duckling/Rustling/binaries/rustling-listener.$ARCH ; then
+    RUSTLING_BIN="rustling-listener.$ARCH"
+  elif [[ $ARCH =~ "^arm.*"]] ; then
+    RUSTLING_BIN="rustling-listener.arm_32"
+  else
+    RUSTLING_BIN="unknown"
+  fi
+
+  echo " "
+  if [[ $RUSTLING_BIN != unknown ]] ; then
+    echo "using precompiled Rustling binary $RUSTLING_BIN"
+    cp opt/Susi/Susi/src/Duckling/Rustling/binaries/$RUSTLING_BIN opt/Rustling/bin/rustling-listener
+  else
+    echo "compiling the rustling-listener from binaries for target architecture $ARCH ..."
+    echo "    This requires to install Rust and compilation of Rustling."
+    echo "    Depending on the hardware this may need up to several hours - please be patient!"
+
+    # install rust
+    # download rustling
+    # copy listener target
+    # compile release
+    # copy binary to opt/Susi/Susi/src/Duckling/rustling-listener
+    #
+    cd /opt/Rustling
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o rust.sh
+    chmod 755 rust.sh
+    ./install.sh -y
+    git clone https://github.com/snipsco/rustling-ontology.git
+    cp -r /opt/Susi/Susi/src/Duckling/Rustling/rustling-ontology/listener /opt/Rustling/rustling-ontology/
+    cp /opt/Susi/Susi/src/Duckling/Rustling/rustling-ontology/Cargo.toml /opt/Rustling/rustling-ontology/
+    cd /opt/Rustling/rustling-ontology/listener
+    cargo build --release
+    cp /opt/Rustling/rustling-ontology/target/release/rustling-listener opt/Rustling/bin/
+  fi
+EOFCMD
+
+
+# comment line 189 in file
+# https://github.com/snipsco/rustling-ontology/blob/master/grammar/de/src/training.rs
+# example!(v, check_moment!(c, [2005, 5, 1], Grain::Month), "mai 2005", "in mai 2005");
+# and
+# 159 in grammar/en/src/training.rs
+# und es und fr
+# main.rs nach cli/src kopieren, dann build --release
+# für raspi precompiled binary
+# Example skills (QnD framework):
+#
+echo " "
+if test -e /opt/Susi/Skills/ADoSnipsQnD/config.ini ; then
+  echo "the ADoSnipsQnD framework is already installed."
+else
+  echo "installing the QnD framework for Julia skills ..."
+
+  sudo -u susi -s <<EOFCMD
+  cd /opt/Susi/Skills/
+  git clone https://github.com/andreasdominik/ADoSnipsQnD.git
+  cd ADoSnipsQnD
+  cp config.ini.template config.ini
+EOFCMD
+fi
+
+echo " "
+if test -e /opt/Susi/Skills/ADoSnipsTemplate/config.ini ; then
+  echo "the QnD template skill is already installed."
+else
+  echo "installing the QnD Template skill ..."
+
+  sudo -u susi -s <<EOFCMD
+  cd /opt/Susi/Skills/
+  git clone https://github.com:andreasdominik/ADoSnipsTemplate.git
+EOFCMD
+fi
+
+
+
+
+
+echo " "
+echo "Susi installation complete!"
+echo " "
+echo "Please go carefully througth the configuration file susi.toml"
+echo "and adapt settings according to the Configuration section of"
+echo "the manual."
