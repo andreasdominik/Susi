@@ -54,11 +54,6 @@ else
 fi
 
 
-# Duckling RPi:
-#
-HASKELL_URL="https://get.haskellstack.org/"
-DUCKLING_GIT="https://github.com/facebook/duckling"
-
 # helper funs:
 #
 function installif(){
@@ -264,9 +259,13 @@ sudo -u susi -s <<EOFCMD
     # copy binary to opt/Susi/Susi/src/Duckling/rustling-listener
     #
     cd /opt/Rustling
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o rust.sh
-    chmod 755 rust.sh
-    ./install.sh -y
+    if command -v cargo >/dev/null 2>&1 ; then
+      echo "   it seems, rust is already installed!"
+    else
+      curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o rust.sh
+      chmod 755 rust.sh
+      ./install.sh -y
+    fi
     git clone https://github.com/snipsco/rustling-ontology.git
     cp -r /opt/Susi/Susi/src/Duckling/Rustling/rustling-ontology/listener /opt/Rustling/rustling-ontology/
     cp /opt/Susi/Susi/src/Duckling/Rustling/rustling-ontology/Cargo.toml /opt/Rustling/rustling-ontology/
@@ -276,15 +275,16 @@ sudo -u susi -s <<EOFCMD
   fi
 EOFCMD
 
+  # comment line 189 in file
+  # https://github.com/snipsco/rustling-ontology/blob/master/grammar/de/src/training.rs
+  # example!(v, check_moment!(c, [2005, 5, 1], Grain::Month), "mai 2005", "in mai 2005");
+  # and
+  # 159 in grammar/en/src/training.rs
+  # und es und fr
+  # main.rs nach cli/src kopieren, dann build --release
+  # für raspi precompiled binary
 
-# comment line 189 in file
-# https://github.com/snipsco/rustling-ontology/blob/master/grammar/de/src/training.rs
-# example!(v, check_moment!(c, [2005, 5, 1], Grain::Month), "mai 2005", "in mai 2005");
-# and
-# 159 in grammar/en/src/training.rs
-# und es und fr
-# main.rs nach cli/src kopieren, dann build --release
-# für raspi precompiled binary
+
 # Example skills (QnD framework):
 #
 echo " "
