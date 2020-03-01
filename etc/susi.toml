@@ -49,7 +49,7 @@ start = true
 daemon = "src/Hotword/hotword.daemon"
 # binary = "/opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/hotword_susi.py"
 binary = "/opt/Snowboy/ubuntu1404-x86_64-1.3.0/hotword_susi.py"
-model_path = "src/Snowboy/bin/resources"
+model_path = "src/Snowboy/resources"
 # model = "Snowboy.umdl"
 # model = "Susi.pmdl"
 model = "computer.pmdl"
@@ -145,6 +145,16 @@ model_dir = "deepspeech-0.6.1-models"
 model = "output_graph.pbmm"
 language_model = "lm.binary"
 trie = "trie"
+
+[snips]
+# paths to local snips installation.
+# defaults are:
+#
+# asr_exec ="/usr/bin/snips-asr"
+# asr_model_path = "/usr/share/snips/assistant/custom_asr"
+#
+asr_exec ="/usr/bin/snips-asr"
+asr_model_path = "/usr/share/snips/assistant/custom_asr"
 
 [duckling]
 start = true

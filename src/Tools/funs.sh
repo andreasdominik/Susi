@@ -186,3 +186,21 @@ function playNotification() {
   _PLAY_FILE="$(basename $_FILE)"
   $record_play $_PLAY_FILE
 }
+
+
+# decode b64 audio with correct ext:
+#
+# use ffmpg for formate detection rather then soxi:
+# MEDIA_TYPE="$(soxi -t $AUDIO)"
+#
+# AUDIO_NAME is defined after fun call:
+#
+function b64_decode() {
+  _B64_NAME=$1
+  _AUDIO_BASENAME=$2
+  base64 --decode $_B64_NAME > $_AUDIO_BASENAME
+
+  MEDIA_TYPE="$(ffprobe -show_format $_AUDIO_BASENAME 2>/dev/null | grep -Po '(?<=format_name=)[0-9a-zA-Z]+$')"
+  AUDIO_NAME="${_AUDIO_BASENAME}.${MEDIA_TYPE}"
+  mv $_AUDIO_BASENAME $AUDIO_NAME
+}
