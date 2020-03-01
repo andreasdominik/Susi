@@ -192,10 +192,16 @@ provides the MQTT broker and is only necessary for the main installation and
 not for satellites.
 MQTT messages are sent as JSON strings. susi uses `jq` to parse JSON.
 In order to avoid sending binary files via MQTT, they are base64 encoded.
+
+Be sure to disable the mosquitto-service! Susi will start mosquitto
+when it is needed.
+
 The base64 utility is part of the coreutils:
 
 ```
 sudo apt-get install mosquitto mosquitto-clients coreutils jq
+sudo systemctl stop mosquitto.service
+sudo systemctl disable mosquitto.service
 ```
 
 #### Julia
