@@ -89,6 +89,11 @@ else
   passwd susi
 fi
 
+# add susi to puls-access group:
+#
+usermod -g pulse-access susi
+
+
 
 # get dependency packages:
 #
@@ -262,8 +267,8 @@ sudo -u susi -s <<EOFCMD
     if command -v cargo >/dev/null 2>&1 ; then
       echo "   it seems, rust is already installed!"
     else
-      curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o rust.sh
-      chmod 755 rust.sh
+      curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o install.sh
+      chmod 755 install.sh
       ./install.sh -y
     fi
     git clone https://github.com/snipsco/rustling-ontology.git

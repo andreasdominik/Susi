@@ -39,6 +39,7 @@ Because the Snips Console (the Web-interface to Snips ASR and NLU) is no longer
 open for the public, it is no longer possible to train the
 speech recognition for new skills.
 
+
 As an alternative approach, general speech-to-text-services that can transcribe
 arbitrary text can be used.
 However, there is only a small number of potentially usable open software
@@ -64,6 +65,8 @@ However, speech recognition technology develops very fast and using a
 cloud service may be necessary for a period of transition, until
 locally installed and *open* software is available.
 
+Nevertheless, the Susi distribution includes the possibility to use
+a trained Snips ASR.
 
 #### Google Cloud STT
 The Google Cloud connector is configured by default in Susi, because of the

@@ -23,7 +23,7 @@ be installed and configured seperately:
 Susi does not come with an own AI for STT and TTS and needs external
 services to transcribe audio to text as well as for speech synthesis.
 The modular design of Susi makes it easy to integrate any service.
-Currently 3 alternatives are implemented:
+Currently 4 alternatives are implemented:
 * **Google Cloud:** best quality for both STT and TTS, but
   cloud-based not local, and not for free - expect cost in the
   range of 0.5-1$ per month.
@@ -31,6 +31,8 @@ Currently 3 alternatives are implemented:
   However, this is also not local.
 * **Mozilla Deep Speech** can be installed locally and hence will
   preserve privacy. However the quality of STT is limited.
+* **Snips ASR** can be used fot STT if a trained model is available
+  (e.g. from an assistant downloaded from the Snps console).
 
 Only **one** of the alternatives must be installed. STT and TTS
 services are selected by specifying the respective binary in the
@@ -121,7 +123,45 @@ rec -r 16000 lighton.wav
 deepspeech --model deepspeech-0.6.1-models/output_graph.pbmm --lm deepspeech-0.6.1-models/lm.binary --trie deepspeech-0.6.1-models/trie --audio lighton.wav
 ```
 
+#### Snips ASR
+
+If a trained model is available and Snips ASR is installed, it can be activated
+by selecting the respective binary in the STT section of the configuration file
+'susi.toml.
+
+To install the Snips asr
+* add the Snips apt-get repository,
+* install snips-asr,
+* make sure that the service is not runing (Susi will start asr
+  when it needs it),
+* if you have no personally trained model, there is a general model
+  (English language only) that can be used:
+
+```
+sudo bash -c  'echo "deb https://debian.snips.ai/stretch stable main" > /etc/apt/sources.list.d/snips.list'
+sudo apt-key adv --fetch-keys  https://debian.snips.ai/5FFCD0DEB5BA45CD.pub
+sudo apt-get update
+sudo apt-get install snips-asr
+sudo systemctl stop snips-asr
+sudo systemctl disable snips-asr
+
+# the general model:
+sudo apt-get install snips-asr-model-en-500mb
+```
+
+In the STT section of the configuration file 'susi.toml' the binary must be set to
+`snips-asr` (just uncomment the respective line) and to use the general model,
+the model path must point to the directory to which the model was saved.
+
+
+
 ## Installation with the installation script (Raspberry Pi only)
+
+In most cases the install script will do the installation.
+Just download the latest Susi release from GitHub unpack it to a temporary
+location and run `sudo ./install` or `sudo ./install satellite` to
+make a full or a sattelite installation.
+
 
 ## Manual installation
 
@@ -237,38 +277,6 @@ tar xvf rpi-arm-raspbian-8.0-1.3.0.tar.bz2
 sudo apt-get install python-pyaudio python3-pyaudio sox
 ```
 
-#### Duckling
-Duckling is used to parse transcribed voice input into
-time or numbers. There is a web-service available, but it is also possible to
-install it locally - the demo-program, which is shipped with the installation,
-already provides a local webserver, sufficcient for our neends.
-Duckling is written in Haskell, so a  Haskell stack is required.
-- install `stack` as described here: https://tech.fpcomplete.com/haskell/get-started.
-- io install Duckling create `/opt/Duckling/`, clone the GitHub repo
-  https://github.com/facebook/duckling into `/opt/Duckling` and
-  build the executable (be sure to have a good cup of coffee while it's compiling).
-
-  It might be necessary to install libpcre before building (the build will fail without).
-  After compilation, run the example-exe. It starts a web-server that can be tested
-  by sending simple requests via cURL:
-
-```
-mkdir /opt/Duckling
-cd /opt/Duckling
-
-git clone https://github.com/facebook/duckling
-sudo apt–get install libpcre3 libpcre3–dev
-cd ./duckling
-stack build
-
-# test:
-#
-stack exec duckling-example-exe
-
-curl -XPOST http://0.0.0.0:8000/parse --data 'locale=en_GB&text=tomorrow at eight'
-```
-
-
 
 
 ### Get and install Susi
@@ -315,6 +323,42 @@ sudo chmod 644 /etc/systemd/system/susi.service
 # configuration:
 sudo cp /opt/Susi/Susi/etc/susi.toml /etc/susi.toml
 ```
+
+
+#### Duckling
+Duckling is used to parse transcribed voice input into
+time or numbers.
+For performance reasons Susi uses the Rust-port (done by the Snips people)
+of Duckling (so-called *Rustling*).
+
+For 32-bit ARM and 64-bit x86 precompiled binaries are available.
+Just copy the correct binary to `/opt/Rustling/bin`.
+
+
+Otherwise
+Rust and Rustling can be installes as follows:
+
+```
+# Rust:
+mkdir -p /opt/Rustling
+mkdir -p /opt/Rustling/bin
+cd /opt/Rustling
+
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Rustling:
+cd /opt/Rustling
+git clone https://github.com/snipsco/rustling-ontology.git
+
+cp -r /opt/Susi/Susi/src/Duckling/Rustling/rustling-ontology/listener /opt/Rustling/rustling-ontology/
+cp /opt/Susi/Susi/src/Duckling/Rustling/rustling-ontology/Cargo.toml /opt/Rustling/rustling-ontology/
+cd /opt/Rustling/rustling-ontology/listener
+cargo build --release
+cp /opt/Rustling/rustling-ontology/target/release/rustling-listener opt/Rustling/bin/
+```
+
+Depending on the hardware, the build process may need from some minutes up to several hours.
+
 
 ## Configure Susi
 
