@@ -237,21 +237,21 @@ fi
 
 # Duckling:
 #
+if test -e /opt/Susi/Susi/src/Duckling/Rustling/binaries/rustling-listener.$ARCH ; then
+  RUSTLING_BIN="rustling-listener.$ARCH"
+elif [[ $ARCH =~ arm ]] ; then
+  RUSTLING_BIN="rustling-listener.arm_32"
+else
+  RUSTLING_BIN="unknown"
+fi
+
 sudo -u susi -s <<EOFCMD
   mkdir -p /opt/Rustling/bin
-
-  if test -e /opt/Susi/Susi/src/Duckling/Rustling/binaries/rustling-listener.$ARCH ; then
-    RUSTLING_BIN="rustling-listener.$ARCH"
-  elif [[ $ARCH =~ "^arm.*"]] ; then
-    RUSTLING_BIN="rustling-listener.arm_32"
-  else
-    RUSTLING_BIN="unknown"
-  fi
 
   echo " "
   if [[ $RUSTLING_BIN != unknown ]] ; then
     echo "using precompiled Rustling binary $RUSTLING_BIN"
-    cp opt/Susi/Susi/src/Duckling/Rustling/binaries/$RUSTLING_BIN opt/Rustling/bin/rustling-listener
+    cp /opt/Susi/Susi/src/Duckling/Rustling/binaries/$RUSTLING_BIN /opt/Rustling/bin/rustling-listener
   else
     echo "compiling the rustling-listener from binaries for target architecture $ARCH ..."
     echo "    This requires to install Rust and compilation of Rustling."
@@ -314,7 +314,7 @@ else
 
   sudo -u susi -s <<EOFCMD
   cd /opt/Susi/Skills/
-  git clone https://github.com:andreasdominik/ADoSnipsTemplate.git
+  git clone https://github.com/andreasdominik/ADoSnipsTemplate.git
 EOFCMD
 fi
 
