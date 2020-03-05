@@ -114,9 +114,11 @@ echo "installing Susi to /opt/Susi/ ..."
 
 createsusidirs /opt/Susi
 createsusidirs /opt/Susi/ApplicationData /opt/Susi/Skills
+createsusidirs /opt/Susi/ApplicationData/Snips/ASRmodels
 
 sudo -u susi bash <<EOFCMD
 cp susi.tar.gz /opt/Susi/susi.tar.gz
+cp Resources/snips-asr-model-en-500MB.tar.gz /opt/Susi/ApplicationData/Snips/ASRmodels
 cd /opt/Susi
 tar -xvzf susi.tar.gz
 #
@@ -149,6 +151,21 @@ if test -e /etc/susi.toml ; then
   mv /etc/susi.toml /etc/susi.toml.saved
 fi
 cp /opt/Susi/Susi/etc/susi.toml /etc/susi.toml
+
+# general model for STT (from Snips)
+# and snips-asr:
+#
+# sudo bash -c  'echo "deb https://debian.snips.ai/stretch stable main" > /etc/apt/sources.list.d/snips.list'
+# sudo apt-key adv --fetch-keys  https://debian.snips.ai/5FFCD0DEB5BA45CD.pub
+# sudo apt-get update
+# sudo apt-get install snips-asr
+# sudo systemctl stop snips-asr
+# sudo systemctl disable snips-asr
+#
+# sudo -u susi -s <<EOFCMD
+#   cp /opt/Susi/Susi/STTModels
+#   tar xvf snips-asr-model-en-500MB.tar.gz
+# EOFCMD
 
 
 # snowboy:
@@ -245,8 +262,8 @@ else
   RUSTLING_BIN="unknown"
 fi
 
+createsusidirs /opt/Rustling/bin
 sudo -u susi -s <<EOFCMD
-  mkdir -p /opt/Rustling/bin
 
   echo " "
   if [[ $RUSTLING_BIN != unknown ]] ; then

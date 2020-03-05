@@ -1,4 +1,4 @@
-# Installation
+# Basic installation
 
 This tutorial shows a brief installation of Susi.
 More configuration and customisation is possible - please read the
@@ -39,120 +39,9 @@ services are selected by specifying the respective binary in the
 `[stt]` and `[tts]` sections of the configuration file.
 
 
-
-#### Google cloud services:
-If google services are used for text-to-speech (TTS)
-or speech-to-text (STT) the required softwate must be set up:
-Go through Google's tutorial
-[Quickstart: Using the command line](https://cloud.google.com/text-to-speech/docs/quickstart-protocol).
-
-  In summary ...
-  * a Google Cloud Platform Project is needed,
-  * the Cloud Text-to-Speech API must be enabled and
-  * the JSON-file with the credentials must be downloaded to
-    `/opt/Susi/ApplicationData/Google/Credentials/google-credentials.json`    
-    Path and filename may differ - they are later specified in the
-    susi configuration file.
-  * the path to the credentials file must be made available by an variable.
-    Edit the file `.bashrc` in the home directory of the user who will later
-    run the assistent (e.g. `susi`) and add the line:    
-`export GOOGLE_APPLICATION_CREDENTIALS="/opt/Susi/ApplicationData/Google/Credentials/google-credentials.json"`    
-    To check the installation run the following command.
-    It should print an access token, which can be uses to access the Cloud
-    Text-to-Speech API:
-
-```
-gcloud auth application-default print-access-token
-```
-
-#### IBM Cloud services
-
-To use IBM Watson Text to Speech STT or TTS, it must be configured as
-described on IBM's website: https://cloud.ibm.com/.
-
-Is is as simple as:
-* create an account
-* descide for a pricing plan (the "Free Lite Plan" may be sufficient
-  as it offers up to 500 minutes of audio transcription and
-  10000 characters for TTS per month)
-* create a Speech to Text Service (and a Text to Sppech Service)
-* download the credential file `ibm-cedentials.env`, rename and save it at
-  `/opt/Susi/ApplicationData/IBMCloud/ibm-tts-cedentials.env` (the download link is in the
-    'Manage' section)
-* work through the "Getting started with Sppech to Text" tutorial
-  (https://cloud.ibm.com/docs/services/speech-to-text?topic=speech-to-text-gettingStarted#getting-started-tutorial).
-
-Similar steps are necessary for text to speech.
-Please notice, that there are different credentials necessary for STT and TTS.
-Both need to be downloaded and saved to `/opt/Susi/ApplicationData/IBMCloud/`
-with different names (such as 'ibm-tts-cedentials.env' and 'ibm-stt-cedentials.env').
-Names can be configured in the 'susi.toml' file.
-
-
-#### Mozilla DeepSpeech
-Installation is simple and follows the instruction on the website
-(https://github.com/mozilla/DeepSpeech). The installation can be tested
-by running deepspeech on the commandline.
-
-DeepSpeech integration to Susi is already included in the distribution and
-can be activated by uncommenting the line in the configuration file.
-
-```
-# installation of Mozilla DeepSpeech:
-#
-# prepare:
-mkdir /opt/DeepSpeech
-cd /opt/DeepSpeech
-virtualenv -p python3 ./deepspeech-venv/
-source $HOME/tmp/deepspeech-venv/bin/activate
-
-# Install DeepSpeech
-pip3 install deepspeech
-
-# Download pre-trained English model and extract
-curl -LO https://github.com/mozilla/DeepSpeech/releases/download/v0.6.1/deepspeech-0.6.1-models.tar.gz
-tar xvf deepspeech-0.6.1-models.tar.gz
-
-# Download example audio files
-curl -LO https://github.com/mozilla/DeepSpeech/releases/download/v0.6.1/audio-0.6.1.tar.gz
-tar xvf audio-0.6.1.tar.gz
-
-# Transcribe an audio file
-rec -r 16000 lighton.wav
-
-deepspeech --model deepspeech-0.6.1-models/output_graph.pbmm --lm deepspeech-0.6.1-models/lm.binary --trie deepspeech-0.6.1-models/trie --audio lighton.wav
-```
-
-#### Snips ASR
-
-If a trained model is available and Snips ASR is installed, it can be activated
-by selecting the respective binary in the STT section of the configuration file
-'susi.toml.
-
-To install the Snips asr
-* add the Snips apt-get repository,
-* install snips-asr,
-* make sure that the service is not runing (Susi will start asr
-  when it needs it),
-* if you have no personally trained model, there is a general model
-  (English language only) that can be used:
-
-```
-sudo bash -c  'echo "deb https://debian.snips.ai/stretch stable main" > /etc/apt/sources.list.d/snips.list'
-sudo apt-key adv --fetch-keys  https://debian.snips.ai/5FFCD0DEB5BA45CD.pub
-sudo apt-get update
-sudo apt-get install snips-asr
-sudo systemctl stop snips-asr
-sudo systemctl disable snips-asr
-
-# the general model:
-sudo apt-get install snips-asr-model-en-500mb
-```
-
-In the STT section of the configuration file 'susi.toml' the binary must be set to
-`snips-asr` (just uncomment the respective line) and to use the general model,
-the model path must point to the directory to which the model was saved.
-
+Please refer to the section *Daemons and Comonents* for detailed
+installation and configuration instructions for the respective
+STT and TTS services.
 
 
 ## Installation with the installation script (Raspberry Pi only)
@@ -545,6 +434,8 @@ To call DeepSpeech, Susi needs to know
 #### [duckling]
 Installation dir, executable and hostame/port ofthe webserver
 must be configured.
+
+#### [snips]
 
 
 #### voices

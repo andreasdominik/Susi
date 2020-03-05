@@ -94,9 +94,11 @@ cache = "/opt/Susi/ApplicationData/TTScache"
 [stt]
 start = true
 daemon = "src/SpeechToText/stt.daemon"
-# binary = "src/GoogleCloud/stt/stt-google.sh"
+binary = "src/GoogleCloud/stt/stt-google.sh"
+# binary = "src/Snips/stt/stt-snips.sh"
 # binary = "src/MozillaDeepSpeech/stt-deepspeech.sh"
-binary = "src/IBMCloud/stt/stt-ibm.sh"
+# binary = "src/IBMCloud/stt/stt-ibm.sh"
+
 
 [nlu]
 # start = true     start the natural language understanding service
@@ -151,10 +153,12 @@ trie = "trie"
 # defaults are:
 #
 # asr_exec ="/usr/bin/snips-asr"
-# asr_model_path = "/usr/share/snips/assistant/custom_asr"
+# asr_model_path = "/usr/share/snips/assistant/custom_asr" for customised assistant
+# asr_model_path = "/opt/Susi/ApplicationData/Snips/ASRmodels/snips-asr-model-en-500MB" for general model/en
 #
 asr_exec ="/usr/bin/snips-asr"
-asr_model_path = "/usr/share/snips/assistant/custom_asr"
+asr_model_path = "/opt/Susi/ApplicationData/Snips/ASRmodels/snips-asr-model-en-500MB"
+# asr_model_path = "/usr/share/snips/assistant/custom_asr"
 
 [duckling]
 start = true
