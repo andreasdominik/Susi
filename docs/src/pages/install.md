@@ -298,6 +298,14 @@ values and are self-explaining.
 
 
 
+## Configure STT and TTS services
+
+Services for speech-to-text and text-to-speech must be configured for the
+assistant. Easiest configuration and best quality are provided by Google's
+or IBM's services. Please read in the section *Components* for details
+how to configure them. Configuration of local services is described
+there, too.
+
 
 
 ## Start Susi service
