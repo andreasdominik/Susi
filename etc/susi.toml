@@ -26,6 +26,7 @@ work_directory = "/tmp"
 [mqtt]
 host = ""
 port = ""
+
 subscribe = "mosquitto_sub --qos 2"
 publish = "mosquitto_pub --qos 2"
 
@@ -50,9 +51,9 @@ daemon = "src/Hotword/hotword.daemon"
 # binary = "/opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/hotword_susi.py"
 binary = "/opt/Snowboy/ubuntu1404-x86_64-1.3.0/hotword_susi.py"
 model_path = "src/Snowboy/resources"
-# model = "Snowboy.umdl"
+model = "Snowboy.umdl"
 # model = "Susi.pmdl"
-model = "computer.pmdl"
+# model = "computer.pmdl"
 sensitivity = 0.37
 local_hotword = "Computer"
 notification = true
@@ -162,7 +163,9 @@ asr_model_path = "/opt/Susi/ApplicationData/Snips/ASRmodels/snips-asr-model-en-5
 
 [duckling]
 start = true
-install_dir = "/opt/Duckling/duckling"
+install_dir = "/opt/Rustling"
+binary = "/opt/Rustling/bin/rustling-listener"
 daemon = "src/Duckling/duckling.daemon"
+# binary = "stack exec duckling-example-exe"
 host = "localhost"
 port = "8017"
