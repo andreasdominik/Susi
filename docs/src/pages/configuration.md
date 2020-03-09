@@ -37,6 +37,11 @@ All variants of installation are possible, such as
   DeepSpeech. To setup such a server, just do a normal susi install
   and set all daemon start-values to false, except the one that should run.
 
+#### [debug]
+if 'show_all_stdout' is set to 'true', all daemons will echo commands to
+stdout (i.e. 'set -xv').
+
+
 #### [mqtt]
 Host and port definitions for the MQTT broker. If empty, the default
 "localhost" and port "8883" will be used. For installations with satellites
@@ -82,13 +87,27 @@ uttered sentence will be stored in the cache. As assistants tend to say the same
 things again and again ("hello", "OK", "I copy"), only a small number calls to the webservice
 is necessary after some time of operation.
 
+Susi is prepared to use IBM Cloud services, too.
+Please refer to the "Installation/Text to Speech"
+section of the documentation for details of installation and cofiguration.
+
+To change the TTS service, the `binary` parameter in the section `tts`
+must be changed.
+
 #### [stt]
 Configuration of the STT daemon.
 By default Google STT is used because of its very high accuracy and common
 knowledge. However, it's no longer local and private.    
-Mozilla DeepSpeech can be used for English language if installed by
-uncommenting the respective line.
-Other services may be included by exchange the `binary`.
+
+Mozilla DeepSpeech can be used for English language.
+Susi is prepared to use IBM Cloud services or Mozilla DeepSpeech, too.
+
+Please refer to the "Components/Text to Speech"
+section of the documentation for details of installation and cofiguration
+of other services.
+
+To change the STT service, the `binary` parameter in the section `stt`
+must be changed.
 
 #### [nlu]
 Configuration of the NLU (natural language understanding) daemon.
@@ -104,14 +123,17 @@ skills.
 Configuartionj of the session manager which runs sequences of
 actions, such as `hotword -> record -> stt -> nlu -> publish intent`.
 
+The session timeout controls after how many seconds of inactivity a session
+is ended by the session manager.
+During skill development shorter timeouts are used (such as 5 sec) to
+avoid waiting if a component crashes.
 
 
 #### [duckling]
 Insert the correct installation dir to susi.toml
-(/opt/Duckling/duckling) with the leading / to enforce
+(/opt/Rustling) with the leading / to enforce
 absolute path.
-If an externam duckling-service is used, correct host and
-password information must be provided.
+By default a local rustling implementation is used and configured.
 
 #### [skills]
 The skills daemon will start all skills in `skills_dir` and all subdirectories.
@@ -125,12 +147,32 @@ If external software is integrated, the file will show sections for these:
 
 #### [google_cloud]
 Settings:
+* path to the credentials file (the same file is used for STT and TTS)
+* command for refresh the token
+* id of the voice to be used; change this voice, if the language
+  of the assistant is changed.
+  Available voices can be tested here: https://cloud.google.com/text-to-speech.
+
+#### [ibm_cloud]
 * path to the credentials file
-* command for refresh the token.
+  (separate credentials are necessary for each service (such as STT and TTS)).
+  Make sure to rename the files after downloading (and match the names
+  in susi.toml)
+* id of the voice to be used; change this voice, if the language
+  of the assistant is changed.
 
 #### [deep_speech]
-If Mozilla DeepSpeech is used as STT engine, it can be configured here.
-Deep speech needs
-* `model`: the trained neural network
-* `language_model`: ngram model for the language
-* `trie`: the suffix tree for fast searched in the language model.
+Mozilla DeepSpeech must be installed locally and the path to
+the installation must be configured here.
+
+To call DeepSpeech, Susi needs to know
+* the executable ('binary')
+* the trained neural network ('model')
+* the language model ('language_model')
+* the prefix tree toi query the language model ('trie')
+
+
+#### [snips]
+If the Snips ASR component is used for STT, the plath to the
+executable 'snips-asr' and the directory with the model to be used
+must be configured.

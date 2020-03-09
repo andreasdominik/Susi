@@ -36,7 +36,7 @@ if [[ $ARCH =~ arm ]] ; then
 elif [[ $ARCH =~ x86_64 ]] ; then
   # Snowboy x86:
   #
-  SNOWBOY_VERSION="ubuntu1404-x86_64-8.0-1.3.0"
+  SNOWBOY_VERSION="ubuntu1404-x86_64-1.3.0"
   SNOWBOY_TAR="${SNOWBOY_VERSION}.tar.bz2"
   SNOWBOY_URL="https://s3-us-west-2.amazonaws.com/snowboy/snowboy-releases/${SNOWBOY_TAR}"
 
@@ -44,7 +44,7 @@ elif [[ $ARCH =~ x86_64 ]] ; then
   #
   JULIA_VERSION="julia-1.3.1"
   JULIA_TAR="${JULIA_VERSION}-linux-x86_64.tar.gz"
-  JULIA_URL="https://julialang-s3.julialang.org/bin/linux/aarch64/1.3/${JULIA_TAR}"
+  JULIA_URL="https://julialang-s3.julialang.org/bin/linux/x64/1.3/${JULIA_TAR}"
 
 else
   echo " "
@@ -85,7 +85,7 @@ if id -u susi ; then
   echo "user susi alredy exists - using existing user"
 else
   echo "creating user susi ..."
-  useradd -m susi
+  useradd -m -U -s /bin/bash susi
   passwd susi
 fi
 
@@ -112,9 +112,9 @@ systemctl disable mosquitto
 echo " "
 echo "installing Susi to /opt/Susi/ ..."
 
-createsusidirs /opt/Susi
+createsusidirs /opt/Susi /opt/Susi/Work
 createsusidirs /opt/Susi/ApplicationData /opt/Susi/Skills
-createsusidirs /opt/Susi/ApplicationData/Snips/ASRmodels
+createsusidirs /opt/Susi/ApplicationData/Snips/ASRmodels /opt/Susi/ApplicationData/TTScache
 
 sudo -u susi bash <<EOFCMD
 cp susi.tar.gz /opt/Susi/susi.tar.gz
@@ -162,7 +162,7 @@ cp /opt/Susi/Susi/etc/susi.toml /etc/susi.toml
 # sudo systemctl stop snips-asr
 # sudo systemctl disable snips-asr
 #
-# sudo -u susi -s <<EOFCMD
+# sudo -u susi -i <<EOFCMD
 #   cp /opt/Susi/Susi/STTModels
 #   tar xvf snips-asr-model-en-500MB.tar.gz
 # EOFCMD
@@ -181,9 +181,9 @@ if test -e "/opt/Snowboy/${SNOWBOY_VERSION}/snowboydecoder_susi.py" &&
 else
   echo "installing Snowboy to /opt/Snowboy/ ..."
   createsusidirs /opt/Snowboy /opt/Snowboy/Resources
-  cd /opt/Snowboy
 
-  sudo -u susi -s <<EOFCMD
+  sudo -u susi -i <<EOFCMD
+  cd /opt/Snowboy
   wget $SNOWBOY_URL
   tar xvf ${SNOWBOY_TAR}
   cp /opt/Snowboy/${SNOWBOY_VERSION}/resources/snowboy.umdl /opt/Snowboy/Resources/
@@ -229,26 +229,26 @@ if command -v julia >/dev/null 2>&1 ; then
   if ! test -e /usr/local/bin/julia ; then
     cd /usr/local/bin
     JULIA="$(command -v julia)"
-    ln -s $JULIA
+    ln -sf $JULIA
   fi
 else
   echo "installing Julia $JULIA_ARM to /opt/Julia/ ..."
   createsusidirs /opt/Julia
-  sudo -u susi -s <<EOFCMD
+  sudo -u susi -i <<EOFCMD
   cd /opt/Julia
   wget $JULIA_URL
   tar xvf $JULIA_TAR
 EOFCMD
 
   cd /usr/local/bin
-  ln -s /opt/Julia/${JULIA_VERSION}/bin/julia
-
-  # julia packages:
-  #
-  sudo -u susi -s <<EOFCMD
-  julia -e 'using Pkg; Pkg.add(["ArgParse", "JSON", "StatsBase"]); Pkg.update()'
-EOFCMD
+  ln -sf /opt/Julia/${JULIA_VERSION}/bin/julia
 fi
+
+# julia packages:
+#
+sudo -u susi -i <<EOFCMD
+julia -e 'using Pkg; Pkg.add(["ArgParse", "JSON", "StatsBase"]); Pkg.update()'
+EOFCMD
 
 
 
@@ -263,13 +263,16 @@ else
 fi
 
 createsusidirs /opt/Rustling/bin
-sudo -u susi -s <<EOFCMD
 
-  echo " "
-  if [[ $RUSTLING_BIN != unknown ]] ; then
+if [ $RUSTLING_BIN != unknown ] ; then
+  sudo -u susi -i <<EOFCMD
+    echo " "
     echo "using precompiled Rustling binary $RUSTLING_BIN"
+    mkdir -p /opt/Rustling/bin
     cp /opt/Susi/Susi/src/Duckling/Rustling/binaries/$RUSTLING_BIN /opt/Rustling/bin/rustling-listener
-  else
+EOFCMD
+else
+  sudo -u susi -i <<EOFCMD
     echo "compiling the rustling-listener from binaries for target architecture $ARCH ..."
     echo "    This requires to install Rust and compilation of Rustling."
     echo "    Depending on the hardware this may need up to several hours - please be patient!"
@@ -294,8 +297,8 @@ sudo -u susi -s <<EOFCMD
     cd /opt/Rustling/rustling-ontology/listener
     cargo build --release
     cp /opt/Rustling/rustling-ontology/target/release/rustling-listener opt/Rustling/bin/
-  fi
 EOFCMD
+fi
 
   # comment line 189 in file
   # https://github.com/snipsco/rustling-ontology/blob/master/grammar/de/src/training.rs
@@ -315,7 +318,7 @@ if test -e /opt/Susi/Skills/ADoSnipsQnD/config.ini ; then
 else
   echo "installing the QnD framework for Julia skills ..."
 
-  sudo -u susi -s <<EOFCMD
+  sudo -u susi -i <<EOFCMD
   cd /opt/Susi/Skills/
   git clone https://github.com/andreasdominik/ADoSnipsQnD.git
   cd ADoSnipsQnD
@@ -329,7 +332,7 @@ if test -e /opt/Susi/Skills/ADoSnipsTemplate/config.ini ; then
 else
   echo "installing the QnD Template skill ..."
 
-  sudo -u susi -s <<EOFCMD
+  sudo -u susi -i <<EOFCMD
   cd /opt/Susi/Skills/
   git clone https://github.com/andreasdominik/ADoSnipsTemplate.git
 EOFCMD

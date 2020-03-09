@@ -83,7 +83,7 @@ Go through Google's tutorial
   * the Cloud Text-to-Speech API must be enabled and
   * the JSON-file with the credentials must be downloaded to
     `/opt/Susi/ApplicationData/Google/Credentials/google-credentials.json`    
-    Path and filename may differ - they are later specified in the
+    Path and filename may differ - they are specified in the
     susi configuration file.
   * the path to the credentials file must be made available by an variable.
     Edit the file `.bashrc` in the home directory of the user who will later
@@ -223,7 +223,7 @@ sudo systemctl disable snips-asr
 ```
 
 A version of the general model is incuded inthe Susi distribution and strored at
-'/opt/Susi/ApplicationData/Snips/ASRmodels'. To use it, just unpack it: 
+'/opt/Susi/ApplicationData/Snips/ASRmodels'. To use it, just unpack it:
 ```
 cd /opt/Susi/ApplicationData/Snips/ASRmodels
 tar xvf snips-asr-model-en-500MB.tar.gz
