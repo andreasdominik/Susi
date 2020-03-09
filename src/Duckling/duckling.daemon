@@ -13,9 +13,9 @@ DUCKLING_DIR="$(relDir $duckling_install_dir)"
 
 # run forever:
 #
-cd $DUCKLING_DIR
+cd $local_work_directory
 while true ; do
 
-  stack exec duckling-example-exe -- --port $duckling_port
+  $duckling_binary --lang $LANGUAGE listen -i rustling.in -o rustling.out
   sleep 10
 done
