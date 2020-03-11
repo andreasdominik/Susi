@@ -87,6 +87,7 @@ else
   echo "creating user susi ..."
   useradd -m -U -s /bin/bash susi
   passwd susi
+  usermod -a -G susi,pulse-access susi
 fi
 
 # add susi to puls-access group:
