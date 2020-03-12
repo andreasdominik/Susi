@@ -3,14 +3,7 @@
 # create a file with name "hotword.toggleOff" to
 # tell the detector to stop.
 #
-
-CONFIG="/etc/susi.toml"
-source $SUSI_INSTALLATION/bin/toml2env $CONFIG
-
-# load tool funs:
-#
-source $SUSI_INSTALLATION/src/Tools/funs.sh
-source $SUSI_INSTALLATION/src/Tools/topics.sh
+source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
 # base names for recveived and subm. MQTT message files:
 #

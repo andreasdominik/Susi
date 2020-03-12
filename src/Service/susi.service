@@ -7,7 +7,7 @@ StartLimitIntervalSec=0
 Type=simple
 Restart=always
 RestartSec=1
-User=andreas
+User=susi
 ExecStart=/usr/local/bin/susi.start
 ExecStop=/usr/local/bin/susi.stop
 Environment="SUSI_INSTALLATION=/opt/Susi/Susi"

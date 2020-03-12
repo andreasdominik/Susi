@@ -151,7 +151,8 @@ function publish() {
 
   _TOPIC="$1"
   _PAYLOAD="$(echo $2)"   # remove newlines
-  $mqtt_publish  -t "$_TOPIC" -m "$_PAYLOAD"
+
+  $mqtt_publish $(mqtt_auth) -t "$_TOPIC" -m "$_PAYLOAD"
 }
 
 function publishFile() {
@@ -166,7 +167,7 @@ function publishFile() {
   mv $_PAYLOAD_TMP $_PAYLOAD
   echo "" >> $_PAYLOAD
 
-  $mqtt_publish  -t "$_TOPIC" -s <"$_PAYLOAD"
+  $mqtt_publish $(mqtt_auth) -t "$_TOPIC" -s <"$_PAYLOAD"
 }
 
 
