@@ -87,7 +87,7 @@ else
   echo "creating user susi ..."
   useradd -m -U -s /bin/bash susi
   passwd susi
-  usermod -a -G susi,pulse-access susi
+  usermod -a -G pulse-access susi
 fi
 
 # add susi to puls-access group:
@@ -124,8 +124,8 @@ cd /opt/Susi
 tar -xvzf susi.tar.gz
 #
 # add variable to environment:
-grep "^export SUSI_INSTALLATION=" ~/.bashrc || echo "export SUSI_INSTALLATION=/opt/Susi/Susi" >> ~/.bashrc
-source ~/.bashrc
+grep "^export SUSI_INSTALLATION=" ~susi/.bashrc || echo "export SUSI_INSTALLATION=/opt/Susi/Susi" >> ~susi/.bashrc
+source ~susi/.bashrc
 EOFCMD
 
 # Susi service and execs:
