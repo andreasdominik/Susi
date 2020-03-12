@@ -5,7 +5,7 @@ function loadIntents()
     skills = AbstractString[]
     for (root, dirs, files) in walkdir(SKILLS_DIR)
 
-        files = filter(f->occursin(Regex("^nlu.$LANG\$"), f), files)
+        files = filter(f->occursin(Regex("^nlu.$LANG.toml\$"), f), files)
         paths = joinpath.(root, files)
         append!(skills, paths)
     end
