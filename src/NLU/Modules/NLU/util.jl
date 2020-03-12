@@ -23,10 +23,6 @@ function readConfig(configName)
     global CONFIG = TOML.parsefile(configName)
     global LANGCODE = CONFIG["assistant"]["language"]
     global LANG = lowercase(LANGCODE[1:2])
-    global DUCKLING_HOST = CONFIG["duckling"]["host"]
-    global DUCKLING_PORT = CONFIG["duckling"]["port"]
-
-
 end
 
 

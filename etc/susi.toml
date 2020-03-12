@@ -32,8 +32,10 @@ publish = "mosquitto_pub --qos 2"
 
 # set user/password for security:
 #
-user = "susi"
-password = "ag543jo9ikngr56hs3mg"
+# user = "susi"
+# password = "ag543jo9ikngr56hs3mg"
+user = ""
+passwd = ""
 
 
 [hotword]
@@ -50,7 +52,7 @@ start = true
 daemon = "src/Hotword/hotword.daemon"
 # binary = "/opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/hotword_susi.py"
 binary = "/opt/Snowboy/ubuntu1404-x86_64-1.3.0/hotword_susi.py"
-model_path = "src/Snowboy/Resources"
+model_path = "/opt/Snowboy/Resources"
 model = "snowboy.umdl"
 # model = "Susi.pmdl"
 # model = "computer.pmdl"
@@ -89,7 +91,7 @@ binary = "play -q"
 # cache = "/opt/.../TTScache"          cache for audio snippets with speech to utter
 start = true
 daemon = "src/TextToSpeach/tts.daemon"
-binary = "src/GoogleCloud/tts/tts-google2.sh"
+binary = "src/GoogleCloud/tts/tts-google.sh"
 # binary = "src/IBMCloud/tts/tts-ibm.sh"
 cache = "/opt/Susi/ApplicationData/TTScache"
 
@@ -120,8 +122,8 @@ message_pipe = "Work/mqtt.fifo"
 [skills]
 start = false
 daemon = "src/Skillserver/skills.daemon"
-skills_dir = "/home/andreas/Documents/Projekte/2019-Susi/Skills"
-# skills_dir = "/opt/Susi/Skills"
+# skills_dir = "/home/andreas/Documents/Projekte/2019-Susi/Skills"
+skills_dir = "/opt/Susi/Skills"
 
 
 # configuration of external services:

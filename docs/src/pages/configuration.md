@@ -1,4 +1,4 @@
-## Configuration file `susi.toml`
+## Configure Susi with `susi.toml`
 
 The central configuration file is located at `/etc/susi.toml`.
 
