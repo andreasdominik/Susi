@@ -20,4 +20,4 @@ PAYLOAD="{
 
   PAYLOAD="$(echo $PAYLOAD)"
 
-  $mqtt_publish -t "$TOPIC_START_SESSION" -m "$PAYLOAD"
+  publish "$TOPIC_START_SESSION" "$PAYLOAD"
