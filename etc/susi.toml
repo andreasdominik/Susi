@@ -36,7 +36,7 @@ publish = "mosquitto_pub --qos 2"
 # user = "susi"
 # password = "ag543jo9ikngr56hs3mg"
 user = ""
-passwd = ""
+password = ""
 
 
 [hotword]

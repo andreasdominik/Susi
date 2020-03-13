@@ -16,32 +16,7 @@ if [[ $local_satellite == true ]] ; then
   DAEMONS="hotword record say"
 else
   DAEMONS="hotword record play stt nlu duckling tts session"
-
-  # start MQTT broker:
-  #
-  if ! test -d ${local_application_data}/Susi/Mosquitto ; then
-    mkdir -p ${local_application_data}/Susi/Mosquitto
-  fi
-
-  MOSQUITTO_DIR="${local_application_data}/Susi/Mosquitto"
-  MOSQUITTO_CONF="${MOSQUITTO_DIR}/mosquitto.conf"
-  MOSQUITTO_PW="${MOSQUITTO_DIR}/passwd"
-  cp /etc/mosquitto/mosquitto.conf $MOSQUITTO_CONF
-
-  addOrReplace $MOSQUITTO_CONF "^log_dest file" "log_dest file ${MOSQUITTO_DIR}/mosquitto.log"
-  addOrReplace $MOSQUITTO_CONF "^pid_file" "pid_file ${MOSQUITTO_DIR}/mosquitto.pid"
-  addOrReplace $MOSQUITTO_CONF "^persistence_location" "persistence_location ${MOSQUITTO_DIR}/"
-
-  # add user/pw to passdw file if defined in susi.toml:
-  #
-  if [[ -n $mqtt_user 1 && -n $mqtt_password ]] ; then
-    addOrReplace $MOSQUITTO_CONF "^password_file" "password_file $MOSQUITTO_PW"
-    addOrReplace $MOSQUITTO_CONF "^allow_anonymous" "allow_anonymous false"
-    mosquitto_passwd -b $MOSQUITTO_PW $mqtt_user $mqtt_password
-  else
-    addOrReplace $MOSQUITTO_CONF "^allow_anonymous" "allow_anonymous true"
-  fi
-  mosquitto --daemon --config-file $MOSQUITTO_CONF
+  startMQTTbroker
 fi
 
 MONITOR_PIDS=""
