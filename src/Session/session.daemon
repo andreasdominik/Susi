@@ -43,7 +43,7 @@ _TOPICS="-t $TOPIC_ASR_AUDIO -t $TOPIC_ASR_TEXT \
         -t $TOPIC_DIALOGUE_STOP_LISTEN -t $TOPIC_DIALOGUE_START_LISTEN"
 TOPICS=$(echo $_TOPICS)
 
-echo $TOPICS
+echo "$mqtt_subscribe -v $(mqtt_auth) $TOPICS > $MQTT_MESSAGE_PIPE"
 $mqtt_subscribe -v $(mqtt_auth) $TOPICS > $MQTT_MESSAGE_PIPE &
 
 # core loop that catches all MQTTs depending on

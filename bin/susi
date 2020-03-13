@@ -9,14 +9,7 @@
 #
 
 COMMAND="$@"
-
-CONFIG="/etc/susi.toml"
-source $SUSI_INSTALLATION/bin/toml2env $CONFIG
-
-# load tool funs:
-#
-source $SUSI_INSTALLATION/src/Tools/funs.sh
-source $SUSI_INSTALLATION/src/Tools/topics.sh
+source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
 PAYLOAD="{
           \"siteId\": \"$local_siteId\",
