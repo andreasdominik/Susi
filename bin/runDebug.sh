@@ -4,6 +4,11 @@
 #
 #
 
+source $SUSI_INSTALLATION/src/Tools/init_susi.sh
+cd $local_work_directory
+
+startMQTTbroker
+
 gnome-terminal --tab -t "Session Manager" --working-directory=/tmp -- $SUSI_INSTALLATION/src/Session/session.daemon
 gnome-terminal --tab -t "Hotword" --working-directory=/tmp -- $SUSI_INSTALLATION/src/Hotword/hotword.daemon
 gnome-terminal --tab -t "NLU" --working-directory=/tmp -- $SUSI_INSTALLATION/src/NLU/nlu.daemon.jl
