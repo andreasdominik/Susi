@@ -127,6 +127,7 @@ installif mosquitto mosquitto-clients jq
 systemctl stop mosquitto
 systemctl disable mosquitto
 
+
 # install Susi itself from release:
 #
 echo " "

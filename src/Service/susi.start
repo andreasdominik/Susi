@@ -17,6 +17,25 @@ if [[ $local_satellite == true ]] ; then
   DAEMONS="hotword record say"
 else
   DAEMONS="hotword record play stt nlu duckling tts session"
+
+  # start MQTT broker:
+  #
+  if ! test -d ${local_application_data}/Susi/Mosquitto ; then
+    mkdir -p ${local_application_data}/Susi/Mosquitto
+  fi
+
+  MOSQUITTO_CONF="${local_application_data}/Susi/Mosquitto/mosquitto.conf"
+  MOSQUITTO_PW="${local_application_data}/Susi/Mosquitto/passwd"
+  cp /etc/mosquitto/mosquitto.conf $MOSQUITTO_CONF
+
+  if [[ -z $mqtt_user && -z $mqtt_password ]] ; then
+    addOrReplace $MOSQUITTO_CONF "^password_file" "password_file $MOSQUITTO_PW"
+    addOrReplace $MOSQUITTO_CONF "^allow_anonymous" "allow_anonymous false"
+    mosquitto_passwd -b $MOSQUITTO_PW $mqtt_user $mqtt_password
+  else
+    addOrReplace $MOSQUITTO_CONF "^allow_anonymous" "allow_anonymous true"
+  fi
+  mosquitto --daemon --config-file $MOSQUITTO_CONF
 fi
 
 MONITOR_PIDS=""

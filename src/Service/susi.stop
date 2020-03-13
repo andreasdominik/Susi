@@ -25,5 +25,7 @@ PROCS=`ps -ef | grep 'mosquitto_sub .* hermes/' | awk '{print $2}'`
 kill -9 $PROCS
 PROCS=`ps -ef | grep 'mosquitto_sub .* susi/' | awk '{print $2}'`
 kill -9 $PROCS
+PROCS=`ps -ef | grep 'mosquitto --daemon' | awk '{print $2}'`
+kill -9 $PROCS
 PROCS=`ps -ef | grep 'duckling' | awk '{print $2}'`
 kill -9 $PROCS
