@@ -33,10 +33,10 @@ publish = "mosquitto_pub --qos 2"
 
 # set user/password for security:
 #
-# user = "susi"
-# password = "ag543jo9ikngr56hs3mg"
-user = ""
-password = ""
+# user = ""
+# password = ""
+user = "susi"
+password = "ag543jo9ikngr56hs3mg"
 
 
 [hotword]

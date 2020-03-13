@@ -136,7 +136,7 @@ echo "installing Susi to /opt/Susi/ ..."
 createsusidirs /opt/Susi /opt/Susi/Work
 createsusidirs /opt/Susi/ApplicationData /opt/Susi/Skills
 createsusidirs /opt/Susi/ApplicationData/Snips/ASRmodels /opt/Susi/ApplicationData/TTScache
-createsusidirs /opt/Susi/ApplicationData/Susi/Logs 
+createsusidirs /opt/Susi/ApplicationData/Susi/Logs
 
 sudo -u susi bash <<EOFCMD
   cp susi.tar.gz /opt/Susi/susi.tar.gz
@@ -352,14 +352,14 @@ chmod 755 /opt/Susi/Skills/ADoSnipsQnD/bin/init.sh
 ln -sf /opt/Susi/Skills/ADoSnipsQnD/bin/init.sh /usr/local/bin/initskill
 
 echo " "
-if test -e /opt/Susi/Skills/ADoSnipsTemplate/config.ini ; then
-  echo "the QnD template skill is already installed."
+if test -e /opt/Susi/Skills/SusiTime/config.ini ; then
+  echo "the QnD time skill is already installed."
 else
-  echo "installing the QnD Template skill ..."
+  echo "installing the QnD Time skill ..."
 
   sudo -u susi -i <<EOFCMD
   cd /opt/Susi/Skills/
-  git clone https://github.com/andreasdominik/ADoSnipsTemplate.git
+  git clone https://github.com/andreasdominik/SusiTime.git
 EOFCMD
 fi
 
