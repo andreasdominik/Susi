@@ -73,6 +73,7 @@ function startMQTTbroker(){
   if [[ -n $mqtt_user && -n $mqtt_password ]] ; then
     addOrReplace $MOSQUITTO_CONF "^password_file" "password_file $MOSQUITTO_PW"
     addOrReplace $MOSQUITTO_CONF "^allow_anonymous" "allow_anonymous false"
+    touch $MOSQUITTO_PW
     mosquitto_passwd -b $MOSQUITTO_PW $mqtt_user $mqtt_password
   else
     addOrReplace $MOSQUITTO_CONF "^allow_anonymous" "allow_anonymous true"
