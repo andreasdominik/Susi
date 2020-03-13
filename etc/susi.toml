@@ -21,6 +21,7 @@ show_all_stdout = true
 satellite = false
 siteId = "default"
 work_directory = "/tmp"
+application_data = "/opt/Susi/ApplicationData"
 
 
 [mqtt]
@@ -116,7 +117,7 @@ daemon = "src/NLU/nlu.daemon.jl"
 start = true
 daemon = "src/Session/session.daemon"
 session_timeout = 15
-message_pipe = "Work/mqtt.fifo"
+message_pipe = "/opt/Susi/Work/mqtt.fifo"
 
 
 [skills]
