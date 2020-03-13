@@ -268,7 +268,7 @@ fi
 # julia packages:
 #
 sudo -u susi -i <<EOFCMD
-julia -e 'using Pkg; Pkg.add(["ArgParse", "JSON", "StatsBase"]); Pkg.update()'
+julia -e 'using Pkg; Pkg.add(["ArgParse", "JSON", "StatsBase", "Dates"]); Pkg.update()'
 EOFCMD
 
 
@@ -346,6 +346,9 @@ else
   cp config.ini.template config.ini
 EOFCMD
 fi
+
+chmod 755 /opt/Susi/Skills/ADoSnipsQnD/bin/init.sh
+ln -sf /opt/Susi/Skills/ADoSnipsQnD/bin/init.sh /usr/local/bin/initskill
 
 echo " "
 if test -e /opt/Susi/Skills/ADoSnipsTemplate/config.ini ; then
