@@ -77,6 +77,25 @@ function createsusidirs(){
   done
 }
 
+# add a line to a config file:
+# * if not already there => append line
+# * if already defined => replace
+#
+function addOrReplace(){
+  _FILE=$1
+  _MATCH=$2
+  _NEWLINE=$3
+  if grep "$_MATCH" $_FILE ; then
+    sed -i "s,${_MATCH}.*\$,${_NEWLINE}," $_FILE
+  else
+     echo "$_NEWLINE" >> $_FILE
+   fi
+
+  # grep "^export SUSI_INSTALLATION=" ~susi/.bashrc && \
+  #    sed -i 's/^export SUSI_INSTALLATION=.*$/export SUSI_INSTALLATION=\/opt\/Susi\/Susi/' ~susi/.bashrc || \
+  #    echo "export SUSI_INSTALLATION=/opt/Susi/Susi" >> ~susi/.bashrc
+}
+
 
 # create user susi and /opt/Susi/:
 #
@@ -118,14 +137,14 @@ createsusidirs /opt/Susi/ApplicationData /opt/Susi/Skills
 createsusidirs /opt/Susi/ApplicationData/Snips/ASRmodels /opt/Susi/ApplicationData/TTScache
 
 sudo -u susi bash <<EOFCMD
-cp susi.tar.gz /opt/Susi/susi.tar.gz
-cp Resources/snips-asr-model-en-500MB.tar.gz /opt/Susi/ApplicationData/Snips/ASRmodels
-cd /opt/Susi
-tar -xvzf susi.tar.gz
-#
-# add variable to environment:
-grep "^export SUSI_INSTALLATION=" ~susi/.bashrc || echo "export SUSI_INSTALLATION=/opt/Susi/Susi" >> ~susi/.bashrc
-source ~susi/.bashrc
+  cp susi.tar.gz /opt/Susi/susi.tar.gz
+  cp Resources/snips-asr-model-en-500MB.tar.gz /opt/Susi/ApplicationData/Snips/ASRmodels
+  cd /opt/Susi
+  tar -xvzf susi.tar.gz
+  #
+  # add variable to environment:
+  addOrReplace "~susi/.bashrc" "^export SUSI_INSTALLATION=" "export SUSI_INSTALLATION=/opt/Susi/Susi"
+  source ~susi/.bashrc
 EOFCMD
 
 # Susi service and execs:

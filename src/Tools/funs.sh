@@ -34,6 +34,24 @@ function mqtt_auth() {
   echo "$_FLAGS"
 }
 
+# add a line to a config file:
+# * if not already there => append line
+# * if already defined => replace
+#
+function addOrReplace(){
+  _FILE=$1
+  _MATCH=$2
+  _NEWLINE=$3
+  if grep "$_MATCH" $_FILE ; then
+    sed -i "s,${_MATCH}.*\$,${_NEWLINE}," $_FILE
+  else
+     echo "$_NEWLINE" >> $_FILE
+   fi
+
+  # grep "^export SUSI_INSTALLATION=" ~susi/.bashrc && \
+  #    sed -i 's/^export SUSI_INSTALLATION=.*$/export SUSI_INSTALLATION=\/opt\/Susi\/Susi/' ~susi/.bashrc || \
+  #    echo "export SUSI_INSTALLATION=/opt/Susi/Susi" >> ~susi/.bashrc
+}
 
 
 # subscribe to MQTT topics and wait only for ONE message
