@@ -38,22 +38,7 @@ while true ; do
   # extract text to be spoken:
   #
   TEXT="$(extractJSONfile .input $RECEIVED_PAYLOAD)"
-
-  # TTS daemon only speaks "his" language!
-  #
-  # # select language code:
-  # #
-  # LANG="$(extractJSONfile .lang $RECEIVED_PAYLOAD)"
-  #
-  # if [[ $LANG =~ "[a-z][a-z]-[A-Z][A-Z]" ]] ; then
-  #   _LANGUAGE_CODE=$LANG
-  # elif [[ $LANG =~ "en" ]] ; then
-  #   _LANGUAGE_CODE="en-GB"
-  # elif [[ $LANG =~ "[a-zA-Z][a-zA-Z]" ]] ; then
-  #   _LANGUAGE_CODE="${$LANG,,}-${LANG^^}"
-  # else
-  #   _LANGUAGE_CODE="en-GB"
-  # fi
+  echo "[TTS daemon] I am asked to say: $TEXT"
 
   CACHED_NAME=$(echo $TEXT | tr '/' '_' | sed 's/[^(0-9a-zA-Z)]/_/g').b64
 
