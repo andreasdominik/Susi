@@ -51,6 +51,7 @@ password = ""
 #
 start = true
 daemon = "src/Hotword/hotword.daemon"
+log = "/opt/Susi/ApplicationData/Susi/Logs/hotword.log"
 # binary = "/opt/Snowboy/rpi-arm-raspbian-8.0-1.3.0/hotword_susi.py"
 binary = "/opt/Snowboy/ubuntu1404-x86_64-1.3.0/hotword_susi.py"
 model_path = "/opt/Snowboy/Resources"
@@ -81,6 +82,7 @@ notification = true
 notification_start = "src/Resources/Welcome/de"
 # notification_start = "src/Resources/Sounds/bellDingDong.wav"
 play = "play -q"
+log = "/opt/Susi/ApplicationData/Susi/Logs/record.flac"
 
 
 [play]
@@ -92,13 +94,15 @@ binary = "play -q"
 # cache = "/opt/.../TTScache"          cache for audio snippets with speech to utter
 start = true
 daemon = "src/TextToSpeach/tts.daemon"
+cache = "/opt/Susi/ApplicationData/TTScache"
+log = "/opt/Susi/ApplicationData/Susi/Logs/tts.log"
 binary = "src/GoogleCloud/tts/tts-google.sh"
 # binary = "src/IBMCloud/tts/tts-ibm.sh"
-cache = "/opt/Susi/ApplicationData/TTScache"
 
 [stt]
 start = true
 daemon = "src/SpeechToText/stt.daemon"
+log = "/opt/Susi/ApplicationData/Susi/Logs/stt.log"
 binary = "src/GoogleCloud/stt/stt-google.sh"
 # binary = "src/Snips/stt/stt-snips.sh"
 # binary = "src/MozillaDeepSpeech/stt-deepspeech.sh"

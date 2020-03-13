@@ -136,6 +136,7 @@ echo "installing Susi to /opt/Susi/ ..."
 createsusidirs /opt/Susi /opt/Susi/Work
 createsusidirs /opt/Susi/ApplicationData /opt/Susi/Skills
 createsusidirs /opt/Susi/ApplicationData/Snips/ASRmodels /opt/Susi/ApplicationData/TTScache
+createsusidirs /opt/Susi/ApplicationData/Susi/Logs 
 
 sudo -u susi bash <<EOFCMD
   cp susi.tar.gz /opt/Susi/susi.tar.gz

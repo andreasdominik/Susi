@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 #
 # Hotword service for NoSnips replacement.
 # Usage:
@@ -55,6 +55,7 @@ while true ; do
       #
       if [[ $STATUS -eq 0 ]] ; then
         publish $TOPIC_HOTWORD "$PAYLOAD"
+        echo "$hotword_local_hotword detected at $(date)" | tee -a $hotword_log
       fi
 
   elif [[ $MQTT_TOPIC == $TOPIC_NOTIFICATION_ON && $MQTT_SITE_ID == $local_siteId ]] ; then

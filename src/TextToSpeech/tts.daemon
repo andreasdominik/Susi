@@ -38,7 +38,7 @@ while true ; do
   # extract text to be spoken:
   #
   TEXT="$(extractJSONfile .input $RECEIVED_PAYLOAD)"
-  echo "[TTS daemon] I am asked to say: $TEXT"
+  echo "$(date): TTS daemon asked to say: $TEXT" | tee -a $tts_log
 
   CACHED_NAME=$(echo $TEXT | tr '/' '_' | sed 's/[^(0-9a-zA-Z)]/_/g').b64
 

@@ -49,4 +49,5 @@ while true ; do
            }"
   publish "$TOPIC_ASR_TEXT" "$PAYLOAD"
 
+  echo "$(date): STT daemon transcribed: $TRANSSCRIPT" | tee -a $tts_log
 done

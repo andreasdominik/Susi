@@ -67,6 +67,15 @@ while true ; do
 
     publishFile $TOPIC $PAYLOAD
 
+    # add recording to log:
+    #
+    if test -e $record_log ; then
+      sox $record_log $REC_FILE tmp.flac
+      mv tmp.flac $record_log
+    else
+      cp $REC_FILE $record_log
+    fi
+
   elif [[ $MQTT_TOPIC == $TOPIC_NOTIFICATION_ON && $MQTT_SITE_ID == $local_siteId ]] ; then
     NOTIFICATION=true
   elif [[ $MQTT_TOPIC == $TOPIC_NOTIFICATION_OFF && $MQTT_SITE_ID == $local_siteId ]] ; then
