@@ -15,7 +15,7 @@ cd $local_work_directory
 if [[ $local_satellite == true ]] ; then
   DAEMONS="hotword record say"
 else
-  DAEMONS="hotword record play stt nlu duckling tts session"
+  DAEMONS="hotword record play stt nlu duckling tts session skills"
   startMQTTbroker
 fi
 
