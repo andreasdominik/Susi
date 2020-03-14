@@ -106,8 +106,8 @@ else
   echo "creating user susi ..."
   useradd -m -U -s /bin/bash susi
   passwd susi
-  usermod -a -G pulse-access susi
 fi
+usermod -a -G pulse-access,audio susi
 
 # add susi to puls-access group:
 #
@@ -209,11 +209,16 @@ else
   wget $SNOWBOY_URL
   tar xvf ${SNOWBOY_TAR}
   cp /opt/Snowboy/${SNOWBOY_VERSION}/resources/snowboy.umdl /opt/Snowboy/Resources/
+  cp /opt/Snowboy/${SNOWBOY_VERSION}/resources/snowboy.umdl /opt/Snowboy/${SNOWBOY_VERSION}/
   cp /opt/Susi/Susi/src/Snowboy/bin/hotword_susi.py /opt/Snowboy/${SNOWBOY_VERSION}/
   cp /opt/Susi/Susi/src/Snowboy/bin/snowboydecoder_susi.py /opt/Snowboy/${SNOWBOY_VERSION}/
 EOFCMD
 fi
 
+# make sure everything is owned by susi:
+#
+cd /opt
+chown -R suis:susi Susi Snowboy
 
 # end if satellite:
 #
@@ -284,7 +289,7 @@ else
   RUSTLING_BIN="unknown"
 fi
 
-createsusidirs /opt/Rustling/bin
+createsusidirs /opt/Rustling /opt/Rustling/bin
 
 if [ $RUSTLING_BIN != unknown ] ; then
   sudo -u susi -i <<EOFCMD
@@ -364,6 +369,10 @@ EOFCMD
 fi
 
 
+# make sure everything is owned by susi:
+#
+cd /opt
+chown -R suis:susi Susi Julia Rustling
 
 
 
