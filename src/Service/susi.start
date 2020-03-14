@@ -10,6 +10,7 @@
 # load tool funs:
 #
 source $SUSI_INSTALLATION/src/Tools/init_susi.sh
+LOG_FILE=SusiService
 cd $local_work_directory
 
 if [[ $local_satellite == true ]] ; then
@@ -30,7 +31,7 @@ function startDaemon() {
   _EXEC="$(relDir ${!_PATH_KEY})"
 
   if [[ $_FLAG == true ]] ; then
-    echo "starting $_DAEMON daemon"
+    printLog "starting $_DAEMON daemon"
     $_EXEC &
 
     # make list to monitor:
@@ -41,7 +42,7 @@ function startDaemon() {
 }
 
 for DAEMON in $DAEMONS ; do
-  echo "Starting $DAEMON"
+  # echo "Starting $DAEMON"
   startDaemon $DAEMON
 done
 
