@@ -93,7 +93,7 @@ binary = "play -q"
 [tts]
 # cache = "/opt/.../TTScache"          cache for audio snippets with speech to utter
 start = true
-daemon = "src/TextToSpeach/tts.daemon"
+daemon = "src/TextToSpeech/tts.daemon"
 cache = "/opt/Susi/ApplicationData/TTScache"
 log = "/opt/Susi/ApplicationData/Susi/Logs/tts.log"
 binary = "src/GoogleCloud/tts/tts-google.sh"
@@ -125,8 +125,8 @@ message_pipe = "/opt/Susi/Work/mqtt.fifo"
 
 
 [skills]
-start = false
-daemon = "src/Skillserver/skills.daemon"
+start = true
+daemon = "src/Skills/skills.daemon"
 # skills_dir = "/home/andreas/Documents/Projekte/2019-Susi/Skills"
 skills_dir = "/opt/Susi/Skills"
 log = "/opt/Susi/ApplicationData/Susi/Logs/skills.log"
