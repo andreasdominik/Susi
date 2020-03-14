@@ -13,7 +13,8 @@ source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
 # base names for recveived and subm. MQTT message files:
 #
-MQTT_BASE_NAME="ttsDaemon"
+MQTT_BASE_NAME="SusiTTSDaemon"
+LOG_FILE=$tts_log
 cd $local_work_directory
 
 BINARY="$(relDir $tts_binary)"
@@ -38,7 +39,7 @@ while true ; do
   # extract text to be spoken:
   #
   TEXT="$(extractJSONfile .input $RECEIVED_PAYLOAD)"
-  echo "$(date): TTS daemon asked to say: $TEXT" | tee -a $tts_log
+  printLog "asked to say: $TEXT" | tee -a $tts_log
 
   CACHED_NAME=$(echo $TEXT | tr '/' '_' | sed 's/[^(0-9a-zA-Z)]/_/g').b64
 

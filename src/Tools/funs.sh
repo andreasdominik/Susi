@@ -250,3 +250,12 @@ function b64_decode() {
   AUDIO_NAME="${_AUDIO_BASENAME}.${MEDIA_TYPE}"
   mv $_AUDIO_BASENAME $AUDIO_NAME
 }
+
+
+# use local temp file if no logfile is defined in daemon:
+#
+LOG_FILE=susi.tmp.log
+
+function printLog(){
+  echo "$(date) [$MQTT_BASE_NAME] $@" | tee -a $LOG_FILE
+}

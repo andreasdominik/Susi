@@ -15,7 +15,8 @@ source $SUSI_INSTALLATION/src/Session/dialogueManagerActions.sh
 
 # base names for recveived and subm. MQTT message files:
 #
-MQTT_BASE_NAME="sessionDaemon"
+MQTT_BASE_NAME="SusiSessionDaemon"
+LOG_FILE=$session_log
 
 MQTT_CLIENT_ID="sessionManager-$RANDOM"
 MQTT_MESSAGE_PIPE="$(relDir $session_message_pipe)"
@@ -43,7 +44,7 @@ _TOPICS="-t $TOPIC_ASR_AUDIO -t $TOPIC_ASR_TEXT \
         -t $TOPIC_DIALOGUE_STOP_LISTEN -t $TOPIC_DIALOGUE_START_LISTEN"
 TOPICS=$(echo $_TOPICS)
 
-echo "$mqtt_subscribe -v $(mqtt_auth) $TOPICS > $MQTT_MESSAGE_PIPE"
+printLog  "$mqtt_subscribe -v $(mqtt_auth) $TOPICS > $MQTT_MESSAGE_PIPE"
 $mqtt_subscribe -v $(mqtt_auth) $TOPICS > $MQTT_MESSAGE_PIPE &
 
 # core loop that catches all MQTTs depending on
@@ -78,21 +79,20 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   echo $ONE_MESSAGE > $RECEIVED_MQTT
   parseMQTTfile
 
-  echo ""
-  echo -n "MQTT received topic: $MQTT_TOPIC, "
-  echo "session: $SESSION_ID"
+  printLog " "
+  printLog "MQTT received topic: $MQTT_TOPIC, session: $SESSION_ID"
 
   # always manage timeouts if in session:
   #
   if [[ $SESSION_ID != "no_session" ]] ; then
     if [[ $MQTT_TOPIC == $TOPIC_TIMEOUT ]] ; then
       if [[ $MQTT_ID == $TIMEOUT_ID && $MQTT_SESSION_ID == $SESSION_ID ]] ; then
-        echo "    timeout matched"
+        printLog "    timeout matched"
         if [[ $IGNORE_TIMEOUT == "false" ]] ; then
           ERROR_ACTION="terminate_session"
           makeSessionEnd "timeout"
         else
-          echo "    timeout ignored"
+          printLog "    timeout ignored"
           scheduleTimeOut
         fi
       fi
@@ -105,9 +105,9 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   #
   if [[ $MQTT_TOPIC == $TOPIC_HOTWORD ]] ; then
     if [[ $LISTEN_TO_HOTWORDS == false ]] ; then
-      echo "    hotword matched, but ignored"
+      printLog "    hotword matched, but ignored"
     else
-      echo "    hotword matched"
+      printLog "    hotword matched"
       # start session or queue the request:
       #
       if [[ $DOING == "no_session" ]] ; then
@@ -130,7 +130,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
 
    if [[ $MQTT_TOPIC == $TOPIC_START_SESSION ]] ; then
 
-    echo "    start matched"
+    printLog "    start matched"
     # start session or queue the request:
     #
     if [[ $DOING == "no_session" ]] ; then
@@ -147,7 +147,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       publishLogSessionStarted
       if [[ $TYPE == "action" ]] ; then
         extractIntentFilter ".init.intentFilter" $RECEIVED_PAYLOAD
-        echo "    intentfilter: $INTENT_FILTER"
+        printLog "    intentfilter: $INTENT_FILTER"
         ERROR_ACTION="terminate_session"
 
         TEXT="$(extractJSONfile .init.text $RECEIVED_PAYLOAD)"
@@ -197,7 +197,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   #
   # a:
   if [[ $MQTT_ID == $ID ]] ; then
-    echo "    ID matched: $MQTT_TOPIC"
+    printLog "    ID matched: $MQTT_TOPIC"
     nextId
 
     # manage dialogue manager sequences:
@@ -283,7 +283,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   # end only if id matches - now sessionId:
   # b:
   elif [[ $MQTT_SESSION_ID == $SESSION_ID ]] ; then
-    echo "    sessionId matched: $MQTT_TOPIC"
+    printLog "    sessionId matched: $MQTT_TOPIC"
 
     if [[ $MQTT_TOPIC == $TOPIC_END_SESSION ]] ; then
       TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
@@ -314,7 +314,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   # say and play always possible:
   #
   if [[ $MQTT_TOPIC == $TOPIC_TTS_SAY ]] ; then
-    echo "    say matched: $MQTT_TOPIC"
+    printLog "    say matched: $MQTT_TOPIC"
     nextId
     TEXT="$(extractJSONfile .text $RECEIVED_PAYLOAD)"
     LANG="$(extractJSONfile .lang $RECEIVED_PAYLOAD)"
@@ -329,7 +329,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   fi
 
   if [[ $MQTT_TOPIC == $TOPIC_PLAY ]] ; then
-    echo "    play matched: $MQTT_TOPIC"
+    printLog "    play matched: $MQTT_TOPIC"
     nextId
     USE_HOTWORD="$(extractJSONfile .hotword $RECEIVED_PAYLOAD)"
     FADE_IN="$(extractJSONfile .fade_in $RECEIVED_PAYLOAD)"
@@ -350,5 +350,5 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   fi
 
 
-  echo "    now doing: $DOING"
+  printLog "    now doing: $DOING"
 done  # loop read messages from pipe

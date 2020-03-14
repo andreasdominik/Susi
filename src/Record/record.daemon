@@ -12,7 +12,7 @@ source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
 # base names for recveived and subm. MQTT message files:
 #
-MQTT_BASE_NAME="recordDaemon"
+MQTT_BASE_NAME="SusiRecordDaemon"
 
 cd $local_work_directory
 
@@ -75,6 +75,8 @@ while true ; do
     else
       cp $REC_FILE $record_log
     fi
+
+    printLog "command recorded"
 
   elif [[ $MQTT_TOPIC == $TOPIC_NOTIFICATION_ON && $MQTT_SITE_ID == $local_siteId ]] ; then
     NOTIFICATION=true

@@ -12,7 +12,8 @@ source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
 # base names for recveived and subm. MQTT message files:
 #
-MQTT_BASE_NAME="skillsDaemon"
+MQTT_BASE_NAME="SusiSkillsDaemon"
+LOG_FILE=$skills_log
 
 cd $local_work_directory
 
@@ -23,7 +24,7 @@ MONITOR_PIDS=""
 function startSkill() {
 
   _SKILL=$1
-  echo "(re)starting skill $_SKILL"
+  printLog "(re)starting skill $_SKILL"
   $_SKILL &
 
   # make list to monitor:

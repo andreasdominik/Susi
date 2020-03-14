@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 #
 # STT service for NoSnips replacement.
 # Usage:
@@ -16,7 +16,7 @@ AUDIO=playAudio
 
 # base names for recveived and subm. MQTT message files:
 #
-MQTT_BASE_NAME="playDaemon"
+MQTT_BASE_NAME="SusiPlayDaemon"
 
 cd $local_work_directory
 
@@ -51,6 +51,8 @@ while true ; do
   AUDIO_NAME="${AUDIO}.${MEDIA_TYPE}"
   mv $AUDIO $AUDIO_NAME
 
+  printLog susi.tmp.log "playing audio $AUDIO_NAME"
+  
   # kill play if hotword is detected:
   #
   if [[ $LISTEN_HOTWORD == sensitive ]] ; then

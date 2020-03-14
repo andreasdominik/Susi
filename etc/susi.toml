@@ -129,6 +129,7 @@ start = false
 daemon = "src/Skillserver/skills.daemon"
 # skills_dir = "/home/andreas/Documents/Projekte/2019-Susi/Skills"
 skills_dir = "/opt/Susi/Skills"
+log = "/opt/Susi/ApplicationData/Susi/Logs/skills.log"
 
 
 # configuration of external services:

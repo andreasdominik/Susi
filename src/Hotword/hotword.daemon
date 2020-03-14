@@ -11,7 +11,8 @@ source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
 # base names for recveived and subm. MQTT message files:
 #
-MQTT_BASE_NAME="hotwordDaemon"
+MQTT_BASE_NAME="SusiHotwordDaemon"
+LOG_FILE=$hotword_log
 
 cd $local_work_directory
 
@@ -45,17 +46,16 @@ while true ; do
       fi
       # run Snowboy until hotword is detected
       #
-      $DETECTOR $MODEL $hotword_sensitivity $hotword_trigger_file
+      $DETECTOR $MODEL $hotword_sensitivity $hotword_trigger_file > /dev/null 2>&1
       STATUS=$?
-      STATUS=0  # cancel should work for debugging
-      echo "$STATUS"
+      # printLog "$STATUS"
 
       # publish "hotword detected" if status == 0; otherwise just keep
       # detector stopped:
       #
       if [[ $STATUS -eq 0 ]] ; then
         publish $TOPIC_HOTWORD "$PAYLOAD"
-        echo "$hotword_local_hotword detected at $(date)" | tee -a $hotword_log
+        printLog "$hotword_local_hotword detected"
       fi
 
   elif [[ $MQTT_TOPIC == $TOPIC_NOTIFICATION_ON && $MQTT_SITE_ID == $local_siteId ]] ; then

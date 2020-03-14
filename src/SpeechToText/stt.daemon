@@ -13,7 +13,9 @@ source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
 # base names for recveived and subm. MQTT message files:
 #
-MQTT_BASE_NAME="sttDaemon"
+MQTT_BASE_NAME="SusiSttDaemon"
+LOG_FILE=$stt_log
+
 cd $local_work_directory
 
 BINARY="$(relDir $stt_binary)"
@@ -49,5 +51,5 @@ while true ; do
            }"
   publish "$TOPIC_ASR_TEXT" "$PAYLOAD"
 
-  echo "$(date): STT daemon transcribed: $TRANSSCRIPT" | tee -a $tts_log
+  printLog "transcribed audio: $TRANSSCRIPT"
 done
