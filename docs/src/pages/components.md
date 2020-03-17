@@ -89,9 +89,19 @@ Go through Google's tutorial
     Edit the file `.bashrc` in the home directory of the user who will later
     run the assistent (e.g. `susi`) and add the line:    
 `export GOOGLE_APPLICATION_CREDENTIALS="/opt/Susi/ApplicationData/Google/Credentials/google-credentials.json"`    
-    To check the installation run the following command.
-    It should print an access token, which can be uses to access the Cloud
-    Text-to-Speech API:
+  * gcloud API must be locally installed (see the quickstart
+    documentation):
+```
+sudo echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+sudo apt-get install apt-transport-https ca-certificates gnupg
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+sudo apt-get update && sudo apt-get install google-cloud-sdk
+```
+
+
+  To check the installation run the following command.
+  It should print an access token, which can be uses to access the Cloud
+  Text-to-Speech API:
 
 ```
 gcloud auth application-default print-access-token
