@@ -89,12 +89,9 @@ function addOrReplace(){
     sed -i "s,${_MATCH}.*\$,${_NEWLINE}," $_FILE
   else
      echo "$_NEWLINE" >> $_FILE
-   fi
-
-  # grep "^export SUSI_INSTALLATION=" ~susi/.bashrc && \
-  #    sed -i 's/^export SUSI_INSTALLATION=.*$/export SUSI_INSTALLATION=\/opt\/Susi\/Susi/' ~susi/.bashrc || \
-  #    echo "export SUSI_INSTALLATION=/opt/Susi/Susi" >> ~susi/.bashrc
+  fi
 }
+export -f addOrReplace
 
 
 # create user susi and /opt/Susi/:
@@ -104,22 +101,25 @@ if id -u susi ; then
   echo "user susi alredy exists - using existing user"
 else
   echo "creating user susi ..."
-  useradd -m -U -s /bin/bash susi
-  passwd susi
+  sudo useradd -m -U -s /bin/bash susi
+  sudo passwd susi
 fi
-usermod -a -G pulse-access,audio susi
-
-# add susi to puls-access group:
-#
-usermod -g pulse-access susi
+sudo usermod -a -G pulse-access,audio,plugdev,gpio susi
 
 
 
 # get dependency packages:
 #
+sudo apt-get update
+sudo apt-get upgrade --assume-yes --fix-missing
+
 installif git curl coreutils wget
-installif sox libsox-fmt-mp3
+installif pulseaudio sox libsox-fmt-mp3
 installif ffmpeg
+
+# add susi to puls-access group:
+#
+sudo usermod -g pulse-access susi
 
 # mosquitto must not be started as a service before Susi:
 #
@@ -138,15 +138,21 @@ createsusidirs /opt/Susi/ApplicationData /opt/Susi/Skills
 createsusidirs /opt/Susi/ApplicationData/Snips/ASRmodels /opt/Susi/ApplicationData/TTScache
 createsusidirs /opt/Susi/ApplicationData/Susi/Logs
 
+# add variable to environment:
+#
+
 sudo -u susi bash <<EOFCMD
+  if grep "^export SUSI_INSTALLATION=" ~/.bashrc ; then
+    sed -i 's,^export SUSI_INSTALLATION=.*$,export SUSI_INSTALLATION=/opt/Susi/Susi,' ~/.bashrc
+  else
+    echo "export SUSI_INSTALLATION=/opt/Susi/Susi" >> ~/.bashrc
+  fi
+  source ~susi/.bashrc
   cp susi.tar.gz /opt/Susi/susi.tar.gz
   cp Resources/snips-asr-model-en-500MB.tar.gz /opt/Susi/ApplicationData/Snips/ASRmodels
   cd /opt/Susi
   tar -xvzf susi.tar.gz
   #
-  # add variable to environment:
-  addOrReplace "~susi/.bashrc" "^export SUSI_INSTALLATION=" "export SUSI_INSTALLATION=/opt/Susi/Susi"
-  source ~susi/.bashrc
 EOFCMD
 
 # Susi service and execs:
@@ -195,6 +201,7 @@ cp /opt/Susi/Susi/etc/susi.toml /etc/susi.toml
 echo " "
 echo "installing prerequisites for Snowboy ..."
 installif python-pyaudio python3-pyaudio sox
+installif libpython2.7 libatlas-base-dev
 
 if test -e "/opt/Snowboy/${SNOWBOY_VERSION}/snowboydecoder_susi.py" &&
    test -e "/opt/Snowboy/${SNOWBOY_VERSION}/hotword_susi.py" &&
@@ -222,7 +229,7 @@ chown -R suis:susi Susi Snowboy
 
 # end if satellite:
 #
-if [[ SATELLITE == true ]] ; then
+if [[ $SATELLITE == true ]] ; then
 
   # susi.toml for satellite:
   #
@@ -372,7 +379,7 @@ fi
 # make sure everything is owned by susi:
 #
 cd /opt
-chown -R suis:susi Susi Julia Rustling
+chown -R susi:susi Susi Julia Rustling
 
 
 

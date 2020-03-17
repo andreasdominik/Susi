@@ -20,6 +20,7 @@ source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 #   ARG_STR="$ARG_STR -P $mqtt_password"
 # fi
 
+EXEC="$SUSI_INSTALLATION/src/Watch/watch.jl"
 # TOPICS="-t 'hermes/#' -t 'susi/#'"
 MQTT_MESSAGE_PIPE=/tmp/susi.watch.messages.fifo
 
@@ -35,4 +36,4 @@ $mqtt_subscribe -v $(mqtt_auth) -t 'hermes/#' -t 'susi/#' > /tmp/susi.watch.mess
 set +xv
 # run:
 #
-julia --color=yes -- $EXEC $ARG_STR
+julia --color=yes -- $EXEC
