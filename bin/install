@@ -115,7 +115,7 @@ sudo apt-get upgrade --assume-yes --fix-missing
 
 installif git curl coreutils wget
 installif pulseaudio sox libsox-fmt-mp3
-installif ffmpeg
+installif ffmpeg uuid-runtime 
 
 # add susi to puls-access group:
 #
