@@ -102,7 +102,7 @@ function askRustling(dimension, text)
         # return time w/o timezone:
         #
         if dimension == "Time"
-            regEx = r"^Datetime\(DatetimeOutput { moment: (\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d),"
+            regEx = r"^Datetime\(DatetimeOutput { moment: (\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d)"
             #slotvalue = replace(value, r"[+-]\d\d:\d\d$" => "")  # rm timezone
             m = match(regEx, rustlingOut)
             if m != nothing

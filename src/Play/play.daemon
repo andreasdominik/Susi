@@ -52,7 +52,7 @@ while true ; do
   mv $AUDIO $AUDIO_NAME
 
   printLog susi.tmp.log "playing audio $AUDIO_NAME"
-  
+
   # kill play if hotword is detected:
   #
   if [[ $LISTEN_HOTWORD == sensitive ]] ; then

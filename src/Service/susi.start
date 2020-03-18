@@ -14,7 +14,7 @@ LOG_FILE=SusiService
 cd $local_work_directory
 
 if [[ $local_satellite == true ]] ; then
-  DAEMONS="hotword record say"
+  DAEMONS="hotword record play"
 else
   DAEMONS="hotword record play stt nlu duckling tts session skills"
   startMQTTbroker
