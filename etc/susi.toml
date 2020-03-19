@@ -135,12 +135,19 @@ log = "/opt/Susi/ApplicationData/Susi/Logs/skills.log"
 # configuration of external services:
 #
 [google_cloud]
+# credentials = path to JSON file with Google cedentials
+# refresh_token_cmd =  script to get a fresh token
+# voice = voice for TTS
+# minimum_size = if filesize of audio recording is smaller then this limit
+#                (as b64), then NO TTS request is sent to Google Cloud.
+#
 credentials = "/opt/Susi/ApplicationData/Google/Credentials/google-credentials.json"
 refresh_token_cmd = "src/GoogleCloud/refreshToken.sh"
 # voice = "en-GB-Wavenet-A"
 # voice = "en-US-Wavenet-A"
 # voice = "fr-FR-Wavenet-A"
 voice = "de-DE-Wavenet-B"
+minimum_size = 1000
 
 [ibm_cloud]
 stt_credentials = "/opt/Susi/ApplicationData/IBMCloud/ibm-stt-credentials.env"

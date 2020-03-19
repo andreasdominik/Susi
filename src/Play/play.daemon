@@ -67,7 +67,7 @@ while true ; do
     publish "$TOPIC_HOTWORD_ON" "$HOTWORD_PAYLOAD"
     subscribeSiteOnce $local_siteId $TOPIC_HOTWORD
     kill $PLAY_PID
-    publish "$TOPIC_HOTWORD_OFF" "$HOTWORD_PAYLOAD"
+    # publish "$TOPIC_HOTWORD_ON" "$HOTWORD_PAYLOAD"
   else
     $play_binary $AUDIO_NAME
   fi

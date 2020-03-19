@@ -11,6 +11,17 @@ STT_OUTPUT=$2
 #
 source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 
+
+# only do something if input filesize is bigger as defined limit:
+#
+IN_SIZE=$(stat --printf="%s" $STT_INPUT)
+
+if [[ $IN_SIZE -lt $google_cloud_minimum_size ]] ; then
+  echo "" > $STT_OUTPUT
+  exit
+fi
+
+
 # get google token:
 #
 REFRESH_TOKEN_CMD="$(relDir $google_cloud_refresh_token_cmd)"
