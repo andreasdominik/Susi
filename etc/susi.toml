@@ -147,7 +147,7 @@ refresh_token_cmd = "src/GoogleCloud/refreshToken.sh"
 # voice = "en-US-Wavenet-A"
 # voice = "fr-FR-Wavenet-A"
 voice = "de-DE-Wavenet-B"
-minimum_size = 1000
+minimum_size = 2500
 
 [ibm_cloud]
 stt_credentials = "/opt/Susi/ApplicationData/IBMCloud/ibm-stt-credentials.env"
