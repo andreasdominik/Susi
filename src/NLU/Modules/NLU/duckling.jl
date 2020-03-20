@@ -80,11 +80,11 @@ function askRustling(dimension, text)
     # for German, such as "7 15 Uhr"
     #
     text = " $text "
-    isTime = match(r"(?<start>.*) (?<hour>\d+) (?<minute>\d+) Uhr (?<end>.*)")
-    if isTime != nothing
-        text = "$(isTime[:start]) $(isTime[:hour]) Uhr $(isTime[:minute]) $(isTime[:end])"
-    end
-    
+    # isTime = match(r"(?<start>.*) (?<hour>\d+) (?<minute>\d+) Uhr (?<end>.*)", text)
+    # if isTime != nothing
+    #     text = "$(isTime[:start]) $(isTime[:hour]) Uhr $(isTime[:minute]) $(isTime[:end])"
+    # end
+
     # create input file for rustling service:
     #
     rawSlot = Dict("sentence" => text)
