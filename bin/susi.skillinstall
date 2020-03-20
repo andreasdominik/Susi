@@ -1,0 +1,33 @@
+#!/bin/bash 
+#
+# Install a Susi skill from github
+# usage:
+# as user susi:
+#     $ susi.skillinstall <github-repo https>
+#
+# (c) 2020, Andreas Dominik, Gießen, Germany
+#
+GITHUB_USER=$1
+GITHUB_REPO=$2
+IAM=$(whoami)
+
+REPO="https://github.com/${GITHUB_USER}/${GITHUB_REPO}.git"
+
+source $SUSI_INSTALLATION/src/Tools/init_susi.sh
+cd $skills_skills_dir
+if test -d $GITHUB_REPO ; then
+  echo "The skill ${GITHUB_USER}/${GITHUB_REPO} seems alreadxy installed!"
+  read -e -p "Update the existing installation? (yes/no): " -i "no" ASK
+  if [[ $ASK == yes ]] ; then
+    cd ${GITHUB_REPO}
+    git fetch origin
+    git reset --hard origin/master
+  else
+    echo "Installation of ${GITHUB_USER}/${GITHUB_REPO} aborted."
+    exit 0
+  fi
+else
+  git clone "$REPO"
+fi
+#
+# eof.

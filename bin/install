@@ -115,7 +115,7 @@ sudo apt-get upgrade --assume-yes --fix-missing
 
 installif git curl coreutils wget
 installif pulseaudio sox libsox-fmt-mp3
-installif ffmpeg uuid-runtime 
+installif ffmpeg uuid-runtime
 
 # add susi to puls-access group:
 #
@@ -163,6 +163,7 @@ cd /usr/local/bin/
 ln -sf /opt/Susi/Susi/bin/susi.watch
 ln -sf /opt/Susi/Susi/bin/susi
 ln -sf /opt/Susi/Susi/bin/susi.say
+ln -sf /opt/Susi/Susi/bin/susi.skillinstall
 ln -sf /opt/Susi/Susi/src/Service/susi.start
 ln -sf /opt/Susi/Susi/src/Service/susi.stop
 
