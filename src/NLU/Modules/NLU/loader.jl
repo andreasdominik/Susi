@@ -13,7 +13,7 @@ function loadIntents()
     println("[NLU loader]: $(length(skills)) skills found to recognise in $SKILLS_DIR.")
 
     for skill in skills
-        println("[NLU loader]: loading $skill.")
+        println("[NLU loader]:     loading $skill.")
 
         toml = TOML.parsefile(skill)
         toml = fixToml(toml)
@@ -108,11 +108,11 @@ function extractPhrases(toml, slots, intentName, phrases)
         end
 
 
-        println(name)
-        println("raw:     $raw")
-        println("phrase:  $phrase")
-        println("regex:  $(Regex(phrase))")
-        println()
+        # println(name)
+        # println("raw:     $raw")
+        # println("phrase:  $phrase")
+        # println("regex:  $(Regex(phrase))")
+        # println()
 
          if re == "unknwon type of expression"
              println("NLU loader error: unable to process match expression $name")
@@ -147,20 +147,6 @@ end
 
 
 
-
-
-
-# julia> match(r".*(?<cg><e\w+>).*", s)
-# RegexMatch("bla <eins> ble bla <zwei> end", cg="<eins>")
-#
-# julia> replace(s, r"<eins>" => "(?<eins>ein|zwe|dre)")
-# "bla (?<eins>ein|zwe|dre) ble bla <zwei> end"
-#
-# julia> ss = replace(s, r"<eins>" => "(?<eins>ein|zwe|dre)")
-# "bla (?<eins>ein|zwe|dre) ble bla <zwei> end"
-#
-# julia> match(Regex(ss), "bla dre ble bla <zwei> end")
-# RegexMatch("bla dre ble bla <zwei> end", eins="dre")
 
 
 
@@ -254,18 +240,6 @@ end
 
 
 
-# # TOML loader and fixer:
-# #
-# function loadToml(filename)
-#     toml = Main.TOML.parsefile(TOML_FILE)
-#
-#     # fix missing [] for one-item lists:
-#     #
-#     return fixToml(toml)
-# end
-
-
-
 function fixToml(dict)
 
     for (key, val) in dict
@@ -290,7 +264,7 @@ end
 
 function fixOne(val)
     if val isa AbstractString
-        println("fixing $val")
+        # println("fixing $val")
         return [val]
     else
         return val
