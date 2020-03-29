@@ -247,7 +247,8 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
           if [[ -z $PLAY_SITE ]] ; then
             PLAY_SITE=$SESSION_SITE_ID
           fi
-          IGNORE_TIMEOUT="true"
+          # no timeout ignore! make timeout time higher (120 secs) instead.
+          # IGNORE_TIMEOUT="true"
           publishPlay $PLAY_SITE
           PLAY_SITE=$SESION_SITE_ID
           DOING="playing"

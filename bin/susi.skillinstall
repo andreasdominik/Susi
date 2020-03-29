@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 #
 # Install a Susi skill from github
 # usage:
@@ -16,7 +16,7 @@ REPO="https://github.com/${GITHUB_USER}/${GITHUB_REPO}.git"
 source $SUSI_INSTALLATION/src/Tools/init_susi.sh
 cd $skills_skills_dir
 if test -d $GITHUB_REPO ; then
-  echo "The skill ${GITHUB_USER}/${GITHUB_REPO} seems alreadxy installed!"
+  echo "The skill ${GITHUB_USER}/${GITHUB_REPO} seems already installed!"
   read -e -p "Update the existing installation? (yes/no): " -i "no" ASK
   if [[ $ASK == yes ]] ; then
     cd ${GITHUB_REPO}

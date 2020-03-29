@@ -41,6 +41,9 @@ function setIntentFilter(payload)
     end
 end
 
+function setIntentAllFilter(payload)
+end
+
 
 """
 payload is the payload of the MQTT with topic hermes/dialogueManager/configureReset
