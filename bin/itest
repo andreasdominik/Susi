@@ -1,0 +1,10 @@
+function createsusidirs(){
+  DIRS=$1
+  for DIR in $DIRS ; do
+    sudo mkdir -p $DIR
+    sudo chown -R susi:susi $DIR
+  done
+}
+
+sudo createsusidirs blabla
+createsusidirs bla blu bli

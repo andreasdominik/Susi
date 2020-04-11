@@ -1,0 +1,22 @@
+Haskell:
+
+* needs llvm-3.7
+* unsinstall: Removing ~/.stack and /usr/local/bin/stack should be sufficient.
+  You may want to delete .stack-work folders in any Haskell projects that you have built.
+
+* stack --system-ghc for system ghc to be used
+OR
+https://github.com/tmspzz/blender.github.io/blob/master/_posts/2016-12-18-haskell-on-raspberry-pi-3.markdown
+
+package haskell-stack  haskell-platform
+
+increase swap?
+
+  Modquitto:
+  * deactivate service and start manually (and kill) by susi service
+
+
+  https://en.wikipedia.org/w/api.php?action=query&pageids=21482&prop=extracts&inprop=url&exintro
+
+  https://de.wikipedia.org/w/api.php?action=query&list=search&srsearch=loriot
+  

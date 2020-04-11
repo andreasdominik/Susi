@@ -1,2 +1,6 @@
 Place for tmp files that need to be persisent (not in /tmp);
 such as fifos.
+
+ add wav2letter
+
+ models for Kaldi and wav20letter at http://zamia-speech.org/asr/

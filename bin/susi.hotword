@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+# Commandline interface to Susi.
+# Makes susi say a sentence.
+# usage:
+#     Just tell susi what to say, such as:
+#     $ susi.say hello, I am your assistant
+#
+# (c) 2020, Andreas Dominik, Gießen, Germany
+#
+
+if [[ $# -lt 1 ]] ; then
+  MY_SITE="unknown"
+else
+  MY_SITE="$1"
+fi
+
+source $SUSI_INSTALLATION/src/Tools/init_susi.sh
+
+if [[ $MY_SITE == unknown ]] ; then
+  MY_SITE=$local_siteId
+fi
+
+# construct MQTT message for hotword detected
+#
+PAYLOAD="{
+  \"siteId\": \"$MY_SITE\",
+  \"modelId\": \"$hotword_local_hotword\",
+  \"modelVersion\": \"1.0\",
+  \"modeltype\": \"personal\",
+  \"currentSensitivity\": $hotword_sensitivity
+}"
+
+publish $TOPIC_HOTWORD "$PAYLOAD"
