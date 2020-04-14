@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <link rel="icon" href="/images/susi.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+
+<h1>Hausprogrammierung
+<a href="/index.html"><img class="lineheight" src="images/house.png" alt="house"></a>
+<a href="/tv.html"><img class="lineheight" src="images/tv.png" alt="TV"></a>
+<a href="/timers.html"><img class="lineheight" src="images/clock.png" alt="TV"></a>
+<a href="/susi.html"><img class="lineheight" src="images/susi.png" alt="TV"></a>
+</h1>
+
+<form action="/cgi-bin/auto.cgi" id="automate">
+<p>
+<label class="radiotext">
+    Beginn:
+    <input class="dateinput" type="date" id="startdate">
+</label>
+</p>
+
+<p>
+<label class="radiotext">
+    Ende:
+    <input class="dateinput" type="date" id="enddate">
+</label>
+</p>
+
+<br>
+<p class="buttontext">Welches Profil soll programmiert werden?</p>
+
+<p>
+    <input type="radio" id="sun_full" name="profile" value="sun_shield"
+           checked="checked" class="radiobutton">
+    <label for="sun_full" class="radiotext"> Sonnenschutz</label><br>
+</p>
+
+<p>
+    <input type="radio" id="sun_small" name="profile" value="sun_shield_light"
+           class="radiobutton">
+    <label for="sun_small" class="radiotext"> kleiner Sonnenschutz</label><br>
+</p>
+
+<p>
+    <input type="radio" id="irrigation" name="profile" value="irrigartion"
+           class="radiobutton">
+    <label for="irrigation" class="radiotext"> Bewässerung</label><br>
+</p>
+
+<p>
+    <input type="radio" id="summer" name="profile" value="summer"
+           class="radiobutton">
+    <label for="summer" class="radiotext"> Sommerurlaub</label><br>
+</p>
+
+<p>
+    <input type="radio" id="winter" name="profile" value="winter"
+           class="radiobutton">
+    <label for="winter" class="radiotext"> Winterurlaub</label>
+</p>
+<br>
+<p>
+<center>
+<button type="submit"><span class="buttontext"> Programieren</span></button>
+</center>
+</p>
+</form>
+
+
+
+
+
+</body>
+</html>
