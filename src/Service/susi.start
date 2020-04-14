@@ -59,7 +59,7 @@ while true ; do
     __DAEMON=$2
     shift 2
 
-    ps -p $__PID
+    ps -p $__PID > /dev/null 2>&1
     __IS_OK=$?
 
     if [[ $__IS_OK -gt 0 ]] ; then
