@@ -16,4 +16,4 @@ PAYLOAD="{
 }"
 
 publish $TOPIC_HOTWORD "$PAYLOAD"
-cat ok.html
+cat oksusi.html
