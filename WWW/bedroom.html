@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<h1>Susi home
+<h1>Schlafzimmer
 <a href="/index.html"><img class="lineheight" src="images/house.png" alt="house"></a>
 <a href="/tv.html"><img class="lineheight" src="images/tv.png" alt="TV"></a>
 <a href="/timers.html"><img class="lineheight" src="images/clock.png" alt="TV"></a>
@@ -22,18 +22,32 @@
 &nbsp;
 Licht
 </p>
+<br>
+<br>
+<h1>Wecker
+<img class="lineheight" src="images/alarmclock.png" alt="alarm">
+</h1>
 
+<form action="/cgi-bin/alarm.cgi" id="wakeup">
 <p>
-<a href="/cgi-bin/gardenaon.cgi"><img src="images/green.png" alt="on"></a>
-&nbsp;
-<img src="images/gardena.png" alt="lamp">
-&nbsp;
-<a href="/cgi-bin/gardenaoff.cgi"><img src="images/red.png" alt="off"></a>
-&nbsp;
-Bewässerung, Garten
+<label class="radiotext">
+    Uhrzeit:
+    <input class="dateinput" type="time" id="wakeuptime" name="wakeuptime">
+</label>
 </p>
 
+<p>
+<center>
+<button type="submit"><span class="buttontext"> programmieren</span></button>
+</center>
+</p>
+</form>
 
+<p>
+<a href="/cgi-bin/alarmoff.cgi"><img src="images/red.png" alt="on"></a>
+&nbsp;
+Wecker löschen!
+</p>
 
 </body>
 </html>
