@@ -65,7 +65,8 @@ CUSTOM_DATA=""                # data provided by user in start/continue session
                               # "sessionEnded"
 IGNORE_TIMEOUT="false"        # during play, timeouts are ignored and
                               # republished.
-LISTEN_TO_HOTWORDS="true"     # only if true, the manager will react to hotwords
+# LISTEN_TO_HOTWORDS="true"     # only if true, the manager will react to hotwords
+declare -a IGNORE_HOTWORD_SITES # list of sites for which hotwords are ignored
 
 LANG=$assistant_language
 INTENT_FILTER="[]"
@@ -104,7 +105,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   # start new session:
   #
   if [[ $MQTT_TOPIC == $TOPIC_HOTWORD ]] ; then
-    if [[ $LISTEN_TO_HOTWORDS == false ]] ; then
+    if [[ " ${IGNORE_HOTWORD_SITES[@]} " =~ " ${MQTT_SITE_ID} " ]] ; then
       printLog "    hotword matched, but ignored"
     else
       printLog "    hotword matched"
@@ -342,12 +343,13 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
     DOING="playing"
   fi
 
-  # switch on/off hotword listener:
+  # switch on/off hotword listene; i.e.
+  # add the MQTT_SITE to th elist or remove it:
   #
   if [[ $MQTT_TOPIC == $TOPIC_DIALOGUE_STOP_LISTEN ]] ; then
-    LISTEN_TO_HOTWORDS=false
+    addSiteIdToIgnore
   elif [[ $MQTT_TOPIC == $TOPIC_DIALOGUE_START_LISTEN ]]; then
-    LISTEN_TO_HOTWORDS=true
+    removeSiteIdFromIgnore
   fi
 
 

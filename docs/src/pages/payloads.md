@@ -85,7 +85,30 @@ the timeoutId is still valid:
 ```
 
 
-### ASR
+#### Topic: susi/dialogueManager/stopListen
+
+The topic is received by the dialogue manager. The 'siteId' of the payload will
+be added to the list of sites for which hotwords are ignored.
+
+```
+{
+    "siteId": "default"
+}
+```
+
+
+
+#### Topic: susi/dialogueManager/startListen
+
+The topic is received by the dialogue manager. The 'siteId' of the payload will
+be removed from the list of sites for which hotwords are ignored and
+a `TOPIC_HOTWORD_ON` is published for teh target siteId.
+
+```
+{
+    "siteId": "default"
+}
+```
 
 #### Topic: hermes/asr/startListening
 

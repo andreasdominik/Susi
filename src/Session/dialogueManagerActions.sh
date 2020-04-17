@@ -274,3 +274,27 @@ function addToQueue() {
   START_QUEUE+=("$MQTT_TOPIC")
   START_QUEUE+=("$(cat $RECEIVED_PAYLOAD)")
 }
+
+
+
+# add an remove siteIds to/ffrom the list of ignored
+# hotwords:
+#
+function addSiteIdToIgnore() {
+
+  IGNORE_HOTWORD_SITES=("${IGNORE_HOTWORD_SITES[@]}" $MQTT_SITE_ID)
+}
+
+function removeSiteIdFromIgnore() {
+
+  unset _IGNORE_LIST
+  declare -a _IGNORE_LIST
+  for _ONE in ${IGNORE_HOTWORD_SITES[@]} ; do
+    echo $_ONE
+    if [[ $_ONE != $MQTT_SITE_ID ]] ; then
+      _IGNORE_LIST=("${_IGNORE_LIST[@]} " $_ONE)
+    fi
+  done
+  unset IGNORE_HOTWORD_SITES
+  IGNORE_HOTWORD_SITES=${_IGNORE_LIST[@]}
+}

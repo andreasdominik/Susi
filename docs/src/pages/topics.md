@@ -14,6 +14,9 @@ TOPIC_SESSION_ENDED="hermes/dialogueManager/sessionEnded"
 TOPIC_TIMEOUT="susi/session/timeout"
 TOPIC_LOG="susi/log/notification"
 TOPIC_LOG_SESSION_STARTED="susi/log/sessionStarted"
+
+TOPIC_DIALOGUE_STOP_LISTEN="susi/dialogueManager/stopListen"
+TOPIC_DIALOGUE_START_LISTEN="susi/dialogueManager/startListen"
 ```
 
 
