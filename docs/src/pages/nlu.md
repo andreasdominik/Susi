@@ -1,6 +1,13 @@
-## NLU
+# NLU
 
-### Command parser
+The NLU component replaces the Snips NLU and is independent from the
+Snips console.
+It is configured only with a configuration file `nlu.xx.toml` for
+each skill, where 'xx'
+denotes a 2-letter language code. The nlu configuration files must be present
+somewhere in the skill's mother or sundiretories.
+
+### Formate of the NLU definition file
 
 #### `<SlotName>`
 
@@ -33,15 +40,18 @@ skill = "RollerShutter"
 developer = "andreasdominik"
 
 [inventory]
-intents = ["RollerUpDown"]
 slots = ["room", "device", "Action"]
+intents = ["RollerUpDown"]
 ```
 
 #### Slot definitions
 
+The scope slot definitions is one skill; i.e. a defined slot can be
+used in all intents of a skill.
+
 For each listed slot, a slot definition section must be present in the
 toml file, including the keys `slot_type`, optional `allow_empty` and
-an optional sub-section `<slotname>.synonyms`:
+optional sub-section `slotname.synonyms`:
 
 ```
 # slot definitions:
@@ -71,7 +81,7 @@ consisting of alternatives with a name and a list of values.
 In contrast to Snips, the names are not included in the list.
 
 When parsing a command the slot will match if one of the words or phrases
-in one of the lists is recognised, and the name of the respective
+in one of the lists is recognised and the name of the respective
 synonym is returned as slot value.
 This way it is easy to write language-independent skill code, because
 the returned slot values are indepentent from the actual parsed commands.
@@ -94,7 +104,7 @@ and passed to Duckling to get a number or timestring.
 The last part of the configuration file holds *match phrases*, which are
 compared with transcribed commands to identify intents (actions to be
 executed within skills) and to extract slot values.
-The following rukles apply:
+The following rules apply:
 * each intent is configured in a separate section of the toml file
   `[intentname]`
 * several match phrases may be defined for each intent
@@ -106,26 +116,26 @@ The following rukles apply:
 
 ##### match phrase type regex
 It is possible to write match phrases as Perl-compatible regular expresisons
-with a syntax, provided b ythe PCRE library (see http://www.pcre.org/current/doc/html/pcre2syntax.html for the syntax).
+with a syntax, provided by the PCRE library (see http://www.pcre.org/current/doc/html/pcre2syntax.html for the syntax).
 Slots are defined as named capture groups with the slot name as capture
 group name.
 
 
 ##### match phrase type complete
 To avoid the need to writing plain regular expressions, the types
-'complete', 'partial' and 'ordered' provide an easier interface.
+'complete', 'partial' and 'ordered' provide an easier syntax.
 
-For complete', the phrase is just a sentence that must
+For `complete`, the phrase is a sentence that must
 match completely, with several types of placeholders allowed:
 
-* **<<slotname>>:** the slot is expected at this position.
-  If the slot si configured as `allow_empty = true`, the phrase will
+* **\<\<slotname\>\>:** the slot value is expected at this position.
+  If the slot is configured as `allow_empty = true`, the phrase will
   match even if the slot is not present.
-* **<<word1|words and more|word3>>:** one of the listed words or phrases
+* **\<\<word1|words and more|word3\>\>:** one of the listed words or phrases
   is expected at this position. Words are separated by the pipe charater `|`.
   An empty alternative (<<word1|words and more|>> or <<word1||words and more>>)
   will match missing words as well.
-* **<<>>:** the empty placeholder will match exactly one or no words.
+* **\<\<\>\>:** the empty placeholder will match exactly one or no words.
 
 Examples:    
 the match phrase  
@@ -135,8 +145,8 @@ roller_a = "complete: <<action>> the <<rollershutter|roller>> <<in|>> <<the|>> <
 ```
 will match the commands `"Open the rollershutter in the kitchen"` and
 `"Open the rollershutter in kitchen"` as well as
-`"Open the rollershutter"`, because the placeholders "<<in|>>" and "<<the|>" allow
-empty values and "<<room>>" is allowed to be empty as well.
+`"Open the rollershutter"`, because the placeholders "\<\<in|\>\>" and "\<\<the|\>\>" allow
+empty values and "\<\<room\>\>" is allowed to be empty as well.
 
 However the match phrase will **not** match
 `"Please open the rollershutter in the kitchen"`, because not the complete
@@ -163,21 +173,22 @@ as well as `"Please open the rollershutter in the kitchen and get me a coffee"`.
 
 ##### match phrase type ordered
 Match phrases of type 'ordered' follow the same rules but are more
-vague, as only all words of the match phrase must be present in the
+vague, as only all elements of the match phrase must be present in the
 command in the correct order. Additional words may be present before,
-after or inbetween.
+after or inbetween the specified elements.
 
 
-#### Example file nlu-xx.toml for the rollershutter skill:
+#### Example file nlu.xx.toml for the rollershutter skill:
 
 A complete (but very simple and not yet sufficent) example nlu configuration
-file is shown in a version vor 3 different languages.
+file is shown in a version for 3 different languages.
 It must be pointet out, that the slot values extracted to the intent
+and sent to the skill code
 are exactly the same for all languages, which makes it easy to
 write language-intependant skill code.
 
 
-##### nlu-en.toml
+##### nlu.en.toml
 ```
 # nlu definition for RollerShutter skill
 #
@@ -221,7 +232,7 @@ roller_c = "partial: make the <<rollershutter|roller>> <<>> <<action>>"
 
 
 
-##### nlu-fr.toml
+##### nlu.fr.toml
 ```
 # nlu definition for RollerShutter skill
 #
@@ -262,7 +273,7 @@ roller_a = "<<veuillez|>> <<action>> <<le volet roulant|les volets|le volet>> <<
 ```
 
 
-##### nlu-de.toml
+##### nlu.de.toml
 ```
 # nlu definition for RollerShutter skill
 #

@@ -112,7 +112,7 @@ a `TOPIC_HOTWORD_ON` is published for teh target siteId.
 
 #### Topic: hermes/asr/startListening
 
-Published ba the dialogue manager to ask a satellite to start
+Published by the dialogue manager to ask a satellite to start
 listening (normally to a command):
 
 ```

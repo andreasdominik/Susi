@@ -294,11 +294,5 @@ and takes care of timeouts and non-responding components.
 
 ## NLU - natural language understanding
 
-The NLU component replaces the Snips NLU and is independent from the
-Snips console.
-It is configured only with a configuration file `nlu.xx.toml` for
-each skill, where 'xx'
-denotes a 2-letter language code. The nlu configuration files must be present
-somewhere in the skills directory.
 
 Please refer to the NLU-Section of the documentation for more details.
