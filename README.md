@@ -1,4 +1,4 @@
-# Susi (noSnips)
+# Susi (is not Snips)
 
 Susi is an attempt to combine a bunch of existing technologies
 to run skills developed for Snips.AI without the Snips console
