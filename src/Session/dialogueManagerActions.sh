@@ -34,9 +34,10 @@ function publishSessionEnded() {
 
 function publishHotwordOn() {
 
+  _SITE_ID=$1
   _PAYLOAD="{
             \"sessionId\": \"no_session\",
-            \"siteId\": \"$SESSION_SITE_ID\"
+            \"siteId\": \"$_SITE_ID\"
            }"
   publish "$TOPIC_HOTWORD_ON" "$_PAYLOAD"
 }
@@ -44,9 +45,10 @@ function publishHotwordOn() {
 
 function publishHotwordOff() {
 
+  _SITE_ID=$1
   _PAYLOAD="{
             \"sessionId\": \"no_session\",
-            \"siteId\": \"$SESSION_SITE_ID\"
+            \"siteId\": \"$_SITE_ID\"
            }"
   publish "$TOPIC_HOTWORD_OFF" "$_PAYLOAD"
 }
@@ -253,7 +255,7 @@ function makeSessionEnd() {
       else
         # acivate hotword only if nothing in queue:
         #
-        publishHotwordOn
+        publishHotwordOn $SESSION_SITE_ID
         START_QUEUE=()
       fi
       # ERROR_ACTION="continue_session"
@@ -282,16 +284,18 @@ function addToQueue() {
 #
 function addSiteIdToIgnore() {
 
-  IGNORE_HOTWORD_SITES=("${IGNORE_HOTWORD_SITES[@]}" $MQTT_SITE_ID)
+  _SITE_ID=$1
+  IGNORE_HOTWORD_SITES=("${IGNORE_HOTWORD_SITES[@]}" $_SITE_ID)
 }
 
 function removeSiteIdFromIgnore() {
 
+  _SITE_ID=$1
   unset _IGNORE_LIST
   declare -a _IGNORE_LIST
   for _ONE in ${IGNORE_HOTWORD_SITES[@]} ; do
     echo $_ONE
-    if [[ $_ONE != $MQTT_SITE_ID ]] ; then
+    if [[ $_ONE != $_SITE_ID ]] ; then
       _IGNORE_LIST=("${_IGNORE_LIST[@]} " $_ONE)
     fi
   done

@@ -121,7 +121,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
         publishAsrStart # next: wait for audio recording
         DOING="wait_for_asr"
         scheduleTimeOut
-        publishHotwordOff
+        publishHotwordOff $SESION_SITE_ID
       else
         addToQueue
       fi
@@ -140,7 +140,7 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
       SESSION_SITE_ID=$MQTT_SITE_ID
       CUSTOM_DATA="$(extractJSONfile .customData $RECEIVED_PAYLOAD)"
       scheduleTimeOut
-      publishHotwordOff
+      publishHotwordOff $SESION_SITE_ID
 
       # check if action or notification or api or command:
       #
@@ -347,9 +347,12 @@ cat $MQTT_MESSAGE_PIPE | while read ONE_MESSAGE ; do
   # add the MQTT_SITE to th elist or remove it:
   #
   if [[ $MQTT_TOPIC == $TOPIC_DIALOGUE_STOP_LISTEN ]] ; then
-    addSiteIdToIgnore
+    addSiteIdToIgnore $MQTT_SITE_ID
   elif [[ $MQTT_TOPIC == $TOPIC_DIALOGUE_START_LISTEN ]]; then
-    removeSiteIdFromIgnore
+    removeSiteIdFromIgnore $MQTT_SITE_ID
+    publishHotwordOn $MQTT_SITE_ID
+
+    TODO SITEID as arg!
   fi
 
 
