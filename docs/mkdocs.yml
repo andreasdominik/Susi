@@ -26,7 +26,7 @@ pages:
   - Configuration: pages/configuration.md
   - Components: pages/components.md
   - NLU: pages/nlu.md
-  - Payloads: pages/payloads.md
   - Topics: pages/topics.md
+  - Payloads: pages/payloads.md
   - Tools: pages/tools.md
   - License: LICENSE.md

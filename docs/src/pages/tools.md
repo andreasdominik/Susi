@@ -38,3 +38,12 @@ If caching is switched on, the audio will be added to the cache.
 ### susi.watch
 Tool to monitor the session managers activity and the traffic on Susi's
 MQTT broker.
+
+
+### susi.skillinstall
+Install a skill from Github by specifiying the github username of the
+developer and the name of the Github-repo:
+
+```
+$ susi.skillinstall andreasdominik ADoSnipsLights
+```
