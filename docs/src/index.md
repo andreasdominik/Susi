@@ -11,5 +11,5 @@ Susi is build as a modular system as a collection of
 of daemons (hotword detection, record, speech to text,
 intent recognion, play, skill managment).
 Most daemons are lightweight bash scripts responsible for communication with
-other daeomns via MQTT messages. The actual workers for the respective functionality
+other daemons via MQTT messages. The actual workers for the respective functionality
 can be configured separately and hence can be replaced easily.

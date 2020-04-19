@@ -8,9 +8,9 @@ All daemons share some config entries:
 
 * `start = "true"` defines if the daemon
   is started with the susi service or not.
-* `daemoon = "xyz"` is the path to the executable that runs the daemon.
+* `daemon = "xyz"` is the path to the executable that runs the daemon.
 * `binary = "xyz"` is the path to the executable that does the job when
-  the daemon is gets a trigger.
+  the daemon gets a trigger.
 
 
 ### Sections
@@ -38,7 +38,7 @@ All variants of installation are possible, such as
   and set all daemon start-values to false, except the one that should run.
 
 #### [debug]
-if 'show_all_stdout' is set to 'true', all daemons will echo commands to
+if 'show\_all\_stdout' is set to 'true', all daemons will echo commands to
 stdout (i.e. 'set -xv').
 
 
@@ -113,7 +113,6 @@ must be changed.
 Configuration of the NLU (natural language understanding) daemon.
 The default daemon is implemented in Julia and uses Regular Expressions
 for intent matching and capturing of slots values.
-sh sus
 For more details see the NLU section of the docu.
 The NLU also reads the skill directory from the `[skills]` section to find
 skills.
@@ -169,7 +168,7 @@ To call DeepSpeech, Susi needs to know
 * the executable ('binary')
 * the trained neural network ('model')
 * the language model ('language_model')
-* the prefix tree toi query the language model ('trie')
+* the prefix tree to query the language model ('trie')
 
 
 #### [snips]
