@@ -7,4 +7,4 @@ to run skills developed for Snips.AI without the Snips console
 **Caveat:** The project is work in progress and not yet considered as
 productive.
 
-Read the [docs](https://andreasdominik.github.io/Susi/)
+Read the [docs](https://andreasdominik.github.io/Susi/dev/)
