@@ -7,20 +7,7 @@ each skill, where 'xx'
 denotes a 2-letter language code. The nlu configuration files must be present
 somewhere in the skill's mother or sundiretories.
 
-### Formate of the NLU definition file
-
-#### `<SlotName>`
-
-Parse this part of the command as slot. SlotName is case
-sensitive.
-
-#### `<>`
-
-Match any word or no word, but do not parse into a slot.
-
-The files are in standard toml format, constisting of
-'key' -> 'value' pairs or 'key' -> 'list' pairs. Lists with only one
-entry may be written as values (without brackets).
+### Format of the NLU definition file
 
 The nlu.xx.toml file includes the parts:
 
