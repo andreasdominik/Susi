@@ -11,7 +11,7 @@ somewhere in the skill's mother or sundiretories.
 
 The nlu.xx.toml file includes the parts:
 
-#### head
+#### Head
 
 The head defines the name of the configured skill and the name of the skill
 developer (the developer name is used to generate Snips-compatible
@@ -61,9 +61,9 @@ If **allow_empty** is specified as true, an expression will match, even if the
 slot is not parsed. If the key 'allow_empty' is missing, the default
 `false` is assumed.
 
-##### Slot type ListOfValues
+##### Slot type `ListOfValues`
 
-A slot type 'ListOfValues' needs a mandatory subsection with synonymes,
+A slot type `ListOfValues` needs a mandatory subsection with synonymes,
 consisting of alternatives with a name and a list of values.
 In contrast to Snips, the names are not included in the list.
 
@@ -74,14 +74,14 @@ This way it is easy to write language-independent skill code, because
 the returned slot values are indepentent from the actual parsed commands.
 
 
-##### Slot type Any
+##### Slot type `Any`
 
-A slot of tyle 'Any' will match any word or phrase.
+A slot of tyle `Any` will match any word or phrase.
 
-In addition it is possible to add synonyms to a slot of type Any.
+In addition it is possible to add synonyms to a slot of type `Any`.
 
 
-##### Slot types Number, Ordinal and Time
+##### Slot types `Number`, `Ordinal` and `Time`
 
 Slots of one of these types will be extracted from the command
 and passed to Duckling to get a number or timestring.
@@ -98,19 +98,22 @@ The following rules apply:
 * each match phrase constists of a *name*, a *type* and the phrase to be
   matched
 * match phrases are matched in alphabetic order of their names
-* a match phrase can be of type 'regex', 'complete', 'partial' or
-  'ordered'.
+* a match phrase can be of type `regex`, `complete`, `partial` or
+  `ordered`.
 
-##### match phrase type regex
+##### match phrase type `regex`
 It is possible to write match phrases as Perl-compatible regular expresisons
 with a syntax, provided by the PCRE library (see http://www.pcre.org/current/doc/html/pcre2syntax.html for the syntax).
 Slots are defined as named capture groups with the slot name as capture
 group name.
 
 
-##### match phrase type complete
-To avoid the need to writing plain regular expressions, the types
-'complete', 'partial' and 'ordered' provide an easier syntax.
+##### match phrase type `complete`
+Instead of writing plain regular expressions, the types
+`complete`, `partial` and `ordered` provide an simplified syntax.
+However, every *match phrase* will eventually be translated into a regular expression.
+For this reason it is possible to use default regular expresison syntax in any place
+(in match phrases, word lists and synonym lists).
 
 For `complete`, the phrase is a sentence that must
 match completely, with several types of placeholders allowed:
@@ -137,15 +140,15 @@ empty values and "\<\<room\>\>" is allowed to be empty as well.
 
 However the match phrase will **not** match
 `"Please open the rollershutter in the kitchen"`, because not the complete
-phrase mathes.
+phrase matches.
 
 To be more specific optional words may be added, such as
 ```
 roller_b = "complete: <<please|>> <<action>> the <<rollershutter|roller>> <<in|>> <<the|>> <<room>> <<please|>>"
 ```
 
-##### match phrase type partial
-Match phrases of type 'partial' follow the same rules as of type 'complete',
+##### match phrase type `partial`
+Match phrases of type `partial` follow the same rules as of type `complete`,
 with the difference that only parts of the command must match the phrase.
 
 Examples:
@@ -158,17 +161,17 @@ will match `"Please open the rollershutter in the kitchen"`
 as well as `"Please open the rollershutter in the kitchen and get me a coffee"`.
 
 
-##### match phrase type ordered
-Match phrases of type 'ordered' follow the same rules but are more
+##### match phrase type `ordered`
+Match phrases of type `ordered` follow the same rules but are much more
 vague, as only all elements of the match phrase must be present in the
-command in the correct order. Additional words may be present before,
+command in the correct order. Additional words may be occure before,
 after or inbetween the specified elements.
 
 
 #### Example file nlu.xx.toml for the rollershutter skill:
 
 A complete (but very simple and not yet sufficent) example nlu configuration
-file is shown in a version for 3 different languages.
+file is shown in versions for 3 different languages.
 It must be pointet out, that the slot values extracted to the intent
 and sent to the skill code
 are exactly the same for all languages, which makes it easy to
@@ -186,7 +189,7 @@ developer = "andreasdominik"
 
 [inventory]
 intents = ["RollerUpDown"]
-slots = ["room", "Action"]
+slots = ["room", "action"]
 
 
 # slot definitions:
@@ -230,7 +233,7 @@ developer = "andreasdominik"
 
 [inventory]
 intents = ["RollerUpDown"]
-slots = ["room", "Action"]
+slots = ["room", "action"]
 
 
 # slot definitions:
@@ -271,7 +274,7 @@ developer = "andreasdominik"
 
 [inventory]
 intents = ["RollerUpDown"]
-slots = ["room", "Action"]
+slots = ["room", "action"]
 
 
 # slot definitions:
