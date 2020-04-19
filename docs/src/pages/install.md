@@ -31,7 +31,7 @@ Currently 4 alternatives are implemented:
   However, this is also not local.
 * **Mozilla Deep Speech** can be installed locally and hence will
   preserve privacy. However the quality of STT is limited.
-* **Snips ASR** can be used fot STT if a trained model is available
+* **Snips ASR** can be used for STT if a trained model is available
   (e.g. from an assistant downloaded from the Snps console).
 
 Please see in the section *Components* for more alternatives.
@@ -125,7 +125,7 @@ is used for recording and playing sound. It must be installed on the main
 installation and on all satellites. In addition ffmpeg and and libsox-fmt-mp3
 might be necessary in order to be able to play all types of audio files.
 
-After installation sox can be tested with `rec firstaudio.wav` and
+After installation, sox can be tested with `rec firstaudio.wav` and
 `play firstaudio.wav`.
 Volume gain may be adapted with alsamixer or (x11) pavucontrol.
 
