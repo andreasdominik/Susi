@@ -118,7 +118,7 @@ For this reason it is possible to use default regular expresison syntax in any p
 For `complete`, the phrase is a sentence that must
 match completely, with several types of placeholders allowed:
 
-* **\<\<slotname\>\>:** the slot value is expected at this position.
+* **<<slotname>>:** the slot value is expected at this position.
   If the slot is configured as `allow_empty = true`, the phrase will
   match even if the slot is not present.
 * **\<\<word1|words and more|word3\>\>:** one of the listed words or phrases
