@@ -92,3 +92,27 @@ is received, it geberates an aodio of the text and publishes it as
 payload of  
 a message with topic `susi/tts/audio`.
 The payload id matches the id of the request.
+
+
+
+## Skills
+
+As all main MQTT topics are comaptible with the respective Snips.ai-topics,
+all Snips-skills shold run with Susi.
+However it is recommended, not to use Snips' Hermes framework for
+Python for skill development. Instead, the Julia-framework
+ADoSnipsQnD supports writing skills (for Snips and Susi)
+in the modern and fast programming language Julia and makes it simple to
+develop skills with multilanguage support and extensive user interaction.
+
+Currently supported and tested skills include:
+
++ ADoSnipsLights
++ ADoSnipsKodi
++ ADoSnipsTVViera
++ ADoSnipsWakeup
++ ADoSnipsRollerShutter
++ ADoSnipsIrrigation
++ ADoSnipsDoNotListen
++ ADoSnipsAutomation
++ SusiTime
