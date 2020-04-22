@@ -121,11 +121,11 @@ match completely, with several types of placeholders allowed:
 * **<<slotname>>:** the slot value is expected at this position.
   If the slot is configured as `allow_empty = true`, the phrase will
   match even if the slot is not present.
-* **\<\<word1|words and more|word3\>\>:** one of the listed words or phrases
+* **<<word1|words and more|word3>>:** one of the listed words or phrases
   is expected at this position. Words are separated by the pipe charater `|`.
   An empty alternative (<<word1|words and more|>> or <<word1||words and more>>)
   will match missing words as well.
-* **\<\<\>\>:** the empty placeholder will match exactly one or no words.
+* **<<>>:** the empty placeholder will match exactly one or no words.
 
 Examples:    
 the match phrase  
@@ -135,8 +135,8 @@ roller_a = "complete: <<action>> the <<rollershutter|roller>> <<in|>> <<the|>> <
 ```
 will match the commands `"Open the rollershutter in the kitchen"` and
 `"Open the rollershutter in kitchen"` as well as
-`"Open the rollershutter"`, because the placeholders "\<\<in|\>\>" and "\<\<the|\>\>" allow
-empty values and "\<\<room\>\>" is allowed to be empty as well.
+`"Open the rollershutter"`, because the placeholders "<<in|>>" and "<<the|>>" allow
+empty values and "<<room>>" is allowed to be empty as well.
 
 However the match phrase will **not** match
 `"Please open the rollershutter in the kitchen"`, because not the complete
