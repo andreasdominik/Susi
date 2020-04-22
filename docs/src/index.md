@@ -16,7 +16,7 @@ can be configured separately and hence can be replaced easily.
 
 
 ## Main components
-All components run standalone on oneor more satellites of the installation
+All components run standalone on one or more satellites of the installation
 and communicate with each other and with the session manager via MQTT.
 
 A default session includes the following components and steps:
@@ -67,14 +67,14 @@ starts, queues and ends sessions and publishes
 final intents.
 
 #### Skill manager
-Skills are standalone programs that may run aon any computer of
+Skills are standalone programs that may run on any computers of
 a Susi installation.  Each skill must subscribe to the
 topics of its intents (such as `/hermes/intent/andreasdominik:LightOn`) and
 execute the requested actions.
 
 Susi's skill manager makes sure, that all skills located in the skills
 directory are running (all skills with name pattern `action-...` wil be started
-with teh susi service and restarted if they crash).
+with the susi service and restarted if they crash).
 
 #### Play service
 A play service must run on all sattelites, on which audio output is
