@@ -142,7 +142,26 @@ All IDs match the IDs of the request:
 
 ### Topic: qnd/asr/transsribe
 
+```
+{
+  "sessionId": "session:0e24799a-aa63-4205-9808-74ee92f2436b",
+  "siteId": "default",
+  "id": "id:f587690c-4612-4e8e-a138-dc66f41890e3",
+  "audio": "UG9seWZvbiB6d2l0c2NoZXJuZCBhw59lbiBNw6R4Y2hlbnMgVsO2Z2VsIF
+          LDvGJlbiwgSm9naHVydCB1bmQgUXVhcms="
+}
+```
+
 ### Topic: hermes/asr/textCaptured
+
+```
+{
+  "sessionId": "session:0e24799a-aa63-4205-9808-74ee92f2436b",
+  "siteId": "default",
+  "id": "id:f587690c-4612-4e8e-a138-dc66f41890e3",
+  "text": "transcribed voice command"
+}
+```
 
 ### Topic: susi/play/request
 
